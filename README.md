@@ -1,5 +1,3 @@
-I'll update the README.md to include information about the live deployment on Streamlit:
-
 # Personalized Diabetes Nutrition Application
 
 A sophisticated AI-powered application that creates personalized nutrition plans for individuals with diabetes, taking into account health metrics, socioeconomic factors, cultural preferences, and literacy levels.
