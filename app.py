@@ -1,38 +1,14 @@
 import streamlit as st
-import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
-import requests
-import json
-import os
-from PIL import Image
-import io
-import base64
 import time
 import openai
 from openai import OpenAI
 
 # Add at the top of app.py
 from utils.data_processing import preprocess_health_data, preprocess_socioeconomic_data
-from utils.llm_integration import DiabetesNutritionAI
-from utils.visualization import (create_pictogram_food_guide, create_simple_meal_pairing_guide, create_symptom_response_guide)
 
 # OpenAI API configuration
 openai.api_key = st.secrets["OPENAI_API_KEY"]  # Store this securely in Streamlit secrets
-
-
-import streamlit as st
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import requests
-import json
-import os
-from PIL import Image
-import io
-import base64
-import time
-from openai import OpenAI
 
 # Set page configuration
 st.set_page_config(
@@ -856,73 +832,225 @@ def show_nutrition_plan():
     
     with visuals_tab:
         if 'visual_guidance' in st.session_state:
-            st.subheader("Visual Guides")
-            st.markdown(st.session_state.visual_guidance)
+            #st.subheader("Visual Guides")
             
-            # Here you would normally generate actual visuals based on the descriptions
-            # For demonstration, we'll just show a placeholder
-            st.info("In a production environment, these visual descriptions would be converted to actual images.")
+            # Create a more visually appealing portion guide
+            #st.markdown("### Diabetes-Friendly Portion Guide")
             
-            # Example visual - Portion Size Guide
-            def create_sample_portion_guide():
-                fig, axs = plt.subplots(1, 3, figsize=(12, 4))
-                
-                # Protein portion
-                axs[0].text(0.5, 0.5, "Protein\nPalm-sized", ha='center', va='center', fontsize=14)
-                axs[0].set_title("Protein Portion", fontsize=16)
-                axs[0].axis('off')
-                
-                # Carbs portion
-                axs[1].text(0.5, 0.5, "Carbs\nFist-sized", ha='center', va='center', fontsize=14)
-                axs[1].set_title("Carbohydrate Portion", fontsize=16)
-                axs[1].axis('off')
-                
-                # Vegetables portion
-                axs[2].text(0.5, 0.5, "Vegetables\nTwo hands", ha='center', va='center', fontsize=14)
-                axs[2].set_title("Vegetable Portion", fontsize=16)
-                axs[2].axis('off')
-                
-                plt.tight_layout()
-                return fig
+            # Create a colorful plate method visualization
+            def create_enhanced_portion_guide():
+                try:
+                    # Import necessary components
+                    from matplotlib.patches import Wedge, Circle
+                    
+                    # Create figure with a nice background
+                    fig, ax = plt.subplots(figsize=(10, 6), facecolor='#f8f9fa')
+                    ax.set_facecolor('#f8f9fa')
+                    
+                    # Draw the plate
+                    plate = Circle((0.5, 0.5), 0.4, fill=True, color='#FFFFFF', ec='#333333', linewidth=2)
+                    ax.add_patch(plate)
+                    
+                    # Create the plate sections
+                    # Left half - vegetables
+                    veg_wedge = Wedge((0.5, 0.5), 0.4, 90, 270, color='#81c784', alpha=0.7)  # Green for vegetables
+                    ax.add_patch(veg_wedge)
+                    
+                    # Top right - proteins
+                    protein_wedge = Wedge((0.5, 0.5), 0.4, 270, 0, color='#ffb74d', alpha=0.7)  # Orange for proteins
+                    ax.add_patch(protein_wedge)
+                    
+                    # Bottom right - carbs
+                    carb_wedge = Wedge((0.5, 0.5), 0.4, 0, 90, color='#64b5f6', alpha=0.7)  # Blue for carbs
+                    ax.add_patch(carb_wedge)
+                    
+                    # Add section labels with icons
+                    ax.text(0.35, 0.6, "NON-STARCHY\nVEGETABLES\n(50%)", ha='center', va='center', fontweight='bold', color='#1b5e20')
+                    ax.text(0.70, 0.75, "PROTEINS\n(25%)", ha='center', va='center', fontweight='bold', color='#e65100')
+                    ax.text(0.75, 0.25, "CARBS\n(25%)", ha='center', va='center', fontweight='bold', color='#0d47a1')
+                    
+                    # Add food examples for each section
+                    veg_examples = ["Broccoli", "Spinach", "Peppers", "Tomatoes", "Zucchini"]
+                    protein_examples = ["Chicken", "Fish", "Beans", "Tofu", "Eggs"]
+                    carb_examples = ["Brown rice", "Sweet potato", "Quinoa", "Whole grain bread"]
+                    
+                    # Column layout for examples
+                    for i, veg in enumerate(veg_examples[:5]):
+                        ax.text(0.15, 0.65 - i*0.06, f"• {veg}", fontsize=9, color='#1b5e20')
+                    
+                    for i, protein in enumerate(protein_examples[:5]):
+                        ax.text(0.52, 0.80 - i*0.06, f"• {protein}", fontsize=9, color='#e65100')
+                    
+                    for i, carb in enumerate(carb_examples[:4]):
+                        ax.text(0.52, 0.40 - i*0.06, f"• {carb}", fontsize=9, color='#0d47a1')
+                    
+                    # Add a helpful title
+                    ax.text(0.5, 0.95, "Diabetes-Friendly Portion Guide", ha='center', va='center', 
+                            fontsize=16, fontweight='bold', color='#333333')
+                    
+                    # Add a footnote
+                    ax.text(0.5, 0.05, "For optimal blood sugar management, follow this portion guide", 
+                            ha='center', va='center', fontsize=10, color='#555555', style='italic')
+                    
+                    # Set limits and remove axes
+                    ax.set_xlim(0, 1)
+                    ax.set_ylim(0, 1)
+                    ax.axis('off')
+                    
+                    return fig
+                except Exception as e:
+                    st.error(f"Error creating enhanced portion guide: {e}")
+                    return None
             
-            st.pyplot(create_sample_portion_guide())
+            # Display the enhanced portion guide
+            portion_guide = create_enhanced_portion_guide()
+            if portion_guide is not None:
+                st.pyplot(portion_guide)
             
-            # Example visual - Blood Glucose Target Range
-            def create_sample_glucose_guide():
-                fig, ax = plt.subplots(figsize=(10, 3))
-                
-                # Create a range
-                ax.axhspan(0, 1, xmin=0, xmax=0.3, color='#F44336', alpha=0.3)  # Red for low
-                ax.axhspan(0, 1, xmin=0.3, xmax=0.7, color='#4CAF50', alpha=0.3)  # Green for target
-                ax.axhspan(0, 1, xmin=0.7, xmax=1, color='#F44336', alpha=0.3)  # Red for high
-                
-                # Add labels
-                ax.text(0.15, 0.5, "LOW\n< 70 mg/dL", ha='center', va='center', fontsize=12)
-                ax.text(0.5, 0.5, "TARGET RANGE\n70-180 mg/dL", ha='center', va='center', fontsize=14, fontweight='bold')
-                ax.text(0.85, 0.5, "HIGH\n> 180 mg/dL", ha='center', va='center', fontsize=12)
-                
-                ax.set_title("Blood Glucose Target Range", fontsize=16)
-                ax.axis('off')
-                
-                return fig
+            # Add educational note about the portion guide
+            st.markdown("""
+            <div style="background-color: #e8f5e9; padding: 15px; border-radius: 10px; margin-top: 20px;">
+                <h4 style="color: #2e7d32;">How to Use This Portion Guide</h4>
+                <ul>
+                    <li><strong>Half your plate</strong> should be filled with non-starchy vegetables</li>
+                    <li><strong>One quarter</strong> should contain lean proteins</li>
+                    <li><strong>One quarter</strong> should have complex carbohydrates</li>
+                    <li>Include a small serving of fruit and/or dairy on the side</li>
+                    <li>Add healthy fats in small amounts (olive oil, avocado, nuts)</li>
+                </ul>
+            </div>
+            """, unsafe_allow_html=True)
             
-            st.pyplot(create_sample_glucose_guide())
+            
+            # Add a separator
+            st.markdown("---")
+            
+            # Add the blood glucose target range visualization
+            # st.markdown("### Blood Glucose Target Range")
+            
+            def create_enhanced_glucose_guide():
+                try:
+                    from matplotlib.patches import Rectangle, Polygon
+                    import numpy as np
+                    
+                    fig, ax = plt.subplots(figsize=(10, 4), facecolor='#f8f9fa')
+                    ax.set_facecolor('#f8f9fa')
+                    
+                    # Create a more attractive glucose meter visualization
+                    # Low range (red)
+                    ax.add_patch(Rectangle((0, 0.2), 0.3, 0.6, color='#ffcdd2', alpha=0.7))
+                    ax.text(0.15, 0.5, "LOW\n< 70 mg/dL\n\nSymptoms:\nShaking, sweating,\nconfusion, dizziness", 
+                            ha='center', va='center', fontsize=10, color='#c62828')
+                    
+                    # Target range (green)
+                    ax.add_patch(Rectangle((0.3, 0.2), 0.4, 0.6, color='#c8e6c9', alpha=0.7))
+                    ax.text(0.5, 0.5, "TARGET RANGE\n70-180 mg/dL\n\nGoal:\nStay in this range\nas much as possible", 
+                            ha='center', va='center', fontsize=12, fontweight='bold', color='#2e7d32')
+                    
+                    # High range (red)
+                    ax.add_patch(Rectangle((0.7, 0.2), 0.3, 0.6, color='#ffcdd2', alpha=0.7))
+                    ax.text(0.85, 0.5, "HIGH\n> 180 mg/dL\n\nSymptoms:\nThirst, fatigue,\nfrequent urination", 
+                            ha='center', va='center', fontsize=10, color='#c62828')
+                    
+                    # Add a meter-like pointer
+                    triangle_vertices = np.array([[0.5, 0.2], [0.47, 0.15], [0.53, 0.15]])
+                    meter = Polygon(triangle_vertices, color='#333333')
+                    ax.add_patch(meter)
+                    
+                    # Add a title
+                    ax.text(0.5, 0.9, "BLOOD GLUCOSE TARGET RANGES", ha='center', va='center', 
+                            fontsize=16, fontweight='bold', color='#333333')
+                    
+                    # Add checking times
+                    #ax.text(0.5, 0.05, "Check your blood sugar: Before meals, 2 hours after eating, before & after exercise, and at bedtime",
+                    #    ha='center', va='center', fontsize=10, color='#555555', style='italic')
+                    
+                    # Set limits and remove axes
+                    ax.set_xlim(0, 1)
+                    ax.set_ylim(0, 1)
+                    ax.axis('off')
+                    
+                    return fig
+                except Exception as e:
+                    st.error(f"Error creating enhanced glucose guide: {e}")
+                    return None
+            
+            # Display the enhanced glucose guide
+            glucose_guide = create_enhanced_glucose_guide()
+            if glucose_guide is not None:
+                st.pyplot(glucose_guide)
+            
+            # Add a separator
+            st.markdown("---")
+
+            # Add the foods to avoid visualization
+            #st.markdown("### Foods to Limit or Avoid")
+
+            # Display the foods to avoid visual
+            foods_to_avoid = create_foods_to_avoid_visual()
+            if foods_to_avoid is not None:
+                st.pyplot(foods_to_avoid)
+
+            # Add explanation
+            # Add explanation with food icons for foods to limit
+            st.markdown("""
+            <div style="background-color: #ffebee; padding: 15px; border-radius: 10px; margin-top: 0px;">
+                <h4 style="color: #c62828;">Why Limit These Foods?</h4>
+                <ul>
+                    <li><span style="font-size: 20px; margin-right: 10px;">🍞</span><strong>White Bread and Refined Grains</strong>: Cause rapid blood sugar spikes</li>
+                    <li><span style="font-size: 20px; margin-right: 10px;">🥤</span><strong>Sugary Drinks</strong>: High in simple sugars with little nutritional value</li>
+                    <li><span style="font-size: 20px; margin-right: 10px;">🍟</span><strong>Fried Foods</strong>: High in unhealthy fats that can worsen insulin resistance</li>
+                    <li><span style="font-size: 20px; margin-right: 10px;">🥓</span><strong>Processed Meats</strong>: High in sodium and unhealthy fats</li>
+                    <li><span style="font-size: 20px; margin-right: 10px;">🍰</span><strong>Sweets & Desserts</strong>: High in sugar and calories with minimal nutrition</li>
+                </ul>
+            </div>
+            """, unsafe_allow_html=True)
+
+            # Add a separator
+            st.markdown("---")
+
+            # Add the recommended foods visualization
+            #st.markdown("### Recommended Foods")
+
+            # Display the recommended foods visual
+            recommended_foods = create_recommended_foods_visual()
+            if recommended_foods is not None:
+                st.pyplot(recommended_foods)
+
+            # Add explanation
+            # Add explanation with food icons
+            st.markdown("""
+            <div style="background-color: #e8f5e9; padding: 15px; border-radius: 10px; margin-top: 0px;">
+                <h4 style="color: #2e7d32;">Why Choose These Foods?</h4>
+                <ul>
+                    <li><span style="font-size: 20px; margin-right: 10px;">🌾</span><strong>Whole Grains</strong>: High in fiber which slows sugar absorption into the bloodstream</li>
+                    <li><span style="font-size: 20px; margin-right: 10px;">🍎</span><strong>Fresh Fruit</strong>: Contains natural sugars with fiber, vitamins, and antioxidants</li>
+                    <li><span style="font-size: 20px; margin-right: 10px;">🍗</span><strong>Lean Protein</strong>: Helps maintain steady blood sugar and promotes satiety</li>
+                    <li><span style="font-size: 20px; margin-right: 10px;">🥑</span><strong>Healthy Fats</strong>: Improves insulin sensitivity and slows digestion of carbohydrates</li>
+                    <li><span style="font-size: 20px; margin-right: 10px;">🫘</span><strong>Legumes</strong>: High in protein and fiber with minimal impact on blood glucose</li>
+                </ul>
+            </div>
+            """, unsafe_allow_html=True)
+
+            # Add informational notes about the text descriptions
+            #if st.session_state.visual_guidance:
+            #    with st.expander("Additional Visual Descriptions"):
+            #        st.markdown(st.session_state.visual_guidance)
         else:
             st.warning("No visual guidance has been generated yet.")
-        st.markdown('</div>', unsafe_allow_html=True)
     
     # Add download button and adjustment button
-    col1, col2 = st.columns([1, 2])
+    # col1, col2 = st.columns([1, 2])
     
-    with col1:
-        st.download_button(
-            label="⬇️ Download PDF",
-            data="This would be a generated PDF in a production environment",  # In production this would be the PDF
-            file_name="diabetes_nutrition_plan.pdf",
-            mime="application/pdf",
-            use_container_width=True,
-            key="download_plan_pdf"  # Add this unique key
-        )
+    # with col1:
+    #     st.download_button(
+    #         label="⬇️ Download PDF",
+    #         data="This would be a generated PDF in a production environment",  # In production this would be the PDF
+    #         file_name="diabetes_nutrition_plan.pdf",
+    #         mime="application/pdf",
+    #         use_container_width=True,
+    #         key="download_plan_pdf"  # Add this unique key
+    #    )
     #with col2:
         # Add button to return to input data
     #    if st.button("🔄 Make Adjustments to Your Plan", 
@@ -931,6 +1059,114 @@ def show_nutrition_plan():
     #        st.session_state.nav_to_input = True
     #        st.rerun()
 
+def create_recommended_foods_visual():
+    try:
+        # Create figure with a clean white background and tight dimensions
+        fig, ax = plt.subplots(figsize=(8, 3.5))
+        
+        # Add title
+        ax.text(0.5, 0.85, "Recommended Foods for Blood Sugar Management", 
+                ha='center', fontsize=14, fontweight='bold', color='#2e7d32')
+        
+        # Define recommended foods
+        foods = [
+            "Whole Grains", 
+            "Fresh Fruit", 
+            "Lean Protein",
+            "Healthy Fats", 
+            "Legumes"
+        ]
+        
+        # Create positions for items (in a single row)
+        num_items = len(foods)
+        x_positions = [0.1 + i * 0.8/(num_items-1) for i in range(num_items)]
+        y_position = 0.55
+        
+        # Draw each food item with checkmark
+        for i, (x, food) in enumerate(zip(x_positions, foods)):
+            # Draw green circle
+            circle = plt.Circle((x, y_position), 0.06, fill=True, 
+                              facecolor='#c8e6c9', edgecolor='#2e7d32', linewidth=1.5)
+            ax.add_patch(circle)
+            
+            # Draw checkmark
+            ax.plot([x-0.03, x-0.01, x+0.035], [y_position-0.01, y_position-0.03, y_position+0.03], 
+                   color='#2e7d32', linewidth=2)
+            
+            # Add food label
+            ax.text(x, y_position-0.12, food, ha='center', fontsize=10, 
+                   fontweight='bold')
+        
+        # Add explanation at bottom
+        ax.text(0.5, 0.25, "These foods help stabilize blood sugar levels", 
+               ha='center', fontsize=11)
+        
+        # Set limits and remove axes
+        ax.set_xlim(0, 1)
+        ax.set_ylim(0, 1)
+        ax.axis('off')
+        
+        # Tight layout to reduce whitespace
+        plt.tight_layout()
+        
+        return fig
+    except Exception as e:
+        st.error(f"Error creating recommended foods visual: {e}")
+        return None
+    
+def create_foods_to_avoid_visual():
+    try:
+        # Create figure with a clean white background and tighter dimensions
+        fig, ax = plt.subplots(figsize=(8, 3.5))
+        
+        # Add title
+        ax.text(0.5, 0.85, "Foods to Limit or Avoid with Diabetes", 
+                ha='center', fontsize=14, fontweight='bold', color='#d32f2f')
+        
+        # Define foods to avoid
+        foods = [
+            "Sugary Drinks", 
+            "White Bread", 
+            "Fried Foods",
+            "Processed Meats", 
+            "Sweets & Desserts"
+        ]
+        
+        # Create positions for items (in a single row)
+        num_items = len(foods)
+        x_positions = [0.1 + i * 0.8/(num_items-1) for i in range(num_items)]
+        y_position = 0.55  # Moved up for more compact layout
+        
+        # Draw each food item with prohibition symbol
+        for i, (x, food) in enumerate(zip(x_positions, foods)):
+            # Draw red circle
+            circle = plt.Circle((x, y_position), 0.06, fill=False, 
+                               edgecolor='red', linewidth=2)
+            ax.add_patch(circle)
+            
+            # Draw diagonal line for "no" symbol
+            ax.plot([x-0.045, x+0.045], [y_position+0.045, y_position-0.045], 
+                   color='red', linewidth=2)
+            
+            # Add food label (smaller text)
+            ax.text(x, y_position-0.12, food, ha='center', fontsize=10, 
+                   fontweight='bold')
+                
+        ax.text(0.5, 0.25, "These foods can cause rapid blood sugar spikes", 
+               ha='center', fontsize=11)
+               
+        # Set limits and remove axes
+        ax.set_xlim(0, 1)
+        ax.set_ylim(0, 1)
+        ax.axis('off')
+        
+        # Tight layout to reduce whitespace
+        plt.tight_layout()
+        
+        return fig
+    except Exception as e:
+        st.error(f"Error creating foods to avoid visual: {e}")
+        return None
 
 def show_educational_resources():
     """Display educational resources about diabetes nutrition."""
@@ -1401,4 +1637,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
