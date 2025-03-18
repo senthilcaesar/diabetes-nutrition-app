@@ -17,6 +17,23 @@ from utils.data_processing import preprocess_health_data, preprocess_socioeconom
 from utils.llm_integration import DiabetesNutritionAI
 from utils.visualization import (create_pictogram_food_guide, create_simple_meal_pairing_guide, create_symptom_response_guide)
 
+# OpenAI API configuration
+openai.api_key = st.secrets["OPENAI_API_KEY"]  # Store this securely in Streamlit secrets
+
+
+import streamlit as st
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import requests
+import json
+import os
+from PIL import Image
+import io
+import base64
+import time
+from openai import OpenAI
+
 # Set page configuration
 st.set_page_config(
     page_title="Personalized Diabetes Nutrition Plan",
@@ -24,9 +41,6 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
-
-# OpenAI API configuration
-openai.api_key = st.secrets["OPENAI_API_KEY"]  # Store this securely in Streamlit secrets
 
 # Define helper functions for data preprocessing
 def preprocess_health_data(health_data):
@@ -99,50 +113,8 @@ def generate_nutrition_plan(user_data):
     )
     
     nutrition_plan = response.choices[0].message.content.strip()
+    print(nutrition_plan)
     return nutrition_plan
-
-def generate_visual_guidance(nutrition_plan, literacy_level, plan_complexity):
-    """Generate visual guidance descriptions based on the nutrition plan."""
-    prompt = f"""
-    Create detailed descriptions for visual aids to accompany the following nutrition plan:
-    
-    NUTRITION PLAN:
-    {nutrition_plan}
-    
-    The user has a {literacy_level} literacy level and the plan complexity is {plan_complexity}.
-    
-    For each key concept in the nutrition plan, describe a simple, clear visual that could help communicate the information. These visual descriptions should:
-    
-    1. Focus on concrete representations of abstract concepts
-    2. Use familiar objects, symbols, and scenarios
-    3. Employ color coding for categorization (e.g., green for "good" foods, red for "avoid" foods)
-    4. Include visual portion guides using common household objects
-    5. Illustrate meal timing and structure
-    6. Show cause-and-effect relationships related to food and blood sugar
-    
-    {'Include detailed visual descriptions that represent key information with minimal reliance on text.' if 'low' in literacy_level else 'Balance visual elements with text to reinforce key concepts.'}
-    
-    Provide 5-7 detailed visual descriptions covering the most important aspects of the nutrition plan.
-    
-    For each visual, provide:
-    1. A clear title
-    2. A detailed description of what the visual should look like
-    3. The key message this visual is meant to convey
-    """
-    
-    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-    response = client.chat.completions.create(
-        model="gpt-4",
-        messages=[
-            {"role": "system", "content": "You are a visual health educator specialized in creating accessible diabetes education materials."},
-            {"role": "user", "content": prompt}
-        ],
-        temperature=0.3,
-        max_tokens=1500
-    )
-    
-    visual_guidance = response.choices[0].message.content.strip()
-    return visual_guidance
 
 def create_nutrition_plan_prompt(user_data):
     """Create a prompt for generating a nutrition plan."""
@@ -224,23 +196,91 @@ def create_nutrition_plan_prompt(user_data):
     
     return prompt
 
+def generate_visual_guidance(nutrition_plan, literacy_level, plan_complexity):
+    """Generate visual guidance descriptions based on the nutrition plan."""
+    prompt = f"""
+    Create detailed descriptions for visual aids to accompany the following nutrition plan:
+    
+    NUTRITION PLAN:
+    {nutrition_plan}
+    
+    The user has a {literacy_level} literacy level and the plan complexity is {plan_complexity}.
+    
+    For each key concept in the nutrition plan, describe a simple, clear visual that could help communicate the information. These visual descriptions should:
+    
+    1. Focus on concrete representations of abstract concepts
+    2. Use familiar objects, symbols, and scenarios
+    3. Employ color coding for categorization (e.g., green for "good" foods, red for "avoid" foods)
+    4. Include visual portion guides using common household objects
+    5. Illustrate meal timing and structure
+    6. Show cause-and-effect relationships related to food and blood sugar
+    
+    {'Include detailed visual descriptions that represent key information with minimal reliance on text.' if 'low' in literacy_level else 'Balance visual elements with text to reinforce key concepts.'}
+    
+    Provide 5-7 detailed visual descriptions covering the most important aspects of the nutrition plan.
+    
+    For each visual, provide:
+    1. A clear title
+    2. A detailed description of what the visual should look like
+    3. The key message this visual is meant to convey
+    """
+    
+    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+    response = client.chat.completions.create(
+        model="gpt-4",
+        messages=[
+            {"role": "system", "content": "You are a visual health educator specialized in creating accessible diabetes education materials."},
+            {"role": "user", "content": prompt}
+        ],
+        temperature=0.3,
+        max_tokens=1500
+    )
+    
+    visual_guidance = response.choices[0].message.content.strip()
+    return visual_guidance
+
+# Function to navigate to view plan page
+def navigate_to_view_plan():
+    st.session_state.page = "View Plan"
 
 # UI Components
 def show_header():
     """Display the application header."""
-    st.title("Personalized Diabetes Nutrition Plan")
-    st.markdown("""
-    This application creates personalized nutrition plans for individuals with diabetes, 
-    taking into account health metrics, socioeconomic factors, and cultural preferences.
-    """)
-    st.markdown("---")
+
+    st.markdown('<h2 style="color:#1E88E5; font-size:35px;">Personalized Diabetes Nutrition Plan</h2>', unsafe_allow_html=True)
+    #st.markdown("""
+    #This application creates personalized nutrition plans for individuals with diabetes, 
+    #taking into account health metrics, socioeconomic factors, and cultural preferences.
+    #""")
+    #st.markdown("---")
 
 def show_sidebar():
     """Configure and display the sidebar."""
     with st.sidebar:
         st.header("Navigation")
-        page = st.radio("Go to", ["Input Data", "View Plan", "Educational Resources"])
         
+        # Initialize the page state if it doesn't exist
+        if 'page' not in st.session_state:
+            st.session_state.page = "Input Data"
+        
+        # Check for navigation request flag
+        if 'nav_to_input' in st.session_state and st.session_state.nav_to_input:
+            st.session_state.page = "Input Data"
+            # Clear the flag
+            st.session_state.nav_to_input = False
+        
+        # Create radio button based on current page
+        selected_page = st.radio(
+            "Go to", 
+            ["Input Data", "View Plan", "Educational Resources"],
+            index=["Input Data", "View Plan", "Educational Resources"].index(st.session_state.page)
+        )
+        
+        # Only update if selected page is different from current
+        if selected_page != st.session_state.page:
+            st.session_state.page = selected_page
+            st.rerun()
+            
         st.markdown("---")
         st.markdown("### About")
         st.markdown("""
@@ -250,14 +290,13 @@ def show_sidebar():
         """)
         
         st.markdown("---")
-        st.markdown("Developed by: [Your Organization]")
+        st.markdown("### Developed by:")
+        st.markdown("Senthil Palanivelu")
     
-    return page
+    return st.session_state.page
 
 def input_health_data():
     """Collect health-related data from the user."""
-    st.header("Health Information")
-    
     col1, col2 = st.columns(2)
     
     with col1:
@@ -283,7 +322,7 @@ def input_health_data():
         postmeal_glucose = st.number_input("Post-meal Blood Glucose (mg/dL)", min_value=70, max_value=400, value=160)
         hba1c = st.number_input("HbA1c (%)", min_value=4.0, max_value=14.0, value=7.0, step=0.1)
         
-        st.subheader("Additional Health Information")
+        #st.subheader("Additional Health Information")
         dietary_restrictions = st.multiselect(
             "Dietary Restrictions",
             ["None", "Vegetarian", "Vegan", "Gluten-Free", "Lactose Intolerant", "Nut Allergies", "Shellfish Allergies"]
@@ -312,8 +351,6 @@ def input_health_data():
 
 def input_socioeconomic_data():
     """Collect socioeconomic data from the user."""
-    st.header("Socioeconomic and Cultural Information")
-    
     col1, col2 = st.columns(2)
     
     with col1:
@@ -356,7 +393,7 @@ def input_socioeconomic_data():
             value="Moderate"
         )
     
-    st.subheader("Living Situation and Food Preferences")
+    #st.subheader("Living Situation and Food Preferences")
     
     col3, col4 = st.columns(2)
     
@@ -401,54 +438,244 @@ def input_socioeconomic_data():
     return socio_data
 
 def show_input_data_page():
-    """Display the input data collection page."""
-    health_data_tab, socio_data_tab, submit_tab = st.tabs(["Health Information", "Socioeconomic Information", "Generate Plan"])
+    # Add more aggressive CSS to fix the empty space below tabs
+    # Add some custom CSS for better styling
+    st.markdown("""
+    <style>
+        /* Fix the empty space below tabs */
+        .stTabs [data-baseweb="tab-panel"] {
+            padding-top: 0px !important;
+        }
+        
+        /* Remove padding around the container holding the tab panels */
+        .stTabs [data-baseweb="tab-content"] {
+            padding: 0px !important;
+        }
+        
+        /* Make the card container start right at the top of the tab panel */
+        .card-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-top: 0px !important;
+            margin-bottom: 20px;
+        }
+        
+        /* Other styles remain the same */
+        .stTabs [data-baseweb="tab-list"] {
+            gap: 8px;
+        }
+        .stTabs [data-baseweb="tab"] {
+            padding: 10px 16px;
+            background-color: #f8f9fa;
+            border-radius: 6px 6px 0px 0px;
+            border-left: 1px solid #eee;
+            border-right: 1px solid #eee;
+            border-top: 1px solid #eee;
+            box-shadow: 0px -2px 5px rgba(0,0,0,0.05);
+        }
+        .stTabs [aria-selected="true"] {
+            background-color: #4CAF50 !important;
+            color: white !important;
+            font-weight: 600;
+            border: none;
+            transform: translateY(-3px);
+            transition: all 0.3s ease;
+        }
+        .nav-button {
+            font-weight: 500 !important;
+            border-radius: 6px !important;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
+            transition: all 0.2s ease !important;
+        }
+        .nav-button:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2) !important;
+        }
+        .success-message {
+            padding: 10px 15px;
+            border-radius: 6px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .section-header {
+            margin-bottom: 1px;
+            color: #2C3E50;
+            font-size: 1.2rem;
+            border-bottom: 1px solid #4CAF50;
+            padding-bottom: 8px;
+            display: inline-block;
+        }
+    </style>
+    """, unsafe_allow_html=True)
     
-    with health_data_tab:
+    # Create tabs with a different approach
+    tab_titles = ["🩺 Health Information", "🏘️ Socioeconomic Information", "🚀 Generate Plan"]
+    tabs = st.tabs(tab_titles)
+    
+    with tabs[0]:
+        st.markdown("")
+        # Start with no whitespace at all
+        #st.markdown('<div class="card-container">', unsafe_allow_html=True)
+        #st.markdown('<h3 class="section-header">Your Health Profile</h3>', unsafe_allow_html=True)
+        
+        # Add a brief introduction
+        #st.markdown("""
+        #Please provide your health information to help us create a personalized nutrition plan 
+        #tailored to your specific needs. This information will be used to calculate appropriate
+        #calorie and nutrient targets.
+        #""")
+        
         if 'health_data' not in st.session_state:
             st.session_state.health_data = {}
         
         st.session_state.health_data = input_health_data()
         
-        if st.button("Save Health Information", key="save_health"):
-            st.success("Health information saved! Please proceed to the Socioeconomic Information tab.")
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            if st.button("💾 Save Health Information", key="save_health", use_container_width=True, 
+                        type="primary", help="Save your health information and proceed to the next tab"):
+                st.markdown('<div class="success-message">', unsafe_allow_html=True)
+                st.success("Health information saved! Please proceed to the Socioeconomic Information tab.")
+                st.markdown('</div>', unsafe_allow_html=True)
+        
+        st.markdown('</div>', unsafe_allow_html=True)
     
-    with socio_data_tab:
+    with tabs[1]:
+        st.markdown("")
+        #st.markdown('<div class="card-container">', unsafe_allow_html=True)
+        #st.markdown('<h3 class="section-header">Your Living Context</h3>', unsafe_allow_html=True)
+        
+        # Add a brief introduction
+        #st.markdown("""
+        #Understanding your living situation, cultural context, and resources helps us create 
+        #a nutrition plan that's practical and accessible for your specific circumstances.
+        #""")
+        
         if 'socio_data' not in st.session_state:
             st.session_state.socio_data = {}
         
         st.session_state.socio_data = input_socioeconomic_data()
         
-        if st.button("Save Socioeconomic Information", key="save_socio"):
-            st.success("Socioeconomic information saved! Please proceed to Generate Plan tab.")
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            if st.button("💾 Save Socioeconomic Information", key="save_socio", use_container_width=True, 
+                        type="primary", help="Save your socioeconomic information and proceed to generate plan"):
+                st.markdown('<div class="success-message">', unsafe_allow_html=True)
+                st.success("Socioeconomic information saved! Please proceed to the Generate Plan tab.")
+                st.markdown('</div>', unsafe_allow_html=True)
+        
+        st.markdown('</div>', unsafe_allow_html=True)
     
-    with submit_tab:
-        st.header("Generate Your Personalized Nutrition Plan")
+    with tabs[2]:
+        st.markdown("")
+        #st.markdown('<div class="card-container">', unsafe_allow_html=True)
+        #st.markdown('<h3 class="section-header">Generate Your Personalized Plan</h3>', unsafe_allow_html=True)
         
         if 'health_data' in st.session_state and 'socio_data' in st.session_state:
-            st.info("Review your information before generating the plan:")
+            st.info("You're almost there! Review your information before generating your personalized nutrition plan.")
             
-            show_button = st.button("Show Collected Data")
+            col1, col2 = st.columns(2)
+            with col1:
+                show_button = st.button("📋 Review Your Data", use_container_width=True, 
+                                      help="View the information you've provided")
+            with col2:
+                generate_button = st.button("✨ Create My Nutrition Plan", key="generate_plan", 
+                                          use_container_width=True, type="primary",
+                                          help="Generate your personalized nutrition plan based on your information")
+            
             if show_button:
-                st.subheader("Health Information")
-                st.json(st.session_state.health_data)
+                st.write("")  # Add a little spacing
                 
-                st.subheader("Socioeconomic Information")
-                st.json(st.session_state.socio_data)
+                health_tab, socio_tab = st.tabs(["Health Data", "Socioeconomic Data"])
+                
+                with health_tab:
+                    # Format the health data in a more readable way
+                    st.subheader("Your Health Information")
+                    health_data = st.session_state.health_data
+                    
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        st.write("**Age:**", health_data.get('age'))
+                        st.write("**Gender:**", health_data.get('gender'))
+                        st.write("**Weight:**", health_data.get('weight'), "kg")
+                        st.write("**Height:**", health_data.get('height'), "cm")
+                        st.write("**BMI:**", health_data.get('bmi'))
+                    
+                    with col2:
+                        st.write("**Diabetes Type:**", health_data.get('diabetes_type'))
+                        st.write("**HbA1c:**", health_data.get('hba1c'), "%")
+                        st.write("**Fasting Glucose:**", health_data.get('fasting_glucose'), "mg/dL")
+                        st.write("**Activity Level:**", health_data.get('activity_level'))
+                
+                with socio_tab:
+                    # Format the socioeconomic data in a more readable way
+                    st.subheader("Your Socioeconomic Information")
+                    socio_data = st.session_state.socio_data
+                    
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        st.write("**Location:**", socio_data.get('location'))
+                        st.write("**Setting:**", socio_data.get('geographic_setting'))
+                        st.write("**Income Level:**", socio_data.get('income_level'))
+                        st.write("**Education Level:**", socio_data.get('education_level'))
+                    
+                    with col2:
+                        st.write("**Food Availability:**", socio_data.get('local_food_availability'))
+                        st.write("**Cooking Facilities:**", socio_data.get('cooking_facilities'))
+                        st.write("**Meal Prep Time:**", socio_data.get('meal_prep_time'))
+                        st.write("**Cultural Foods:**", socio_data.get('cultural_foods')[:50] + "..." if len(socio_data.get('cultural_foods', '')) > 50 else socio_data.get('cultural_foods', ''))
             
-            if st.button("Generate Personalized Nutrition Plan", key="generate_plan"):
-                with st.spinner("Generating your personalized nutrition plan... This may take up to a minute."):
+            if generate_button:
+                # Create a placeholder for the header text
+                header_placeholder = st.empty()
+                header_placeholder.markdown("""
+                <div style="text-align: center; padding: 10px;">
+                    <h3>Crafting Your Personalized Nutrition Plan</h3>
+                    <p>Analyzing your health data and creating customized recommendations...</p>
+                </div>
+                """, unsafe_allow_html=True)
+                
+                # Create a progress bar
+                progress_bar = st.progress(0)
+                
+                # Create a percentage text placeholder
+                percentage_text = st.empty()
+                
+                # Use the Streamlit spinner for the animation
+                with st.spinner(""):
+                    # Simulate progress up to 90% (reserve the last 10% for actual generation)
+                    for percent_complete in range(0, 91, 10):
+                        # Update progress bar
+                        progress_bar.progress(percent_complete/100)
+                        # Update percentage text
+                        percentage_text.markdown(f"<div style='text-align: center;'><strong>{percent_complete}% Complete</strong></div>", unsafe_allow_html=True)
+                        # Add a small delay to simulate processing
+                        time.sleep(0.5)  # Adjust as needed
+                    
                     # Preprocess the data
                     processed_health_data = preprocess_health_data(st.session_state.health_data)
+                    progress_bar.progress(92/100)
+                    percentage_text.markdown("<div style='text-align: center;'><strong>92% Complete</strong></div>", unsafe_allow_html=True)
+                    
                     processed_socio_data = preprocess_socioeconomic_data(st.session_state.socio_data)
+                    progress_bar.progress(95/100)
+                    percentage_text.markdown("<div style='text-align: center;'><strong>95% Complete</strong></div>", unsafe_allow_html=True)
                     
                     # Combine the data
                     combined_data = {**processed_health_data, **processed_socio_data}
                     
                     # Generate the nutrition plan
                     try:
+                        # Generate plan
                         nutrition_plan = generate_nutrition_plan(combined_data)
                         st.session_state.nutrition_plan = nutrition_plan
+                        progress_bar.progress(98/100)
+                        percentage_text.markdown("<div style='text-align: center;'><strong>98% Complete</strong></div>", unsafe_allow_html=True)
                         
                         # Generate visual guidance
                         visual_guidance = generate_visual_guidance(
@@ -458,44 +685,174 @@ def show_input_data_page():
                         )
                         st.session_state.visual_guidance = visual_guidance
                         
-                        st.success("Your personalized nutrition plan has been generated! Go to the View Plan page to see it.")
+                        # Show 100% completion
+                        progress_bar.progress(100/100)
+                        percentage_text.markdown("<div style='text-align: center;'><strong>100% Complete!</strong></div>", unsafe_allow_html=True)
+                        
+                        # Clear progress elements
+                        time.sleep(0.5)
+                        header_placeholder.empty()
+                        progress_bar.empty()
+                        percentage_text.empty()
+                        
+                        # Show completion animation
+                        st.balloons()
+                        st.success("✅ Your personalized nutrition plan has been generated!")
+                        
+                        # Add button to navigate to View Plan page
+                        if st.button("View My Nutrition Plan →", type="primary", key="view_plan_button", 
+                                    use_container_width=True, on_click=navigate_to_view_plan):
+                            pass  # The on_click function handles the navigation
+                            
                     except Exception as e:
+                        # Clear progress elements
+                        header_placeholder.empty()
+                        progress_bar.empty()
+                        percentage_text.empty()
+                        
                         st.error(f"An error occurred while generating the plan: {str(e)}")
         else:
-            st.warning("Please complete both the Health Information and Socioeconomic Information tabs before generating a plan.")
+            # Create a more visually appealing warning
+            st.markdown("""
+            <div style="
+                background-color: #FFF3E0; 
+                padding: 15px; 
+                border-left: 5px solid #FF9800;
+                border-radius: 4px;
+                margin: 10px 0;
+            ">
+                <h4 style="color: #E65100; margin-top: 0;">Information Needed</h4>
+                <p>Please complete both the Health Information and Socioeconomic Information tabs before generating a plan.</p>
+                <p>Click on the tabs above to enter your information.</p>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            # Add some helpful guidance images
+            col1, col2 = st.columns(2)
+            with col1:
+                st.markdown("""
+                <div style="text-align: center; padding: 20px;">
+                    <div style="font-size: 48px;">🩺</div>
+                    <h4>Step 1: Enter Health Information</h4>
+                    <p>Share your health metrics to help us customize your plan.</p>
+                </div>
+                """, unsafe_allow_html=True)
+            
+            with col2:
+                st.markdown("""
+                <div style="text-align: center; padding: 20px;">
+                    <div style="font-size: 48px;">🏘️</div>
+                    <h4>Step 2: Enter Socioeconomic Information</h4>
+                    <p>Tell us about your lifestyle and resources for practical recommendations.</p>
+                </div>
+                """, unsafe_allow_html=True)
+        
+        st.markdown('</div>', unsafe_allow_html=True)
 
 def show_nutrition_plan():
     """Display the generated nutrition plan."""
     if 'nutrition_plan' not in st.session_state:
         st.warning("No nutrition plan has been generated yet. Please go to the Input Data page first.")
+        
+        # Add helpful button to navigate to Input Data
+        if st.button("Go to Input Data", type="primary", use_container_width=False):
+            # Set a navigation flag instead of directly changing radio value
+            st.session_state.nav_to_input = True
+            st.rerun()
         return
     
-    st.header("Your Personalized Diabetes Nutrition Plan")
+    # Add some CSS for better styling
+    st.markdown("""
+    <style>
+        .plan-header {
+            background-color: #4CAF50;
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .plan-section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .plan-section h3 {
+            color: #2C3E50;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+        .meal-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #f9f9f9;
+        }
+        .meal-title {
+            font-weight: bold;
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+                
+        /* New styles for highlighted limit section */
+        .limit-section {
+            background-color: #FFF9C4; /* Light yellow background */
+            border-left: 4px solid #FFC107; /* Yellow border */
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .limit-section h2 {
+            color: #FF5722; /* Orange-red color for title */
+            font-weight: bold;
+        }
+    </style>
+    """, unsafe_allow_html=True)
+    
+    # Display header
+    #st.markdown("""
+    #<div class="plan-header">
+    #    <h1>Your Personalized Diabetes Nutrition Plan</h1>
+    #    <p>Created based on your unique health profile and living context</p>
+    #</div>
+    #""", unsafe_allow_html=True)
     
     # Display the plan in tabs for better organization
     overview_tab, meal_plan_tab, recipes_tab, visuals_tab = st.tabs(["Overview", "Meal Plan", "Recipes & Tips", "Visual Guides"])
     
     # Split the nutrition plan into sections
     nutrition_plan = st.session_state.nutrition_plan
-    sections = nutrition_plan.split("\n## ")
-    sections = ["## " + section if i > 0 else section for i, section in enumerate(sections)]
+    if "\n## " in nutrition_plan:
+        sections = nutrition_plan.split("\n## ")
+        sections = ["## " + section if i > 0 else section for i, section in enumerate(sections)]
+    else:
+        sections = nutrition_plan.split("\n### ")
+        sections = ["### " + section if i > 0 else section for i, section in enumerate(sections)]
+
     
     # Extract main sections
-    overview_sections = [s for s in sections if any(x in s.lower() for x in ["introduction", "overview", "caloric", "macronutrient", "recommendation"])]
+    overview_sections = [s for s in sections if any(x in s.lower() for x in ["introduction", "overview", "caloric", "macronutrient", "recommended"])]
     meal_plan_sections = [s for s in sections if any(x in s.lower() for x in ["meal plan", "sample meal", "day 1", "day 2", "day 3"])]
-    recipe_sections = [s for s in sections if any(x in s.lower() for x in ["recipe", "tips", "avoid", "limit", "portion", "guideline"])]
+    recipe_sections = [s for s in sections if any(x in s.lower() for x in ["recipe", "tips", "avoid", "limit", "portion", "guideline", "stabilize"])]
     
     with overview_tab:
         for section in overview_sections:
             st.markdown(section)
+        st.markdown('</div>', unsafe_allow_html=True)
     
     with meal_plan_tab:
         for section in meal_plan_sections:
-            st.markdown(section)
+                st.markdown(section)
+        st.markdown('</div>', unsafe_allow_html=True)
     
     with recipes_tab:
         for section in recipe_sections:
-            st.markdown(section)
+                st.markdown(section)
+        st.markdown('</div>', unsafe_allow_html=True)
     
     with visuals_tab:
         if 'visual_guidance' in st.session_state:
@@ -552,29 +909,52 @@ def show_nutrition_plan():
             st.pyplot(create_sample_glucose_guide())
         else:
             st.warning("No visual guidance has been generated yet.")
+        st.markdown('</div>', unsafe_allow_html=True)
     
-    # Add download button for the plan
-    st.download_button(
-        label="Download Nutrition Plan (PDF)",
-        data="This would be a generated PDF in a production environment",  # In production this would be the PDF
-        file_name="diabetes_nutrition_plan.pdf",
-        mime="application/pdf"
-    )
+    # Add download button and adjustment button
+    col1, col2 = st.columns([1, 2])
+    
+    with col1:
+        st.download_button(
+            label="⬇️ Download PDF",
+            data="This would be a generated PDF in a production environment",  # In production this would be the PDF
+            file_name="diabetes_nutrition_plan.pdf",
+            mime="application/pdf",
+            use_container_width=True,
+            key="download_plan_pdf"  # Add this unique key
+        )
+    #with col2:
+        # Add button to return to input data
+    #    if st.button("🔄 Make Adjustments to Your Plan", 
+    #                use_container_width=True,
+    #                key="adjust_plan_button"):  # Add this unique key
+    #        st.session_state.nav_to_input = True
+    #        st.rerun()
+
 
 def show_educational_resources():
     """Display educational resources about diabetes nutrition."""
     st.header("Educational Resources")
     
-    resource_type = st.radio(
-        "Select Resource Type",
-        ["Diabetes Basics", "Food & Nutrition", "Physical Activity", "Monitoring", "Cultural Adaptations"]
-    )
+    # Create tabs
+    tab_names = [
+        "Diabetes Basics", 
+        "Food & Nutrition", 
+        "Physical Activity", 
+        "Monitoring", 
+        "Cultural Adaptations"
+    ]
     
-    if resource_type == "Diabetes Basics":
+    tabs = st.tabs(tab_names)
+    
+    st.markdown("---")
+    
+    # Use with blocks for each tab instead of conditional statements
+    with tabs[0]:  # Diabetes Basics tab
         st.subheader("Understanding Diabetes")
         
         st.markdown("""
-        ### What is Diabetes?
+        #### What is Diabetes?
         Diabetes is a chronic condition that affects how your body turns food into energy. There are several types:
         
         - **Type 1 Diabetes**: The body doesn't produce insulin. This is usually diagnosed in children and young adults.
@@ -582,10 +962,10 @@ def show_educational_resources():
         - **Gestational Diabetes**: Develops during pregnancy in women who don't already have diabetes.
         - **Prediabetes**: Blood sugar is higher than normal but not high enough to be diagnosed as type 2 diabetes.
         
-        ### How Diabetes Affects Your Body
+        #### How Diabetes Affects Your Body
         When you eat, your body turns food into glucose (sugar) that enters your bloodstream. Your pancreas releases insulin to help move glucose from the blood into cells for energy. With diabetes, either your body doesn't make enough insulin or can't use it effectively, leading to high blood sugar levels.
         
-        ### Importance of Blood Sugar Management
+        #### Importance of Blood Sugar Management
         Consistently high blood sugar can damage your blood vessels and nerves over time, leading to complications like:
         - Heart disease
         - Kidney disease
@@ -600,7 +980,7 @@ def show_educational_resources():
         
         with col1:
             st.markdown("""
-            ### Blood Sugar Targets
+            #### Blood Sugar Targets
             General targets for blood sugar levels:
             - **Before meals**: 80-130 mg/dL
             - **2 hours after meals**: Less than 180 mg/dL
@@ -633,11 +1013,14 @@ def show_educational_resources():
             
             st.pyplot(create_glucose_chart())
     
-    elif resource_type == "Food & Nutrition":
+    with tabs[1]:  # Food & Nutrition tab
         st.subheader("Nutrition for Diabetes Management")
         
+        # Rest of the Food & Nutrition content...
+        # Existing code for this section
+        
         st.markdown("""
-        ### Key Principles of Diabetes Nutrition
+        #### Key Principles of Diabetes Nutrition
         
         1. **Carbohydrate Management**: Carbohydrates have the most impact on blood sugar. Focus on:
            - Consistent carb intake at meals
@@ -661,7 +1044,7 @@ def show_educational_resources():
         
         with col1:
             st.markdown("""
-            ### Glycemic Index and Load
+            #### Glycemic Index and Load
             The **Glycemic Index (GI)** measures how quickly foods raise blood sugar:
             - **Low GI (55 or less)**: Oatmeal, sweet potatoes, most fruits
             - **Medium GI (56-69)**: Brown rice, whole wheat bread
@@ -696,11 +1079,14 @@ def show_educational_resources():
             
             st.pyplot(create_plate_method())
     
-    elif resource_type == "Physical Activity":
+    with tabs[2]:  # Physical Activity tab
         st.subheader("Physical Activity and Diabetes")
         
+        # Rest of the Physical Activity content...
+        # Existing code for this section
+        
         st.markdown("""
-        ### Benefits of Physical Activity for Diabetes
+        #### Benefits of Physical Activity for Diabetes
         
         Regular physical activity:
         - Lowers blood glucose by increasing insulin sensitivity
@@ -709,14 +1095,14 @@ def show_educational_resources():
         - Improves mood and reduces stress
         - Strengthens muscles and bones
         
-        ### Recommended Activity
+        #### Recommended Activity
         
         - **Aim for 150 minutes of moderate-intensity activity per week**
         - Spread activity throughout the week (e.g., 30 minutes, 5 days a week)
         - Include both aerobic exercise and strength training
         - Start slowly and gradually increase intensity
         
-        ### Types of Physical Activity
+        #### Types of Physical Activity
         """)
         
         col1, col2 = st.columns(2)
@@ -760,7 +1146,7 @@ def show_educational_resources():
             st.pyplot(create_activity_chart())
         
         st.markdown("""
-        ### Safety Tips
+        #### Safety Tips
         
         - Check blood glucose before, during (for long sessions), and after activity
         - Carry fast-acting carbs (like glucose tablets) in case of low blood sugar
@@ -770,11 +1156,14 @@ def show_educational_resources():
         - Talk to your healthcare provider before starting a new exercise program
         """)
     
-    elif resource_type == "Monitoring":
+    with tabs[3]:  # Monitoring tab
         st.subheader("Monitoring Blood Glucose")
         
+        # Rest of the Monitoring content...
+        # Existing code for this section
+        
         st.markdown("""
-        ### Why Monitor Blood Glucose?
+        #### Why Monitor Blood Glucose?
         
         Regular monitoring helps you:
         - Understand how food, activity, medication, and stress affect your blood sugar
@@ -783,7 +1172,7 @@ def show_educational_resources():
         - Track your progress toward goals
         - Make informed decisions about food, activity, and medication
         
-        ### When to Check Blood Glucose
+        #### When to Check Blood Glucose
         
         Common times to check include:
         - First thing in the morning (fasting)
@@ -800,7 +1189,7 @@ def show_educational_resources():
         
         with col1:
             st.markdown("""
-            ### Understanding Your Results
+            #### Understanding Your Results
             
             General target ranges (may vary based on provider recommendations):
             
@@ -811,7 +1200,7 @@ def show_educational_resources():
             **HbA1c**: Measures average blood sugar over 2-3 months
             - Target for most adults with diabetes: Less than 7%
             
-            ### Responding to Results
+            #### Responding to Results
             
             **High Blood Sugar (Hyperglycemia)**
             - Drink water
@@ -856,8 +1245,11 @@ def show_educational_resources():
             
             st.pyplot(create_glucose_log())
     
-    elif resource_type == "Cultural Adaptations":
-        st.subheader("Cultural Adaptations for Diabetes Management")
+    with tabs[4]:  # Cultural Adaptations tab
+        
+        st.markdown("""#### Cultural Adaptations for Diabetes Management""")
+        # Rest of the Cultural Adaptations content...
+        # Existing code for this section
         
         region = st.selectbox(
             "Select a Region for Cultural Adaptations",
@@ -866,7 +1258,7 @@ def show_educational_resources():
         
         if region == "African Cuisine":
             st.markdown("""
-            ### Adapting African Diets for Diabetes Management
+            #### Adapting African Diets for Diabetes Management
             
             **Traditional Foods to Emphasize:**
             - Leafy greens (amaranth, collard greens, kale)
@@ -889,7 +1281,7 @@ def show_educational_resources():
         
         elif region == "South Asian Cuisine":
             st.markdown("""
-            ### Adapting South Asian Diets for Diabetes Management
+            #### Adapting South Asian Diets for Diabetes Management
             
             **Traditional Foods to Emphasize:**
             - Legumes (lentils, chickpeas, beans)
@@ -913,7 +1305,7 @@ def show_educational_resources():
         
         elif region == "Latin American Cuisine":
             st.markdown("""
-            ### Adapting Latin American Diets for Diabetes Management
+            #### Adapting Latin American Diets for Diabetes Management
             
             **Traditional Foods to Emphasize:**
             - Beans and legumes (black beans, pinto beans, lentils)
@@ -937,7 +1329,7 @@ def show_educational_resources():
         
         elif region == "Middle Eastern Cuisine":
             st.markdown("""
-            ### Adapting Middle Eastern Diets for Diabetes Management
+            #### Adapting Middle Eastern Diets for Diabetes Management
             
             **Traditional Foods to Emphasize:**
             - Legumes (chickpeas, lentils, fava beans)
@@ -961,7 +1353,7 @@ def show_educational_resources():
         
         elif region == "East Asian Cuisine":
             st.markdown("""
-            ### Adapting East Asian Diets for Diabetes Management
+            #### Adapting East Asian Diets for Diabetes Management
             
             **Traditional Foods to Emphasize:**
             - Vegetables (bok choy, Chinese broccoli, mushrooms, seaweed)
@@ -984,7 +1376,7 @@ def show_educational_resources():
             """)
         
         st.markdown("""
-        ### General Principles for Cultural Adaptation
+        #### General Principles for Cultural Adaptation
         
         1. **Preserve Cultural Identity**: Modify traditional dishes rather than eliminate them
         2. **Use Traditional Wisdom**: Many cultures have traditional foods that are beneficial for diabetes
@@ -996,6 +1388,8 @@ def show_educational_resources():
 def main():
     """Main function to run the Streamlit app."""
     show_header()
+    
+    # Get the selected page from sidebar
     page = show_sidebar()
     
     if page == "Input Data":
@@ -1007,3 +1401,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
