@@ -587,6 +587,7 @@ def show_input_data_page():
                         st.write("**HbA1c:**", health_data.get('hba1c'), "%")
                         st.write("**Fasting Glucose:**", health_data.get('fasting_glucose'), "mg/dL")
                         st.write("**Activity Level:**", health_data.get('activity_level'))
+                        st.write("**Dietary Restrictions:**", health_data.get('dietary_restrictions')[:50] + "..." if len(health_data.get('dietary_restrictions', '')) > 50 else health_data.get('dietary_restrictions', ''))
                 
                 with socio_tab:
                     # Format the socioeconomic data in a more readable way
