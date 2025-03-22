@@ -132,7 +132,7 @@ def show_health_assessment():
                     title = section[:title_end].strip()
                     content = section[title_end:].strip()
                     
-                    st.markdown("---")  # Add divider before each section
+                    #st.markdown("---")  # Add divider before each section
                     st.subheader(title)
                     
                     # Use the built-in info component
