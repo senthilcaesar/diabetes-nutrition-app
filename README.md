@@ -1,178 +1,128 @@
-# Personalized Diabetes Nutrition Application
+# Personalized Diabetes Nutrition Plan
 
-A sophisticated AI-powered application that creates personalized nutrition plans for individuals with diabetes, taking into account health metrics, socioeconomic factors, cultural preferences, and literacy levels.
+A Streamlit-based web application that generates personalized nutrition plans for individuals with diabetes based on their health metrics and socioeconomic context.
 
-## 🚀 Live Application
+## Live Application
 
-**The application is deployed and accessible at: [https://diabetes-nutrition.streamlit.app/](https://diabetes-nutrition.streamlit.app/)**
+Access the live application at: [https://diabetes-nutrition-app.streamlit.app/](https://diabetes-nutrition-app.streamlit.app/)
 
-Try it out to generate your own personalized diabetes nutrition plan!
+## Project Structure
 
-## 🌟 Project Overview
+The application is organized in a modular structure to promote maintainability and separation of concerns:
 
-This application aims to improve healthcare accessibility for individuals with diabetes by providing tailored nutrition guidance that considers not just medical factors, but also socioeconomic realities, cultural contexts, and literacy levels. It was designed specifically to support underserved populations and make diabetes management more accessible across diverse communities.
+```
+diabetes_nutrition_plan/
+│
+├── app.py                # Main application entry point
+│
+├── utils/                # Utility modules
+│   ├── data_processing.py    # Data validation and preprocessing functions
+│   ├── llm_integration.py    # OpenAI API integration for generating content
+│   ├── ui_components.py      # UI-related functions and components
+│   └── visualization.py      # Functions for creating visualizations
+│
+└── app_pages/            # Application pages/screens
+    ├── __init__.py                        # Package initialization
+    ├── input_page.py                      # User input collection page
+    ├── nutrition_plan_page.py             # Nutrition plan display page
+    ├── health_assessment_page.py          # Health assessment page
+    └── educational_resources_page.py      # Educational resources page
+```
 
-## ✨ Key Features
+## Component Descriptions
 
-- **Personalized Nutrition Plans**: Generate detailed nutrition recommendations based on individual health metrics, including diabetes type, blood glucose levels, and other health conditions
-- **Socioeconomic Adaptation**: Accommodate different income levels, food accessibility, cooking facilities, and time constraints
-- **Cultural Context Integration**: Adapt recommendations to various cultural food preferences and regional food availability
-- **Literacy-Level Adjustment**: Provide content with appropriate complexity based on education and literacy levels
-- **Visual Communication**: Create visual aids to enhance understanding, especially for users with limited literacy
-- **Practical Recipe Suggestions**: Offer simple, affordable recipes suitable for various cooking environments
+### Main Application
 
-## 🔧 Technology Stack
+- **app.py**: Entry point for the Streamlit application, handles navigation between different pages.
 
-- **Frontend**: Streamlit for the user interface
-- **Backend**: Python with various data processing libraries
-- **AI/ML**: OpenAI API (GPT-4) for personalized content generation
-- **Data Visualization**: Matplotlib and other Python visualization libraries
-- **Deployment**: Streamlit Cloud for hosting the application
+### Utility Modules
 
-## 📋 Prerequisites
+- **data_processing.py**: Contains functions for validating and preprocessing user data, ensuring it's in the right format for generating plans.
 
-- Python 3.9+
-- OpenAI API key
+- **llm_integration.py**: Manages interactions with OpenAI's API to generate personalized health assessments, nutrition plans, and visual guidance descriptions.
 
-## 🚀 Installation and Setup
+- **ui_components.py**: Houses reusable UI components and functions for consistent interface elements across the application.
 
-1. **Clone the repository**:
+- **visualization.py**: Contains functions for creating visualizations like portion guides, glucose charts, and food recommendation visualizations.
+
+### Application Pages
+
+- **input_page.py**: Handles the collection of user health data and socioeconomic information through form inputs.
+
+- **nutrition_plan_page.py**: Displays the AI-generated nutrition plan with tabs for different sections and visual guidance.
+
+- **health_assessment_page.py**: Shows health metrics visualizations and displays the AI-generated health assessment.
+
+- **educational_resources_page.py**: Provides educational content about diabetes management, nutrition, and cultural adaptations.
+
+## Requirements
+
+The application requires the following Python packages:
+
+```
+streamlit>=1.30.0
+matplotlib>=3.7.0
+numpy>=1.24.0
+openai>=1.3.0
+pandas>=2.0.0
+scikit-learn>=1.0.0
+```
+
+Install all required packages using:
+
+```bash
+pip install -r requirements.txt
+```
+
+## Getting Started
+
+1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/diabetes-nutrition-app.git
+   git clone https://github.com/senthilcaesar/diabetes-nutrition-app.git
    cd diabetes-nutrition-app
    ```
 
-2. **Create and activate a virtual environment**:
-
-   ```bash
-   python -m venv venv
-
-   # On Windows
-   venv\Scripts\activate
-
-   # On macOS/Linux
-   source venv/bin/activate
-   ```
-
-3. **Install dependencies**:
+2. Install the required dependencies:
 
    ```bash
    pip install -r requirements.txt
    ```
 
-4. **Set up your OpenAI API key**:
-
-   Create a `.streamlit` directory and add a `secrets.toml` file:
-
-   ```bash
-   mkdir -p .streamlit
-   ```
-
-   Add your API key to `.streamlit/secrets.toml`:
+3. Set your OpenAI API key in Streamlit secrets.toml file:
 
    ```toml
-   OPENAI_API_KEY = "your_openai_api_key_here"
+   OPENAI_API_KEY = "your-api-key-here"
    ```
 
-5. **Run the application locally**:
+4. Run the application:
    ```bash
    streamlit run app.py
    ```
 
-## 💻 Usage
+## Features
 
-1. **Input Health Information**: Enter personal health data including diabetes type, glucose levels, weight, height, and dietary restrictions
-2. **Add Socioeconomic Context**: Provide information about location, income level, food accessibility, cooking facilities, etc.
-3. **Generate Plan**: Create a personalized nutrition plan based on the provided information
-4. **View and Download**: Review the generated plan and download it for future reference
+- Collects comprehensive health and socioeconomic data
+- Generates personalized nutrition plans using AI
+- Visualizes health metrics and nutrition guidelines
+- Provides educational resources about diabetes management
+- Adapts recommendations based on cultural preferences and socioeconomic factors
 
-## 📊 Application Structure
+## Notes
 
-```
-diabetes-nutrition-app/
-├── app.py                       # Main Streamlit application
-├── utils/
-│   ├── data_processing.py       # Data preprocessing functions
-│   ├── llm_integration.py       # LLM integration functions
-│   └── visualization.py         # Visual component generation
-├── requirements.txt             # Project dependencies
-└── README.md                    # Project documentation
-```
+- The application uses OpenAI's GPT-4 for generating personalized content
+- Visualizations are created using Matplotlib
+- The user interface is built with Streamlit
 
-## 🔍 Key Components
+## Contact
 
-- **Data Collection Module**: Gathers health metrics and socioeconomic factors
-- **Analysis Engine**: Processes input data to determine nutritional needs
-- **Adaptation System**: Tailors content based on literacy and cultural context
-- **Visual Component Generator**: Creates visual aids appropriate to user needs
-- **Plan Generation**: Produces comprehensive, personalized nutrition guidance
+For questions, support, or contributions, please contact:
 
-## 👨‍⚕️ Healthcare Applications
+- **Developer**: Senthil Palanivelu
+- **Email**: senthilcaesar@gmail.com
+- **GitHub**: [https://github.com/senthilcaesar](https://github.com/senthilcaesar)
+- **LinkedIn**: [https://www.linkedin.com/in/senthilpalanivelu/](https://www.linkedin.com/in/senthilpalanivelu/)
 
-This application can support:
-
-- Primary care providers in creating personalized nutrition guidance
-- Diabetes educators in developing accessible education materials
-- Community health workers in rural and underserved areas
-- International healthcare initiatives addressing diabetes management
-
-## 🌍 Cultural Adaptation
-
-The application includes specific adaptations for various cultural contexts, including:
-
-- African cuisine and food traditions
-- South Asian dietary patterns
-- Latin American food practices
-- Middle Eastern culinary traditions
-- East Asian food systems
-
-## 🧠 Development Roadmap
-
-Future enhancements planned:
-
-- [ ] User accounts and data persistence
-- [ ] Mobile application development
-- [ ] Offline mode for areas with limited connectivity
-- [ ] Integration with blood glucose monitoring devices
-- [ ] Expanded language support
-- [ ] Community features for support and recipe sharing
-
-## 🔒 Privacy Considerations
-
-This application handles sensitive health information. In a production environment, ensure:
-
-- Proper data encryption
-- Secure authentication
-- Compliance with healthcare data regulations
-- Clear privacy policies and data usage terms
-
-## 🤝 Contributing
-
-Contributions to improve the application are welcome! Please follow these steps:
-
-1. Fork the repository
-2. Create a new branch (`git checkout -b feature-branch`)
-3. Make your changes
-4. Commit your changes (`git commit -m 'Add some feature'`)
-5. Push to the branch (`git push origin feature-branch`)
-6. Open a Pull Request
-
-## 📜 License
+## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🙏 Acknowledgements
-
-- World Health Organization for diabetes management guidelines
-- OpenAI for providing the AI capabilities
-- Streamlit for the application framework and hosting
-- Contributors and testers from diverse backgrounds who helped refine the cultural adaptations
-
-## 📞 Contact
-
-For questions or support, please open an issue on this repository or contact [senthilcaesar@gmail.com].
-
----
-
-_This application is intended to provide nutritional guidance only and is not a substitute for professional medical advice. Always consult healthcare providers for medical decisions._
