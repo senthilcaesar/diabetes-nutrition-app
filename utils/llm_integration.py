@@ -17,16 +17,9 @@ def generate_health_assessment(user_data, api_key):
         model="gpt-4.5-preview",  # Use GPT-4 for more comprehensive medical analysis
         messages=[
             {"role": "system", "content": """
-            You are an expert medical doctor specialized in diabetes and metabolic health assessment. 
-            Provide a thorough assessment of the patient's health condition based on their data.
-            Focus on diabetes management, identify potential risks, suggest diagnosis and generate care plans.
-            
-            Important rules:
-            1. DO NOT make definitive diagnoses - only highlight potential concerns
-            2. ALWAYS qualify your assessment with appropriate disclaimers about AI limitations
-            3. Focus on objective measures and evidence-based recommendations
-            4. Indicate clearly when values are outside of optimal ranges
-            5. Prioritize the most critical health concerns first
+            You are an expert endocrinologist specializing in personalized diabetes care and metabolic health assessment.
+            Your tasks is to transform patient data into actionable insights by analyzing all available patient data, suggesting diagnoses and generating care plans.
+            Please focus on diabetes management, identify potential risks and areas of concern, and recommend strategies for improvement.
             """
             },
             {"role": "user", "content": prompt}
@@ -95,8 +88,9 @@ def create_health_assessment_prompt(user_data):
     1. An overall evaluation of the patient's diabetes management
     2. Analysis of their key metrics and how they compare to recommended targets
     3. Identification of potential health risks based on their profile
-    4. Specific areas of concern that should be discussed with a healthcare provider
-    5. Recommendations for improving their health management
+    4. Suggestion of diagnoses and care plans
+    5. Specific areas of concern that should be discussed with a healthcare provider
+    6. Recommendations for improving their health management
     
     Format the assessment in clear sections with headings, and begin with a summary of the most important points.
     """
