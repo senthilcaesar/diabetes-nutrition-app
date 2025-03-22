@@ -120,8 +120,6 @@ For questions, support, or contributions, please contact:
 
 - **Developer**: Senthil Palanivelu
 - **Email**: senthilcaesar@gmail.com
-- **GitHub**: [https://github.com/senthilcaesar](https://github.com/senthilcaesar)
-- **LinkedIn**: [https://www.linkedin.com/in/senthilpalanivelu/](https://www.linkedin.com/in/senthilpalanivelu/)
 
 ## License
 
