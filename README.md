@@ -121,10 +121,12 @@ The application requires the following Python packages:
 
 ```
 streamlit>=1.30.0
-matplotlib>=3.7.0
-numpy>=1.24.0
 openai>=1.3.0
 pandas>=2.0.0
+numpy>=1.24.0
+matplotlib>=3.7.0
+Pillow>=9.0.0
+python-dotenv>=0.20.0
 scikit-learn>=1.0.0
 ```
 
