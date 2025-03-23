@@ -16,44 +16,104 @@ diabetes_nutrition_plan/
 ├── app.py                # Main application entry point
 │
 ├── utils/                # Utility modules
-│   ├── data_processing.py    # Data validation and preprocessing functions
-│   ├── llm_integration.py    # OpenAI API integration for generating content
-│   ├── ui_components.py      # UI-related functions and components
-│   └── visualization.py      # Functions for creating visualizations
+│   ├── __init__.py              # Package initialization
+│   ├── data_processing.py       # Data validation and preprocessing functions
+│   ├── llm_integration.py       # OpenAI API integration for generating content
+│   ├── genetic_processing.py    # Processes genetic data and analyzes markers
+│   ├── genetic_llm_integration.py # Integrates genetic insights with OpenAI API
+│   ├── ui_components.py         # UI-related functions and components
+│   ├── genetic_ui_components.py # Genetic data UI functions and visualizations
+│   └── visualization.py         # Functions for creating visualizations
 │
-└── app_pages/            # Application pages/screens
-    ├── __init__.py                        # Package initialization
-    ├── input_page.py                      # User input collection page
-    ├── nutrition_plan_page.py             # Nutrition plan display page
-    ├── health_assessment_page.py          # Health assessment page
-    └── educational_resources_page.py      # Educational resources page
+├── app_pages/            # Application pages/screens
+│   ├── __init__.py                       # Package initialization
+│   ├── input_page.py                     # User input collection page
+│   ├── nutrition_plan_page.py            # Nutrition plan display page
+│   ├── health_assessment_page.py         # Health assessment page
+│   └── educational_resources_page.py     # Educational resources page
+│
+├── example_data/         # Sample data for demonstration
+│   └── sample_23andme.txt              # Sample genetic data file
+│
+├── requirements.txt      # Project dependencies
+└── README.md             # Project documentation
 ```
 
-## Component Descriptions
+# Diabetes Nutrition App Directory Structure
 
-### Main Application
+Here's an explanation of the project structure and what each file does:
 
-- **app.py**: Entry point for the Streamlit application, handles navigation between different pages.
+## Root Directory
 
-### Utility Modules
+- **app.py**: Main entry point for the application, handles navigation between pages
 
-- **data_processing.py**: Contains functions for validating and preprocessing user data, ensuring it's in the right format for generating plans.
+## utils/ Directory - Utility Functions
 
-- **llm_integration.py**: Manages interactions with OpenAI's API to generate personalized health assessments, nutrition plans, and visual guidance descriptions.
+- **\_\_init\_\_.py**: Makes the utils directory a Python package for easier imports
+- **data_processing.py**: Handles validation and transformation of user input data
+- **llm_integration.py**: Manages interactions with OpenAI API for generating nutrition plans
+- **genetic_processing.py**: Processes genetic data files and analyzes genetic markers
+- **genetic_llm_integration.py**: Integrates genetic insights into OpenAI prompts
+- **ui_components.py**: Contains reusable UI elements and styling for the application
+- **genetic_ui_components.py**: Provides UI for genetic data input and visualization
+- **visualization.py**: Creates charts and visual elements for health metrics
 
-- **ui_components.py**: Houses reusable UI components and functions for consistent interface elements across the application.
+## app_pages/ Directory - Application Pages
 
-- **visualization.py**: Contains functions for creating visualizations like portion guides, glucose charts, and food recommendation visualizations.
+- **\_\_init\_\_.py**: Makes the app_pages directory a Python package
+- **input_page.py**: Handles collection of health, socioeconomic, and genetic data
+- **nutrition_plan_page.py**: Displays the generated nutrition plan with recommendations
+- **health_assessment_page.py**: Shows health metrics and detailed health assessment
+- **educational_resources_page.py**: Provides educational content about diabetes
 
-### Application Pages
+## example_data/ Directory
 
-- **input_page.py**: Handles the collection of user health data and socioeconomic information through form inputs.
+- **sample_23andme.txt**: Sample genetic data file for demonstration purposes
 
-- **nutrition_plan_page.py**: Displays the AI-generated nutrition plan with tabs for different sections and visual guidance.
+# Genetic Data Input Format
 
-- **health_assessment_page.py**: Shows health metrics visualizations and displays the AI-generated health assessment.
+For the diabetes nutrition app, the genetic data should be in one of these standard formats:
 
-- **educational_resources_page.py**: Provides educational content about diabetes management, nutrition, and cultural adaptations.
+## 1. 23andMe Raw Data Format
+
+```
+# rsid  chromosome  position  genotype
+rs7903146   10    114758349    C/T
+rs1801282    3     12393125    C/G
+rs5082       1    161192056    C/T
+```
+
+- Each line represents one genetic marker
+- Four columns separated by tabs or spaces
+- Contains: marker ID (rsid), chromosome number, position, and genotype
+- Lines beginning with # are comments and will be ignored
+
+## 2. Ancestry DNA Format
+
+Very similar to 23andMe format, with minor variations in header formatting
+
+## 3. VCF Format (Variant Call Format)
+
+A more technical standard format used for storing gene sequence variations:
+
+```
+#CHROM  POS     ID        REF  ALT  QUAL FILTER INFO                   FORMAT
+10      114758349  rs7903146  C    T    .    .     RS=7903146;...       GT:GQ  0/1:99
+```
+
+## Key Markers Used by the App
+
+The application specifically analyzes these genetic markers:
+
+- **rs7903146** (TCF7L2 gene) - Carbohydrate metabolism
+- **rs1801282** (PPARG gene) - Insulin sensitivity
+- **rs5082** (APOA2 gene) - Saturated fat sensitivity
+- **rs9939609** (FTO gene) - Satiety response
+- **rs1801133** (MTHFR gene) - Folate processing
+- **rs762551** (CYP1A2 gene) - Caffeine metabolism
+- **rs1800795** (IL6 gene) - Inflammatory response
+
+A sample file is provided in `example_data/sample_23andme.txt` that can be used for demonstration purposes.
 
 ## Requirements
 
