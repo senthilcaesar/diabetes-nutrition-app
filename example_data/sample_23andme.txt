@@ -1,0 +1,22 @@
+# Sample 23andMe raw data file for demonstration purposes
+# This file contains a small subset of markers related to metabolism
+# Format: rsid chromosome position genotype
+#
+# Note: This is synthetic data for demonstration only and does not represent a real genetic profile
+
+# Carbohydrate metabolism markers
+rs7903146 10 114758349 C/T  # TCF7L2 gene - moderate carbohydrate sensitivity
+rs1801282 3 12393125  C/G   # PPARG gene - improved insulin sensitivity
+
+# Fat metabolism markers
+rs5082    1 161192056 C/T   # APOA2 gene - moderate saturated fat sensitivity
+rs9939609 16 53820527 A/T   # FTO gene - reduced satiety response
+
+# Vitamin metabolism markers
+rs1801133 1 11856378  C/T   # MTHFR gene - reduced folate processing
+
+# Inflammation markers
+rs1800795 7 22766645  G/C   # IL6 gene - moderate inflammatory response
+
+# Caffeine metabolism markers
+rs762551  15 75041917 A/C   # CYP1A2 gene - slow caffeine metabolism

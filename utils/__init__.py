@@ -9,5 +9,10 @@ from utils.llm_integration import *
 from utils.ui_components import *
 from utils.visualization import *
 
+# Add imports for genetic modules
+from utils.genetic_processing import *
+from utils.genetic_ui_components import *
+from utils.genetic_llm_integration import *
+
 # Set version
-__version__ = '0.1.0'
+__version__ = '0.2.0'  # Updated version to reflect genetic enhancements

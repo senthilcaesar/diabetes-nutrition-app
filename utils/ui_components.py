@@ -9,7 +9,18 @@ def show_header():
     """
     Display the application header.
     """
-    st.markdown('<h2 style="color:#1E88E5; font-size:35px;">Personalized Diabetes Nutrition Plan</h2>', unsafe_allow_html=True)
+    import streamlit as st
+    
+    # Check if genetic data is available to customize the header
+    has_genetic_data = 'genetic_profile' in st.session_state and st.session_state.genetic_profile is not None
+    
+    
+    if has_genetic_data:
+        st.markdown('<h2 style="color:#673AB7; font-size:35px;">Genetically Optimized Diabetes Nutrition Plan</h2>', unsafe_allow_html=True)
+        st.markdown('<p style="color:#757575;">Personalized nutrition recommendations based on your health metrics, socioeconomic context, and genetic profile</p>', unsafe_allow_html=True)
+    else:
+        st.markdown('<h2 style="color:#1E88E5; font-size:35px;">Personalized Diabetes Nutrition Plan</h2>', unsafe_allow_html=True)
+        st.markdown('<p style="color:#757575;">Personalized nutrition recommendations  based on your health metrics and socioeconomic context</p>', unsafe_allow_html=True)
 
 def apply_custom_css():
     """
@@ -150,45 +161,125 @@ def show_sidebar():
     """
     Configure and display the sidebar. Returns the current page selection.
     """
-    with st.sidebar:
-        st.header("Navigation")
-        
-        # Initialize the page state if it doesn't exist
-        if 'page' not in st.session_state:
-            st.session_state.page = "Input Data"
-        
-        # Check for navigation request flag
-        if 'nav_to_input' in st.session_state and st.session_state.nav_to_input:
-            st.session_state.page = "Input Data"
-            # Clear the flag
-            st.session_state.nav_to_input = False
-        
-        # Create radio button based on current page with additional Health Assessment option
-        selected_page = st.radio(
-            "Go to", 
-            ["Input Data", "Nutrition Plan", "Health Assessment", "Educational Resources"],
-            index=["Input Data", "Nutrition Plan", "Health Assessment", "Educational Resources"].index(st.session_state.page)
+    import streamlit as st
+    
+    # Initialize the page state if it doesn't exist
+    if 'page' not in st.session_state:
+        st.session_state.page = "Input Data"
+    
+    # Check for navigation request flag
+    if 'nav_to_input' in st.session_state and st.session_state.nav_to_input:
+        st.session_state.page = "Input Data"
+        # Clear the flag
+        st.session_state.nav_to_input = False
+    
+    # Add a header directly above the navigation
+    st.sidebar.header("Navigation")
+    
+    # Create radio button based on current page with a unique key and no label
+    selected_page = st.sidebar.radio(
+        "Navigation Options", 
+        ["Input Data", "Nutrition Plan", "Health Assessment", "Educational Resources"],
+        index=["Input Data", "Nutrition Plan", "Health Assessment", "Educational Resources"].index(st.session_state.page),
+        key="navigation_radio",
+        label_visibility="collapsed"  # Hide the empty label completely
+    )
+    
+    # Only update if selected page is different from current
+    if selected_page != st.session_state.page:
+        st.session_state.page = selected_page
+        st.rerun()
+    
+    # Show genetic status if available
+    if 'genetic_profile' in st.session_state and st.session_state.genetic_profile is not None:
+        st.sidebar.markdown("---")
+        st.sidebar.markdown(
+            """
+            <div style="
+                background-color: #E8EAF6; 
+                padding: 10px; 
+                border-radius: 5px;
+                margin-bottom: 10px;
+                text-align: center;
+            ">
+                <div style="font-size: 24px;">🧬</div>
+                <div style="font-weight: bold; color: #3F51B5;">Genetic Optimization Active</div>
+            </div>
+            """,
+            unsafe_allow_html=True
         )
         
-        # Only update if selected page is different from current
-        if selected_page != st.session_state.page:
-            st.session_state.page = selected_page
-            st.rerun()
-            
-        st.markdown("---")
-        st.markdown("### About")
-        st.markdown("""
-        This application was developed to provide accessible, 
-        personalized nutrition guidance for individuals with diabetes, 
-        particularly those in underserved communities.
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("### About")
+    st.sidebar.markdown("""
+    This application provides accessible, personalized nutrition guidance for individuals with diabetes, taking into account:
+    
+    - Health metrics and diabetes status
+    - Socioeconomic context and resources
+    - Cultural food preferences
+    - Genetic profile (if provided)
+    """)
+    
+    if 'genetic_profile' in st.session_state and st.session_state.genetic_profile is not None:
+        st.sidebar.markdown("""
+        ### Genetic Insights
+        The nutrition plan and health assessment are enhanced with insights from your genetic profile, including:
+        
+        - Carbohydrate metabolism
+        - Fat sensitivity
+        - Nutrient processing
+        - Inflammation response
+        - Caffeine metabolism
         """)
         
-        st.markdown("---")
-        st.markdown("### Developed by:")
-        st.markdown("Senthil Palanivelu")
+        # Add option to clear genetic data
+        if st.sidebar.button("🗑️ Clear Genetic Data", type="secondary", key="clear_genetic_data_button"):
+            # Clear all genetic-related data from the session
+            if 'genetic_profile' in st.session_state:
+                del st.session_state.genetic_profile
+            
+            if 'original_genetic_data' in st.session_state:
+                del st.session_state.original_genetic_data
+                
+            if 'genetic_data_option' in st.session_state:
+                st.session_state.genetic_data_option = "None"
+                
+            if 'show_genetic_insights' in st.session_state:
+                del st.session_state.show_genetic_insights
+            
+            # Also clear any health assessment that might include genetic data
+            if 'health_assessment' in st.session_state:
+                del st.session_state.health_assessment
+            
+            st.sidebar.success("All genetic data has been cleared!")
+            st.rerun()
+    else:
+        st.sidebar.markdown("""
+        ### Enhance Your Assessment
+        Upload genetic data on the Input Data page to receive more personalized recommendations tailored to your unique genetic profile.
+        """)
+        
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("### Developed by:")
+    st.sidebar.markdown("Senthil Palanivelu")
     
     return st.session_state.page
 
+def input_health_data():
+    """
+    Collect health-related data from the user and save to session state.
+    
+    Returns:
+        dict: Dictionary containing user health information
+    """
+    # Initialize health_data in session state if it doesn't exist
+    previous_health_data = st.session_state.health_data.copy() if 'health_data' in st.session_state else {}
+
+    if 'health_data' not in st.session_state:
+        st.session_state.health_data = {}
+    
+    col1, col2 = st.columns(2)
+    
 def input_health_data():
     """
     Collect health-related data from the user and save to session state.

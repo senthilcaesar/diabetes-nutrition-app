@@ -24,6 +24,10 @@ try:
     from utils.llm_integration import *
     from utils.ui_components import *
     from utils.visualization import *
-except ImportError:
+    # Add import for genetic modules
+    from utils.genetic_processing import *
+    from utils.genetic_ui_components import *
+    from utils.genetic_llm_integration import *
+except ImportError as e:
     # If imports fail, print informative message (won't appear in Streamlit UI)
-    print("Warning: Could not import utility modules in pages/__init__.py")
+    print(f"Warning: Could not import utility modules in pages/__init__.py: {e}")

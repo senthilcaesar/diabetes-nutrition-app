@@ -14,8 +14,8 @@ from app_pages.educational_resources_page import show_educational_resources
 
 # Set page configuration
 st.set_page_config(
-    page_title="Personalized Diabetes Nutrition Plan",
-    page_icon="🍽️",
+    page_title="Diabetes Nutrition Plan",
+    page_icon="🧬",
     layout="wide",
     initial_sidebar_state="expanded"
 )

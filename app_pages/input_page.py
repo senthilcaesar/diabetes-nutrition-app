@@ -1,6 +1,6 @@
 """
 Input data page for the Diabetes Nutrition Plan application.
-Handles user input for health and socioeconomic data.
+Handles user input for health, socioeconomic, and genetic data.
 """
 
 import streamlit as st
@@ -9,13 +9,17 @@ import time
 # Import from utils directory
 from utils.data_processing import combine_user_data
 from utils.ui_components import input_health_data, input_socioeconomic_data, navigate_to_view_plan
+# Update the import to use the correct module
+from utils.genetic_ui_components import input_genetic_data
 from utils.llm_integration import generate_nutrition_plan, generate_visual_guidance
+from utils.genetic_llm_integration import generate_genetic_enhanced_nutrition_plan, generate_genetic_health_assessment
+from utils.genetic_processing import DIABETES_GENETIC_MARKERS
 
 def display_user_data_review():
     """Display a review of the user's health and socioeconomic data."""
     st.write("")  # Add a little spacing
     
-    health_tab, socio_tab = st.tabs(["Health Data", "Socioeconomic Data"])
+    health_tab, socio_tab, genetic_tab = st.tabs(["Health Data", "Socioeconomic Data", "Genetic Data"])
     
     with health_tab:
         # Format the health data in a more readable way
@@ -74,6 +78,70 @@ def display_user_data_review():
             cultural_foods = socio_data.get('cultural_foods', '')
             st.write("**Cultural Foods:**", cultural_foods[:50] + "..." if len(cultural_foods) > 50 else cultural_foods)
 
+    with genetic_tab:
+        # Show genetic data preview if available
+        if 'genetic_profile' in st.session_state and st.session_state.genetic_profile:
+            st.subheader("Your Genetic Profile")
+            genetic_profile = st.session_state.genetic_profile
+            
+            # Show overall summary
+            st.info(genetic_profile.get('overall_summary', 'No genetic summary available.'))
+            
+            # Show key recommendations
+            #st.markdown("### Key Genetic Recommendations")
+            #for rec in genetic_profile.get('key_recommendations', []):
+            #    st.markdown(f"- {rec}")
+            
+            # Display the genetic data in tabular format
+            with st.expander("View Processed Genetic Data", expanded=False):
+                import pandas as pd
+                
+                # Check if we have the original genetic data
+                if 'original_genetic_data' in st.session_state and st.session_state.original_genetic_data:
+                    genetic_data = st.session_state.original_genetic_data
+                    
+                    # Initialize data list
+                    data_list = []
+                    
+                    # Convert genetic_data dict to DataFrame
+                    for marker, genotype in genetic_data.items():
+                        # Find gene name for this marker
+                        gene_name = "Unknown"
+                        for gene, markers in DIABETES_GENETIC_MARKERS.items():
+                            if marker in markers:
+                                gene_name = gene
+                                break
+                        
+                        # Add entry to our data list
+                        data_list.append({
+                            "Marker ID": marker,
+                            "Genotype": genotype,
+                            "Gene": gene_name,
+                        })
+                    
+                    # Create and display DataFrame
+                    df = pd.DataFrame(data_list)
+                    st.dataframe(df, use_container_width=True)
+                else:
+                    st.info("Detailed genetic data is not available in this view. Please go to the Genetic Information tab to see the complete data.")
+                
+            # Add expandable sections for detailed genetic insights
+            with st.expander("Detailed Genetic Insights", expanded=False):
+                st.markdown("#### Carbohydrate Metabolism")
+                st.markdown(f"**Sensitivity:** {genetic_profile.get('carb_metabolism', {}).get('carb_sensitivity', 'Normal').title()}")
+                st.markdown(f"**Explanation:** {genetic_profile.get('carb_metabolism', {}).get('explanation', '')}")
+                
+                st.markdown("#### Fat Metabolism")
+                st.markdown(f"**Saturated Fat Sensitivity:** {genetic_profile.get('fat_metabolism', {}).get('saturated_fat_sensitivity', 'Normal').title()}")
+                st.markdown(f"**Explanation:** {genetic_profile.get('fat_metabolism', {}).get('explanation', '')}")
+                
+                st.markdown("#### Other Genetic Factors")
+                st.markdown(f"**Folate Processing:** {genetic_profile.get('vitamin_metabolism', {}).get('folate_processing', 'Normal').title()}")
+                st.markdown(f"**Inflammatory Response:** {genetic_profile.get('inflammation_response', {}).get('inflammatory_response', 'Normal').title()}")
+                st.markdown(f"**Caffeine Metabolism:** {genetic_profile.get('caffeine_metabolism', {}).get('caffeine_metabolism', 'Normal').title()}")
+        else:
+            st.info("No genetic data has been provided. To add genetic insights to your nutrition plan, please select 'Upload genetic data file' or 'Use sample data for demonstration' on the Genetic Information tab.")
+
 def generate_nutrition_plan_workflow():
     """Handle the workflow for generating the nutrition plan."""
     # Create a placeholder for the header text
@@ -109,8 +177,26 @@ def generate_nutrition_plan_workflow():
             progress_bar.progress(95/100)
             percentage_text.markdown("<div style='text-align: center;'><strong>95% Complete</strong></div>", unsafe_allow_html=True)
             
-            # Generate the nutrition plan
-            nutrition_plan = generate_nutrition_plan(combined_data, st.secrets["OPENAI_API_KEY"])
+            # Check if genetic profile is available
+            using_genetic_data = 'genetic_profile' in st.session_state and st.session_state.genetic_profile is not None
+            
+            # Generate the nutrition plan with or without genetic insights
+            if using_genetic_data:
+                # Generate nutrition plan with genetic insights
+                nutrition_plan = generate_genetic_enhanced_nutrition_plan(
+                    combined_data, 
+                    st.session_state.genetic_profile,
+                    st.secrets["OPENAI_API_KEY"]
+                )
+                
+                # IMPORTANT: Do NOT generate health assessment here
+                # This should only happen on the Health Assessment page
+                # when the user clicks the "Run Health Assessment" button
+            else:
+                # Generate standard nutrition plan
+                nutrition_plan = generate_nutrition_plan(combined_data, st.secrets["OPENAI_API_KEY"])
+            
+            # Save the nutrition plan to session state
             st.session_state.nutrition_plan = nutrition_plan
             progress_bar.progress(98/100)
             percentage_text.markdown("<div style='text-align: center;'><strong>98% Complete</strong></div>", unsafe_allow_html=True)
@@ -136,7 +222,12 @@ def generate_nutrition_plan_workflow():
             
             # Show completion animation
             st.balloons()
-            st.success("✅ Your personalized nutrition plan has been generated!")
+            
+            # Different success message based on whether genetic data was used
+            if using_genetic_data:
+                st.success("✅ Your genetically-optimized nutrition plan has been generated! To see your health assessment, go to the Health Assessment page and click 'Run Genetic Health Assessment'.")
+            else:
+                st.success("✅ Your personalized nutrition plan has been generated! To see your health assessment, go to the Health Assessment page and click 'Run Health Assessment'.")
             
             # Add button to navigate to View Plan page
             if st.button("View My Nutrition Plan →", type="primary", key="view_plan_button", 
@@ -152,9 +243,9 @@ def generate_nutrition_plan_workflow():
             st.error(f"An error occurred while generating the plan: {str(e)}")
 
 def show_input_data_page():
-    """Show the input data page with tabs for health and socioeconomic information."""
+    """Show the input data page with tabs for health, socioeconomic, and genetic information."""
     # Create tabs
-    tab_titles = ["🩺 Health Information", "🏘️ Socioeconomic Information", "🚀 Generate Plan"]
+    tab_titles = ["🩺 Health Information", "🏘️ Socioeconomic Information", "🧬 Genetic Information", "🚀 Generate Plan"]
     tabs = st.tabs(tab_titles)
     
     with tabs[0]:
@@ -186,9 +277,9 @@ def show_input_data_page():
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
             if st.button("💾 Save Socioeconomic Information", key="save_socio", use_container_width=True, 
-                        type="primary", help="Save your socioeconomic information and proceed to generate plan"):
+                        type="primary", help="Save your socioeconomic information and proceed to genetic information"):
                 st.markdown('<div class="success-message">', unsafe_allow_html=True)
-                st.success("Socioeconomic information saved! Please proceed to the Generate Plan tab.")
+                st.success("Socioeconomic information saved! Please proceed to the Genetic Information tab.")
                 st.markdown('</div>', unsafe_allow_html=True)
         
         st.markdown('</div>', unsafe_allow_html=True)
@@ -196,15 +287,42 @@ def show_input_data_page():
     with tabs[2]:
         st.markdown("")
         
+        # Collect genetic data
+        input_genetic_data()
+        
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            if st.button("💾 Save Genetic Information", key="save_genetic", use_container_width=True, 
+                        type="primary", help="Save your genetic information and proceed to generate plan"):
+                st.markdown('<div class="success-message">', unsafe_allow_html=True)
+                if 'genetic_profile' in st.session_state and st.session_state.genetic_profile is not None:
+                    st.success("Genetic information saved! Your nutrition plan will incorporate genetic insights. Please proceed to the Generate Plan tab.")
+                else:
+                    st.success("No genetic data provided. Your plan will be generated without genetic optimization. Please proceed to the Generate Plan tab.")
+                st.markdown('</div>', unsafe_allow_html=True)
+        
+        st.markdown('</div>', unsafe_allow_html=True)
+    
+    with tabs[3]:
+        st.markdown("")
+        
         if 'health_data' in st.session_state and 'socio_data' in st.session_state:
-            st.info("You're almost there! Review your information before generating your personalized nutrition plan.")
+            # Check if genetic data is available
+            has_genetic_data = 'genetic_profile' in st.session_state and st.session_state.genetic_profile is not None
+            
+            if has_genetic_data:
+                st.info("You're almost there! Review your information before generating your genetically-optimized nutrition plan.")
+            else:
+                st.info("You're almost there! Review your information before generating your personalized nutrition plan.")
             
             col1, col2 = st.columns(2)
             with col1:
                 show_button = st.button("📋 Review Your Data", use_container_width=True, 
                                       help="View the information you've provided")
             with col2:
-                generate_button = st.button("✨ Create My Nutrition Plan", key="generate_plan", 
+                # Customize the button text based on genetic data availability
+                button_text = "✨ Create My Nutrition Plan" if has_genetic_data else "✨ Create My Nutrition Plan"
+                generate_button = st.button(button_text, key="generate_plan", 
                                           use_container_width=True, type="primary",
                                           help="Generate your personalized nutrition plan based on your information")
             
@@ -225,26 +343,36 @@ def show_input_data_page():
             ">
                 <h4 style="color: #E65100; margin-top: 0;">Information Needed</h4>
                 <p>Please complete both the Health Information and Socioeconomic Information tabs before generating a plan.</p>
+                <p>Genetic information is optional but recommended for a more personalized plan.</p>
                 <p>Click on the tabs above to enter your information.</p>
             </div>
             """, unsafe_allow_html=True)
             
             # Add some helpful guidance images
-            col1, col2 = st.columns(2)
+            col1, col2, col3 = st.columns(3)
             with col1:
                 st.markdown("""
-                <div style="text-align: center; padding: 20px;">
-                    <div style="font-size: 48px;">🩺</div>
-                    <h4>Step 1: Enter Health Information</h4>
-                    <p>Share your health metrics to help us customize your plan.</p>
+                <div style="text-align: center; padding: 10px;">
+                    <div style="font-size: 36px;">🩺</div>
+                    <h4>Step 1: Health Information</h4>
+                    <p>Share your health metrics.</p>
                 </div>
                 """, unsafe_allow_html=True)
             
             with col2:
                 st.markdown("""
-                <div style="text-align: center; padding: 20px;">
-                    <div style="font-size: 48px;">🏘️</div>
-                    <h4>Step 2: Enter Socioeconomic Information</h4>
-                    <p>Tell us about your lifestyle and resources for practical recommendations.</p>
+                <div style="text-align: center; padding: 10px;">
+                    <div style="font-size: 36px;">🏘️</div>
+                    <h4>Step 2: Socioeconomic Information</h4>
+                    <p>Tell us about your lifestyle and resources.</p>
+                </div>
+                """, unsafe_allow_html=True)
+                
+            with col3:
+                st.markdown("""
+                <div style="text-align: center; padding: 10px;">
+                    <div style="font-size: 36px;">🧬</div>
+                    <h4>Step 3: Genetic Information (Optional)</h4>
+                    <p>Add genetic insights for optimization.</p>
                 </div>
                 """, unsafe_allow_html=True)
