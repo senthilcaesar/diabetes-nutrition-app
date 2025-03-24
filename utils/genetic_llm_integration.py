@@ -22,7 +22,7 @@ def generate_genetic_enhanced_nutrition_plan(user_data: Dict, genetic_profile: D
     
     client = OpenAI(api_key=api_key)
     response = client.chat.completions.create(
-        model="gpt-4.5-preview",  # Adjust based on availability and needs
+        model="gpt-4",  # Adjust based on availability and needs
         messages=[
             {"role": "system", "content": "You are a medical nutrition specialist with expertise in both diabetes management and nutrigenomics. Create a personalized nutrition plan that integrates both health data and genetic insights."},
             {"role": "user", "content": prompt}
@@ -216,7 +216,7 @@ def generate_genetic_health_assessment(user_data: Dict, genetic_profile: Dict, a
     
     client = OpenAI(api_key=api_key)
     response = client.chat.completions.create(
-        model="gpt-4.5-preview",  # Use GPT-4 for more comprehensive medical analysis
+        model="gpt-4",  # Use GPT-4 for more comprehensive medical analysis
         messages=[
             {"role": "system", "content": """
             You are an expert endocrinologist specializing in personalized diabetes care, metabolic health assessment, and nutrigenomics.

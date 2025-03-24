@@ -14,7 +14,7 @@ def generate_health_assessment(user_data, api_key):
 
     client = OpenAI(api_key=api_key)
     response = client.chat.completions.create(
-        model="gpt-4.5-preview",  # Use GPT-4 for more comprehensive medical analysis
+        model="gpt-4",  # Use GPT-4 for more comprehensive medical analysis
         messages=[
             {"role": "system", "content": """
             You are an expert endocrinologist specializing in personalized diabetes care and metabolic health assessment.
@@ -103,7 +103,7 @@ def generate_nutrition_plan(user_data, api_key):
     
     client = OpenAI(api_key=api_key)
     response = client.chat.completions.create(
-        model="gpt-4.5-preview",  # Adjust based on availability and needs
+        model="gpt-4",  # Adjust based on availability and needs
         messages=[
             {"role": "system", "content": "You are a medical nutrition specialist with expertise in diabetes management. Create a personalized nutrition plan based on the provided health and socioeconomic data."},
             {"role": "user", "content": prompt}
