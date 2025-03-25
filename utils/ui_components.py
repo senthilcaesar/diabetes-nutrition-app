@@ -15,11 +15,11 @@ def show_header():
     has_genetic_data = 'genetic_profile' in st.session_state and st.session_state.genetic_profile is not None
     
     
-    if has_genetic_data:
-        st.markdown('<h2 style="color:#673AB7; font-size:35px;">Genetically Optimized Diabetes Nutrition Plan</h2>', unsafe_allow_html=True)
+    if (has_genetic_data):
+        st.markdown('<h2 style="color:#379ced; font-size:35px;">Genetically Optimized Diabetes Nutrition Plan</h2>', unsafe_allow_html=True)
         st.markdown('<p style="color:#757575;">Personalized nutrition recommendations based on your health metrics, socioeconomic context, and genetic profile</p>', unsafe_allow_html=True)
     else:
-        st.markdown('<h2 style="color:#1E88E5; font-size:35px;">Personalized Diabetes Nutrition Plan</h2>', unsafe_allow_html=True)
+        st.markdown('<h2 style="color:#379ced; font-size:35px;">Personalized Diabetes Nutrition Plan</h2>', unsafe_allow_html=True)
         st.markdown('<p style="color:#757575;">Personalized nutrition recommendations  based on your health metrics and socioeconomic context</p>', unsafe_allow_html=True)
 
 def apply_custom_css():
@@ -44,7 +44,7 @@ def apply_custom_css():
         
         /* Make the card container start right at the top of the tab panel */
         .card-container {
-            background-color: white;
+            background-color: var(--background-color);
             border-radius: 10px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             padding: 20px;
@@ -58,7 +58,8 @@ def apply_custom_css():
         }
         .stTabs [data-baseweb="tab"] {
             padding: 12px 18px;
-            background-color: #b8bec2;
+            background-color: var(--tab-background-color);
+            color: var(--tab-color);
             border-radius: 6px 6px 0px 0px;
             border-left: 1px solid #eee;
             border-right: 1px solid #eee;
@@ -66,8 +67,8 @@ def apply_custom_css():
             box-shadow: 0px -2px 5px rgba(0,0,0,0.05);
         }
         .stTabs [aria-selected="true"] {
-            background-color: #4CAF50 !important;
-            color: white !important;
+            background-color: var(--tab-selected-background-color) !important;
+            color: var(--tab-selected-color) !important;
             font-weight: 600;
             border: none;
             transform: translateY(-3px);
@@ -100,32 +101,32 @@ def apply_custom_css():
         /* Section header styles */
         .section-header {
             margin-bottom: 1px;
-            color: #2C3E50;
+            color: var(--section-header-color);
             font-size: 1.2rem;
-            border-bottom: 1px solid #4CAF50;
+            border-bottom: 1px solid var(--section-header-border-color);
             padding-bottom: 8px;
             display: inline-block;
         }
         
         /* Plan styling */
         .plan-header {
-            background-color: #4CAF50;
+            background-color: var(--plan-header-background-color);
             padding: 20px;
             border-radius: 10px;
-            color: white;
+            color: var(--plan-header-color);
             margin-bottom: 20px;
             text-align: center;
         }
         .plan-section {
-            background-color: white;
+            background-color: var(--plan-section-background-color);
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             margin-bottom: 20px;
         }
         .plan-section h3 {
-            color: #2C3E50;
-            border-bottom: 2px solid #4CAF50;
+            color: var(--plan-section-header-color);
+            border-bottom: 2px solid var(--plan-section-header-border-color);
             padding-bottom: 8px;
             margin-bottom: 15px;
         }
@@ -134,25 +135,71 @@ def apply_custom_css():
             border-radius: 8px;
             padding: 15px;
             margin-bottom: 15px;
-            background-color: #f9f9f9;
+            background-color: var(--meal-card-background-color);
         }
         .meal-title {
             font-weight: bold;
-            color: #4CAF50;
+            color: var(--meal-title-color);
             margin-bottom: 10px;
         }
                 
         /* Foods limit section styles */
         .limit-section {
-            background-color: #FFF9C4; /* Light yellow background */
-            border-left: 4px solid #FFC107; /* Yellow border */
+            background-color: var(--limit-section-background-color); /* Light yellow background */
+            border-left: 4px solid var(--limit-section-border-color); /* Yellow border */
             padding: 15px;
             border-radius: 5px;
             margin: 10px 0;
         }
         .limit-section h2 {
-            color: #FF5722; /* Orange-red color for title */
+            color: var(--limit-section-title-color); /* Orange-red color for title */
             font-weight: bold;
+        }
+                
+/* Serene Blue Light Mode */
+        @media (prefers-color-scheme: light) {
+            :root {
+                --background-color: #f9f9f9;
+                --tab-background-color: #e8e8e8;
+                --tab-color: #555555;
+                --tab-selected-background-color: #5cacee;
+                --tab-selected-color: #ffffff;
+                --section-header-color: #333333;
+                --section-header-border-color: #5cacee;
+                --plan-header-background-color: #5cacee;
+                --plan-header-color: #ffffff;
+                --plan-section-background-color: #ffffff;
+                --plan-section-header-color: #333333;
+                --plan-section-header-border-color: #5cacee;
+                --meal-card-background-color: #f0f8ff;
+                --meal-title-color: #1e90ff;
+                --limit-section-background-color: #fff8e1;
+                --limit-section-border-color: #ffecb3;
+                --limit-section-title-color: #ffb300;
+            }
+        }
+
+        /* Serene Blue Dark Mode (Revised Unselected Tabs - Light Background) */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --background-color: #303030;
+                --tab-background-color: #4a5568;
+                --tab-color: #d1d5db;
+                --tab-selected-background-color: #61d46d;
+                --tab-selected-color: #212121;
+                --section-header-color: #f5f5f5;
+                --section-header-border-color: #64b5f6;
+                --plan-header-background-color: #64b5f6;
+                --plan-header-color: #212121;
+                --plan-section-background-color: #424242;
+                --plan-section-header-color: #f5f5f5;
+                --plan-section-header-border-color: #64b5f6;
+                --meal-card-background-color: #4a4a4a;
+                --meal-title-color: #90caf9;
+                --limit-section-background-color: #5e5e5e;
+                --limit-section-border-color: #757575;
+                --limit-section-title-color: #ffea00;
+            }
         }
     </style>
     """, unsafe_allow_html=True)
