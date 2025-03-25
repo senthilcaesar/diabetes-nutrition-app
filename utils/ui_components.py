@@ -57,8 +57,8 @@ def apply_custom_css():
             gap: 8px;
         }
         .stTabs [data-baseweb="tab"] {
-            padding: 10px 16px;
-            background-color: #f8f9fa;
+            padding: 12px 18px;
+            background-color: #b8bec2;
             border-radius: 6px 6px 0px 0px;
             border-left: 1px solid #eee;
             border-right: 1px solid #eee;
