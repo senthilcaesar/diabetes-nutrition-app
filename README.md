@@ -1,6 +1,6 @@
 # Personalized Diabetes Nutrition Plan
 
-A web application that provides personalized nutrition recommendations for individuals with diabetes, considering their health metrics, socioeconomic background, and genetic profile.
+An AI-powered web application that provides personalized nutrition recommendations for individuals with diabetes, considering their health metrics, socioeconomic background, and genetic profile.
 
 ## Live Application
 
