@@ -1,6 +1,6 @@
 # Personalized Diabetes Nutrition Plan
 
-A Streamlit-based web application that generates personalized nutrition plans for individuals with diabetes based on their health metrics and socioeconomic context.
+A web application that provides personalized nutrition recommendations for individuals with diabetes, considering their health metrics, socioeconomic background, and genetic profile.
 
 ## Live Application
 
