@@ -170,11 +170,50 @@ pip install -r requirements.txt
 - Provides educational resources about diabetes management
 - Adapts recommendations based on cultural preferences and socioeconomic factors
 
-## Notes
+# Tech Stack for Personalized Diabetes Nutrition Plan
 
-- The application uses OpenAI's GPT-4 for generating personalized content
-- Visualizations are created using Matplotlib
-- The user interface is built with Streamlit
+This application is built using the following technologies:
+
+## Core Framework
+
+- **Streamlit**: The main web application framework that powers the user interface and interactive components
+
+## Python Libraries
+
+- **Python 3.9+**: The primary programming language
+- **OpenAI**: API integration for generating personalized health assessments and nutrition plans
+- **Matplotlib**: For creating visualizations of health metrics
+- **Pandas**: For data manipulation and processing
+- **NumPy**: For numerical operations and array handling
+
+## AI Integration
+
+- **OpenAI API**: Using GPT-4 models for generating personalized health assessments and nutrition plans
+- **Function Calling**: OpenAI tools framework for structured outputs
+
+## Data Handling
+
+- **JSON**: For structured data exchange
+- **Session State**: Streamlit's session state mechanism for maintaining user data across interactions
+
+## User Interface Components
+
+- **Streamlit Components**: Tabs, containers, columns, expanders
+- **Custom CSS**: For styling and theming the application
+- **Markdown**: For rich text formatting
+- **HTML**: For advanced styling and layout
+
+## Visualization
+
+- **Matplotlib Figures**: Custom visualizations for glucose levels, HbA1c, BMI, and nutrition guides
+- **Custom Plots**: Specialized visualizations for genetic data and meal planning
+
+## Genetic Analysis
+
+- **Custom Genetic Processing**: For analyzing genetic markers related to metabolism and nutrition
+- **Marker Mapping**: To correlate genetic variants with nutrition recommendations
+
+The application leverages AI to provide tailored nutrition plans based on health metrics, genetic data, and socioeconomic factors for diabetes management.
 
 ## Contact
 

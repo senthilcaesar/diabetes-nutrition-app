@@ -88,12 +88,26 @@ def show_nutrition_plan():
                 unsafe_allow_html=True
             )
             
-        for section in overview_sections:
-            st.markdown(section)
+        if 'nutrition_overview' in st.session_state:
+            st.markdown(st.session_state.nutrition_overview, unsafe_allow_html=True)
+        else:
+            # Fall back to extracting from the complete plan
+            overview_sections = [s for s in sections if any(x in s.lower() for x in [
+                "introduction", "overview", "caloric", "macronutrient", "recommended"
+            ])]
+            for section in overview_sections:
+                st.markdown(section, unsafe_allow_html=True)
     
     with meal_plan_tab:
-        for section in meal_plan_sections:
-            st.markdown(section)
+        if 'nutrition_meal_plan' in st.session_state:
+            st.markdown(st.session_state.nutrition_meal_plan, unsafe_allow_html=True)
+        else:
+            # Fall back to extracting from the complete plan
+            meal_plan_sections = [s for s in sections if any(x in s.lower() for x in [
+                "meal plan", "sample meal", "day 1", "day 2", "day 3"
+            ])]
+            for section in meal_plan_sections:
+                st.markdown(section, unsafe_allow_html=True)
     
     # Show genetic optimization tab if genetic data is available
     if has_genetic_data:
@@ -142,9 +156,16 @@ def show_nutrition_plan():
                     st.markdown(f"- {rec}")
     
     with recipes_tab:
-        for section in recipe_sections:
-            st.markdown(section)
-    
+        if 'nutrition_recipes_tips' in st.session_state:
+            st.markdown(st.session_state.nutrition_recipes_tips, unsafe_allow_html=True)
+        else:
+            # Fall back to extracting from the complete plan
+            recipe_sections = [s for s in sections if any(x in s.lower() for x in [
+                "recipe", "tips", "avoid", "limit", "portion", "guideline", "stabilize"
+            ]) and not any(x in s.lower() for x in ["genetic", "gene", "dna"])]
+            for section in recipe_sections:
+                st.markdown(section, unsafe_allow_html=True)
+            
     with visuals_tab:
         if 'visual_guidance' in st.session_state:
             display_visual_guidance(has_genetic_data)

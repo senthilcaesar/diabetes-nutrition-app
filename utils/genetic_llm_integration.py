@@ -4,35 +4,43 @@ Contains functions for integrating genetic data into the nutrition plan.
 """
 
 from openai import OpenAI
+import json
+import streamlit as st
 from typing import Dict, List, Optional, Any
+from utils.llm_integration import create_nutrition_plan_tools, format_structured_nutrition_plan
 
-def generate_genetic_enhanced_nutrition_plan(user_data: Dict, genetic_profile: Dict, api_key: str) -> str:
+def generate_genetic_enhanced_nutrition_plan(user_data, genetic_profile, api_key):
     """
     Generate a nutrition plan that incorporates genetic insights.
     
-    Args:
-        user_data (Dict): Dictionary containing user health and socioeconomic data
-        genetic_profile (Dict): Dictionary containing genetic nutrition profile
-        api_key (str): OpenAI API key
-        
     Returns:
-        str: Generated nutrition plan with genetic insights
+        tuple: (nutrition_plan, overview, meal_plan, recipes_tips) - complete plan and individual sections
     """
     prompt = create_genetic_nutrition_plan_prompt(user_data, genetic_profile)
     
     client = OpenAI(api_key=api_key)
     response = client.chat.completions.create(
-        model="gpt-4",  # Adjust based on availability and needs
+        model="gpt-4.5-preview",
         messages=[
             {"role": "system", "content": "You are a medical nutrition specialist with expertise in both diabetes management and nutrigenomics. Create a personalized nutrition plan that integrates both health data and genetic insights."},
             {"role": "user", "content": prompt}
         ],
         temperature=0.3,
-        max_tokens=2500
+        tools=create_nutrition_plan_tools(),
+        tool_choice={"type": "function", "function": {"name": "generate_structured_nutrition_plan"}}
     )
     
-    nutrition_plan = response.choices[0].message.content.strip()
-    return nutrition_plan
+    # Extract the structured response
+    function_call = response.choices[0].message.tool_calls[0]
+    structured_plan = json.loads(function_call.function.arguments)
+    
+    # Format the structured data into separate sections
+    overview, meal_plan, recipes_tips = format_structured_nutrition_plan(structured_plan)
+    
+    # Also create a complete plan by combining all sections (for backward compatibility)
+    nutrition_plan = overview + "\n" + meal_plan + "\n" + recipes_tips
+    
+    return nutrition_plan, overview, meal_plan, recipes_tips
 
 def create_genetic_nutrition_plan_prompt(user_data: Dict, genetic_profile: Dict) -> str:
     """
@@ -200,53 +208,154 @@ def create_genetic_nutrition_plan_prompt(user_data: Dict, genetic_profile: Dict)
     
     return prompt
 
-def generate_genetic_health_assessment(user_data: Dict, genetic_profile: Dict, api_key: str) -> str:
+def create_genetic_health_assessment_tools():
     """
-    Generate a health assessment that incorporates genetic insights.
+    Create a structured tools schema for generating genetic health assessments.
+    
+    Returns:
+        list: A list containing the function schema for genetic health assessment
+    """
+    tools = [
+        {
+            "type": "function",
+            "function": {
+                "name": "generate_structured_genetic_health_assessment",
+                "description": "Generate a structured health assessment for a diabetes patient that incorporates genetic profile insights.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "summary": {
+                            "type": "string",
+                            "description": "A concise summary paragraph of the patient's overall health status including genetic insights."
+                        },
+                        "diabetes_management_evaluation": {
+                            "type": "string",
+                            "description": "Overall evaluation of the patient's diabetes management status considering genetic factors."
+                        },
+                        "key_metrics_analysis": {
+                            "type": "object",
+                            "description": "Analysis of key health metrics compared to targets",
+                            "properties": {
+                                "fasting_glucose": {"type": "string"},
+                                "postmeal_glucose": {"type": "string"},
+                                "hba1c": {"type": "string"}
+                            }
+                        },
+                        "genetic_profile_overview": {
+                            "type": "object",
+                            "description": "Overview of key genetic factors affecting diabetes management",
+                            "properties": {
+                                "carb_metabolism": {"type": "string"},
+                                "fat_metabolism": {"type": "string"},
+                                "inflammation_response": {"type": "string"},
+                                "caffeine_processing": {"type": "string"}
+                            }
+                        },
+                        "potential_health_risks": {
+                            "type": "string",
+                            "description": "Description of potential health risks based on both standard assessment and genetic factors."
+                        },
+                        "suggested_diagnoses_and_care_plans": {
+                            "type": "string",
+                            "description": "Suggested diagnoses and care plans based on the assessment and genetic insights."
+                        },
+                        "areas_of_concern": {
+                            "type": "string",
+                            "description": "Areas of concern that should be discussed with a healthcare provider, including genetic considerations."
+                        },
+                        "personalized_recommendations": {
+                            "type": "object",
+                            "description": "Recommendations for health management tailored to genetic profile",
+                            "properties": {
+                                "nutrition": {"type": "string"},
+                                "physical_activity": {"type": "string"},
+                                "medication_considerations": {"type": "string"},
+                                "lifestyle_modifications": {"type": "string"},
+                                "monitoring_approach": {"type": "string"}
+                            }
+                        }
+                    },
+                    "required": [
+                        "summary", 
+                        "diabetes_management_evaluation", 
+                        "key_metrics_analysis", 
+                        "genetic_profile_overview",
+                        "potential_health_risks", 
+                        "suggested_diagnoses_and_care_plans", 
+                        "areas_of_concern", 
+                        "personalized_recommendations"
+                    ]
+                }
+            }
+        }
+    ]
+    
+    return tools
+
+def generate_genetic_health_assessment(user_data, genetic_profile, api_key):
+    """
+    Generate a health assessment using OpenAI API based on both user health data and genetic profile.
     
     Args:
-        user_data (Dict): Dictionary containing user health data
-        genetic_profile (Dict): Dictionary containing genetic nutrition profile
+        user_data (dict): Dictionary containing user health data
+        genetic_profile (dict): Dictionary containing user genetic profile
         api_key (str): OpenAI API key
         
     Returns:
-        str: Generated health assessment with genetic insights
+        str: Generated health assessment incorporating genetic insights
     """
+    # Create a comprehensive prompt that includes both health and genetic data
     prompt = create_genetic_health_assessment_prompt(user_data, genetic_profile)
     
     client = OpenAI(api_key=api_key)
+    
+    # Get the genetic tools schema
+    tools = create_genetic_health_assessment_tools()
+    
     response = client.chat.completions.create(
-        model="gpt-4",  # Use GPT-4 for more comprehensive medical analysis
+        model="gpt-4.5-preview",  # Use appropriate model
         messages=[
             {"role": "system", "content": """
-            You are an expert endocrinologist specializing in personalized diabetes care, metabolic health assessment, and nutrigenomics.
-            Your task is to transform patient data and genetic information into actionable insights by analyzing all available patient data,
-            suggesting diagnoses and generating care plans that integrate genetic factors.
-            Please focus on diabetes management, identify potential risks and areas of concern, and recommend strategies for improvement
-            based on both standard medical protocols and genetic insights.
+            You are an expert endocrinologist specializing in personalized diabetes care, metabolic health assessment and personalized medicine.
+            Your task is to transform patient health data and genetic information into actionable insights.
+            Analyze all available data to suggest personalized diagnoses and generate care plans that integrate genetic factors.
+            Focus on diabetes management, identify potential risks based on both medical metrics and genetic predispositions,
+            and recommend strategies tailored to the patient's unique genetic profile.
+            You must return your assessment in the exact structured format requested.
             """
             },
             {"role": "user", "content": prompt}
         ],
         temperature=0.2,  # Lower temperature for more consistent medical information
-        max_tokens=1500
+        tools=tools,
+        tool_choice={"type": "function", "function": {"name": "generate_structured_genetic_health_assessment"}}
     )
     
-    health_assessment = response.choices[0].message.content.strip()
+    # Extract the structured response
+    function_call = response.choices[0].message.tool_calls[0]
+    structured_assessment = json.loads(function_call.function.arguments)
+    
+    # Store the structured data in the session state
+    st.session_state.structured_genetic_health_assessment = structured_assessment
+    
+
+    health_assessment = structured_assessment
+    
+
     return health_assessment
 
-def create_genetic_health_assessment_prompt(user_data: Dict, genetic_profile: Dict) -> str:
+def create_genetic_health_assessment_prompt(user_data, genetic_profile):
     """
-    Create a prompt for generating a health assessment with genetic insights.
+    Create a comprehensive prompt that includes both health and genetic data.
     
     Args:
-        user_data (Dict): Dictionary containing user health data
-        genetic_profile (Dict): Dictionary containing genetic nutrition profile
+        user_data (dict): Dictionary containing user health data
+        genetic_profile (dict): Dictionary containing user genetic profile
         
     Returns:
-        str: Generated prompt
+        str: Combined prompt for generating a genetic health assessment
     """
-    # Extract and format key health metrics (same as in llm_integration.py)
+    # Extract and format health data
     age = user_data.get('age', '')
     gender = user_data.get('gender', '')
     weight = user_data.get('weight', '')
@@ -258,58 +367,23 @@ def create_genetic_health_assessment_prompt(user_data: Dict, genetic_profile: Di
     postmeal_glucose = user_data.get('postmeal_glucose', '')
     hba1c = user_data.get('hba1c', '')
     
-    # Format medications and other conditions for better prompt structure
+    # Format medications and conditions
     medications = user_data.get('medications', '')
     medications_list = [med.strip() for med in medications.split('\n') if med.strip()]
     
     other_conditions = user_data.get('other_conditions', '')
     conditions_list = [condition.strip() for condition in other_conditions.split('\n') if condition.strip()]
     
-    # Get dietary restrictions
-    dietary_restrictions = user_data.get('dietary_restrictions', 'None')
+    # Format genetic data
+    carb_metabolism = genetic_profile.get('carb_metabolism', {})
+    fat_metabolism = genetic_profile.get('fat_metabolism', {})
+    vitamin_metabolism = genetic_profile.get('vitamin_metabolism', {})
+    inflammation_response = genetic_profile.get('inflammation_response', {})
+    caffeine_metabolism = genetic_profile.get('caffeine_metabolism', {})
     
-    # Format genetic insights
-    genetic_info = """
-    ## Genetic Insights
-    """
-    
-    # Add overall genetic summary
-    genetic_info += f"""
-    ### Overall Genetic Summary
-    {genetic_profile.get('overall_summary', '')}
-    
-    Key Genetic-Based Recommendations:
-    """
-    for rec in genetic_profile.get('key_recommendations', []):
-        genetic_info += f"- {rec}\n"
-    
-    # Add carbohydrate metabolism insights
-    carb_metabolism = genetic_profile.get("carb_metabolism", {})
-    genetic_info += f"""
-    ### Carbohydrate Metabolism
-    - Carbohydrate Sensitivity: {carb_metabolism.get('carb_sensitivity', 'normal')}
-    - Explanation: {carb_metabolism.get('explanation', '')}
-    """
-    
-    # Add fat metabolism insights
-    fat_metabolism = genetic_profile.get("fat_metabolism", {})
-    genetic_info += f"""
-    ### Fat Metabolism
-    - Saturated Fat Sensitivity: {fat_metabolism.get('saturated_fat_sensitivity', 'normal')}
-    - Explanation: {fat_metabolism.get('explanation', '')}
-    """
-    
-    # Add inflammation response insights
-    inflammation_response = genetic_profile.get("inflammation_response", {})
-    genetic_info += f"""
-    ### Inflammation Response
-    - Inflammatory Response: {inflammation_response.get('inflammatory_response', 'normal')}
-    - Explanation: {inflammation_response.get('explanation', '')}
-    """
-    
-    # Build the complete prompt
+    # Build the comprehensive prompt
     prompt = f"""
-    Please provide a comprehensive health assessment for a patient with the following profile, integrating both their standard health metrics AND their genetic insights:
+    Please provide a comprehensive health assessment for a patient with the following profile and genetic insights:
     
     ## Basic Information
     - Age: {age}
@@ -331,22 +405,57 @@ def create_genetic_health_assessment_prompt(user_data: Dict, genetic_profile: Di
     ## Other Health Conditions
     {chr(10).join(f"- {condition}" for condition in conditions_list) if conditions_list else "- None specified"}
     
-    ## Dietary Restrictions
-    - {dietary_restrictions}
+    ## Genetic Profile
     
-    {genetic_info}
+    ### Carbohydrate Metabolism
+    - Sensitivity: {carb_metabolism.get('carb_sensitivity', 'Normal')}
+    - Explanation: {carb_metabolism.get('explanation', 'No specific genetic variations detected')}
+    - Genetic Recommendations:
+      {chr(10).join(f"  - {rec}" for rec in carb_metabolism.get('recommendations', [])) if carb_metabolism.get('recommendations') else "  - No specific recommendations"}
+    
+    ### Fat Metabolism
+    - Sensitivity to Saturated Fat: {fat_metabolism.get('saturated_fat_sensitivity', 'Normal')}
+    - Explanation: {fat_metabolism.get('explanation', 'No specific genetic variations detected')}
+    - Genetic Recommendations:
+      {chr(10).join(f"  - {rec}" for rec in fat_metabolism.get('recommendations', [])) if fat_metabolism.get('recommendations') else "  - No specific recommendations"}
+    
+    ### Inflammation Response
+    - Inflammatory Response: {inflammation_response.get('inflammatory_response', 'Normal')}
+    - Explanation: {inflammation_response.get('explanation', 'No specific genetic variations detected')}
+    - Genetic Recommendations:
+      {chr(10).join(f"  - {rec}" for rec in inflammation_response.get('recommendations', [])) if inflammation_response.get('recommendations') else "  - No specific recommendations"}
+    
+    ### Caffeine Metabolism
+    - Caffeine Processing: {caffeine_metabolism.get('caffeine_metabolism', 'Normal')}
+    - Explanation: {caffeine_metabolism.get('explanation', 'No specific genetic variations detected')}
+    - Genetic Recommendations:
+      {chr(10).join(f"  - {rec}" for rec in caffeine_metabolism.get('recommendations', [])) if caffeine_metabolism.get('recommendations') else "  - No specific recommendations"}
+    
+    ## Overall Genetic Summary
+    {genetic_profile.get('overall_summary', 'No significant genetic variations affecting diabetes management were detected.')}
+    
+    ## Key Genetic Recommendations
+    {chr(10).join(f"- {rec}" for rec in genetic_profile.get('key_recommendations', [])) if genetic_profile.get('key_recommendations') else "- No specific genetic-based recommendations"}
     
     ## Requested Assessment
-    Please provide:
-    1. An overall evaluation of the patient's diabetes management, integrating genetic insights
-    2. Analysis of their key metrics and how they compare to recommended targets
-    3. Identification of potential health risks based on both their standard health profile AND genetic factors
-    4. Specific areas where genetic factors may be impacting their metabolic health
-    5. Personalized recommendations that incorporate both standard diabetes care AND genetic optimization
-    6. Specific areas of concern that should be discussed with a healthcare provider
+    Based on both the patient's health data and genetic profile, please provide:
     
-    Format the assessment in clear sections with headings, and begin with a summary of the most important points. Include a specific section titled "Genetic Factors and Metabolism" that explains how their genetic profile impacts their diabetes management.
+    1. An overall health assessment that incorporates genetic insights
+    2. Analysis of key health metrics with genetic context
+    3. Specific genetic factors affecting diabetes management
+    4. Potential health risks based on both standard and genetic factors
+    5. Personalized diagnosis and care plans integrating genetic insights
+    6. Areas of concern for healthcare provider discussion
+    7. Detailed personalized recommendations for:
+       - Nutrition (based on genetic metabolism factors)
+       - Physical activity (considering genetic factors)
+       - Medication considerations (with genetic context)
+       - Lifestyle modifications (personalized to genetic profile)
+       - Monitoring approach (optimized for genetic factors)
+    
+    Include more detailed information for each subsection
+
+    Format the assessment in the structured format requested by the tools interface.
     """
-    print(prompt)
     
     return prompt

@@ -2,7 +2,6 @@
 UI Components module for the Diabetes Nutrition Plan application.
 Contains functions for creating and managing the user interface.
 """
-
 import streamlit as st
 
 def show_header():
@@ -28,20 +27,98 @@ def apply_custom_css():
     """
     st.markdown("""
     <style>
+
+        <style>
+        /* Hide default Streamlit elements */
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+        header {display: none !important;}
+        
+        /* Force the entire app to start from the very top */
+        .stApp {
+            margin-top: -4rem !important;
+        }
+        
+        /* Make the app container take up full height with no padding */
+        .appview-container {
+            padding-top: 0 !important;
+        }
+        
+        /* Adjust sidebar to start from the top edge with no extra space */
+        section[data-testid="stSidebar"] {
+            top: 0 !important;
+            padding-top: 4rem !important; /* Compensation for negative margin */
+        }
+        
+        /* Remove padding and margin from sidebar content */
+        [data-testid="stSidebarContent"] {
+            padding-top: 0 !important;
+            margin-top: 0 !important;
+        }
+        
+        /* Adjust the Navigation header in sidebar */
+        [data-testid="stSidebarContent"] h1:first-child,
+        [data-testid="stSidebarContent"] h2:first-child,
+        [data-testid="stSidebarContent"] h3:first-child {
+            margin-top: 0 !important;
+            padding-top: 0 !important;
+        }
+        
+        /* Remove padding from main content area */
+        .main .block-container {
+            padding-top: 4rem !important; /* Compensation for negative margin */
+        }
+        
+        /* Ensure nothing gets hidden behind the negative margin */
+        body {
+            overflow-x: hidden;
+        }
+                      
+        /* Hide default Streamlit elements */
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+        header {display: none !important;}
+        
+        /* Force the entire app to start from the very top */
+        .stApp {
+            margin-top: -4rem !important;
+        }
+        
+        /* Make the app container take up full height with no padding */
+        .appview-container {
+            padding-top: 0 !important;
+        }
+        
+        /* Adjust sidebar to start from the top edge */
+        section[data-testid="stSidebar"] {
+            top: 0 !important;
+            padding-top: 4rem !important; /* Add padding to account for negative margin */
+        }
+        
+        /* Remove padding from main content area */
+        .main .block-container {
+            padding-top: 4rem !important; /* Add padding to account for negative margin */
+        }
+        
+        /* Ensure nothing gets hidden behind the negative margin */
+        body {
+            overflow-x: hidden;
+        }
+                
         /* Hide Streamlit menu and footer */
         #MainMenu {visibility: hidden;}
         footer {visibility: hidden;}
-        
+
         /* Fix the empty space below tabs */
         .stTabs [data-baseweb="tab-panel"] {
             padding-top: 0px !important;
         }
-        
+
         /* Remove padding around the container holding the tab panels */
         .stTabs [data-baseweb="tab-content"] {
             padding: 0px !important;
         }
-        
+
         /* Make the card container start right at the top of the tab panel */
         .card-container {
             background-color: var(--background-color);
@@ -51,7 +128,7 @@ def apply_custom_css():
             margin-top: 0px !important;
             margin-bottom: 20px;
         }
-        
+
         /* Tab styles */
         .stTabs [data-baseweb="tab-list"] {
             gap: 8px;
@@ -74,7 +151,7 @@ def apply_custom_css():
             transform: translateY(-3px);
             transition: all 0.3s ease;
         }
-        
+
         /* Button styles */
         .nav-button {
             font-weight: 500 !important;
@@ -86,7 +163,7 @@ def apply_custom_css():
             transform: translateY(-2px) !important;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2) !important;
         }
-        
+
         /* Message styles */
         .success-message {
             padding: 10px 15px;
@@ -97,7 +174,7 @@ def apply_custom_css():
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        
+
         /* Section header styles */
         .section-header {
             margin-bottom: 1px;
@@ -107,7 +184,7 @@ def apply_custom_css():
             padding-bottom: 8px;
             display: inline-block;
         }
-        
+
         /* Plan styling */
         .plan-header {
             background-color: var(--plan-header-background-color);
@@ -155,8 +232,128 @@ def apply_custom_css():
             color: var(--limit-section-title-color); /* Orange-red color for title */
             font-weight: bold;
         }
-                
-/* Serene Blue Light Mode */
+
+        /* Health Assessment specific styling */
+        .health-assessment-section {
+            margin-bottom: 25px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .health-assessment-section h2 {
+            font-size: 1.5rem;
+            color: #2E7D32;
+            margin-top: 0;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #C8E6C9;
+            padding-bottom: 8px;
+        }
+
+        .health-assessment-section h3 {
+            font-size: 1.2rem;
+            color: #1565C0;
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+
+        .health-assessment-section p {
+            margin: 10px 0;
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        .summary-section {
+            background-color: #E8F5E9;
+            border-left: 5px solid #4CAF50;
+        }
+
+        .diabetes-management-section {
+            background-color: #E3F2FD;
+            border-left: 5px solid #2196F3;
+        }
+
+
+        .risks-section {
+            background-color: #FFEBEE;
+            border-left: 5px solid #F44336;
+        }
+
+        .care-plans-section {
+            background-color: #E0F7FA;
+            border-left: 5px solid #00BCD4;
+        }
+
+        .concerns-section {
+            background-color: #FFF3E0;
+            border-left: 5px solid #FF9800;
+        }
+
+        .recommendations-section {
+            background-color: #F1F8E9;
+            border-left: 5px solid #8BC34A;
+        }
+
+        .genetic-section {
+            background-color: #E8EAF6;
+            border-left: 5px solid #3F51B5;
+        }
+
+
+        /* Make paragraphs more readable */
+        p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        /* Improve list formatting */
+        ul, ol {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        /* Table styling */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 15px 0;
+        }
+
+        th {
+            background-color: #E3F2FD;
+            padding: 10px;
+            border: 1px solid #BBDEFB;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        td {
+            padding: 8px 10px;
+            border: 1px solid #E3F2FD;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .health-assessment-section {
+                padding: 15px;
+            }
+            
+            .health-assessment-section h2 {
+                font-size: 1.3rem;
+            }
+            
+            .metric-item {
+                padding: 10px;
+            }
+        }
+
+        /* Serene Blue Light Mode */
         @media (prefers-color-scheme: light) {
             :root {
                 --background-color: #f9f9f9;
@@ -200,6 +397,7 @@ def apply_custom_css():
                 --limit-section-border-color: #757575;
                 --limit-section-title-color: #ffea00;
             }
+ 
         }
     </style>
     """, unsafe_allow_html=True)
@@ -208,8 +406,7 @@ def show_sidebar():
     """
     Configure and display the sidebar. Returns the current page selection.
     """
-    import streamlit as st
-    
+
     # Initialize the page state if it doesn't exist
     if 'page' not in st.session_state:
         st.session_state.page = "Input Data"

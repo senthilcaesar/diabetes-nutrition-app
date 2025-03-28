@@ -181,23 +181,28 @@ def generate_nutrition_plan_workflow():
             using_genetic_data = 'genetic_profile' in st.session_state and st.session_state.genetic_profile is not None
             
             # Generate the nutrition plan with or without genetic insights
+            # Inside generate_nutrition_plan_workflow():
+
             if using_genetic_data:
                 # Generate nutrition plan with genetic insights
-                nutrition_plan = generate_genetic_enhanced_nutrition_plan(
+                nutrition_plan, overview, meal_plan, recipes_tips = generate_genetic_enhanced_nutrition_plan(
                     combined_data, 
                     st.session_state.genetic_profile,
                     st.secrets["OPENAI_API_KEY"]
                 )
-                
-                # IMPORTANT: Do NOT generate health assessment here
-                # This should only happen on the Health Assessment page
-                # when the user clicks the "Run Health Assessment" button
             else:
                 # Generate standard nutrition plan
-                nutrition_plan = generate_nutrition_plan(combined_data, st.secrets["OPENAI_API_KEY"])
-            
-            # Save the nutrition plan to session state
+                nutrition_plan, overview, meal_plan, recipes_tips = generate_nutrition_plan(
+                    combined_data, 
+                    st.secrets["OPENAI_API_KEY"]
+                )
+
+            # Save all sections to session state
             st.session_state.nutrition_plan = nutrition_plan
+            st.session_state.nutrition_overview = overview
+            st.session_state.nutrition_meal_plan = meal_plan
+            st.session_state.nutrition_recipes_tips = recipes_tips
+            
             progress_bar.progress(98/100)
             percentage_text.markdown("<div style='text-align: center;'><strong>98% Complete</strong></div>", unsafe_allow_html=True)
             

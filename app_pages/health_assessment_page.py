@@ -20,6 +20,206 @@ from utils.llm_integration import generate_health_assessment
 from utils.genetic_ui_components import show_genetic_insights
 from utils.genetic_llm_integration import generate_genetic_health_assessment
 
+def display_health_assessment(structured_data):
+    """
+    Display health assessment with consistent formatting across all sections.
+    """
+    # Summary section
+    st.markdown("<h3 style='color:#2E7D32; margin-top:0; border-bottom:2px solid #C8E6C9; padding-bottom:10px;'>Summary</h3>", unsafe_allow_html=True)
+    
+    st.markdown(
+        f'<div style="background-color:#E8F5E9; padding:15px; border-radius:5px; border-left:5px solid #4CAF50; margin-bottom:20px;">{structured_data["summary"]}</div>',
+        unsafe_allow_html=True
+    )
+    
+    # Diabetes Management Evaluation
+    st.markdown("<h3 style='color:#0D47A1; margin-top:0; border-bottom:2px solid #BBDEFB; padding-bottom:10px;'>Diabetes Management Evaluation</h3>", unsafe_allow_html=True)
+    
+    st.markdown(
+        f'<div style="background-color:#E3F2FD; padding:15px; border-radius:5px; border-left:5px solid #2196F3; margin-bottom:20px;">{structured_data["diabetes_management_evaluation"]}</div>',
+        unsafe_allow_html=True
+    )
+    
+    # Key Metrics Analysis
+    metrics = structured_data["key_metrics_analysis"]
+    
+    st.markdown("<h3 style='color:#4A148C; margin-top:0; border-bottom:2px solid #E1BEE7; padding-bottom:10px;'>Key Metrics Analysis</h3>", unsafe_allow_html=True)
+    
+    st.markdown(
+        f'<div style="background-color:#F3E5F5; padding:15px; border-radius:5px; border-left:5px solid #9C27B0; margin-bottom:10px;"><strong>Fasting Glucose:</strong> {metrics["fasting_glucose"]}</div>',
+        unsafe_allow_html=True
+    )
+    
+    st.markdown(
+        f'<div style="background-color:#F3E5F5; padding:15px; border-radius:5px; border-left:5px solid #9C27B0; margin-bottom:10px;"><strong>Post-meal Glucose:</strong> {metrics["postmeal_glucose"]}</div>',
+        unsafe_allow_html=True
+    )
+    
+    st.markdown(
+        f'<div style="background-color:#F3E5F5; padding:15px; border-radius:5px; border-left:5px solid #9C27B0; margin-bottom:10px;"><strong>HbA1c:</strong> {metrics["hba1c"]}</div>',
+        unsafe_allow_html=True
+    )
+    
+    # Potential Health Risks
+    st.markdown("<h3 style='color:#B71C1C; margin-top:0; border-bottom:2px solid #FFCDD2; padding-bottom:10px;'>Potential Health Risks</h3>", unsafe_allow_html=True)
+    
+    st.markdown(
+        f'<div style="background-color:#FFEBEE; padding:15px; border-radius:5px; border-left:5px solid #F44336; margin-bottom:20px;">{structured_data["potential_health_risks"]}</div>',
+        unsafe_allow_html=True
+    )
+    
+    # Suggested Diagnoses and Care Plans
+    st.markdown("<h3 style='color:#006064; margin-top:0; border-bottom:2px solid #B2EBF2; padding-bottom:10px;'>Suggested Diagnoses and Care Plans</h3>", unsafe_allow_html=True)
+    
+    st.markdown(
+        f'<div style="background-color:#E0F7FA; padding:15px; border-radius:5px; border-left:5px solid #00BCD4; margin-bottom:20px;">{structured_data["suggested_diagnoses_and_care_plans"]}</div>',
+        unsafe_allow_html=True
+    )
+    
+    # Areas of Concern
+    st.markdown("<h3 style='color:#E65100; margin-top:0; border-bottom:2px solid #FFE0B2; padding-bottom:10px;'>Areas of Concern for Discussion with a Healthcare Provider</h3>", unsafe_allow_html=True)
+    
+    st.markdown(
+        f'<div style="background-color:#FFF3E0; padding:15px; border-radius:5px; border-left:5px solid #FF9800; margin-bottom:20px;">{structured_data["areas_of_concern"]}</div>',
+        unsafe_allow_html=True
+    )
+    
+    # Recommendations
+    st.markdown("<h3 style='color:#33691E; margin-top:0; border-bottom:2px solid #DCEDC8; padding-bottom:10px;'>Recommendations for Health Management Improvement</h3>", unsafe_allow_html=True)
+    
+    st.markdown(
+        f'<div style="background-color:#F1F8E9; padding:15px; border-radius:5px; border-left:5px solid #8BC34A; margin-bottom:20px;">{structured_data["recommendations"]}</div>',
+        unsafe_allow_html=True
+    )
+    
+def display_genetic_health_assessment(structured_data):
+    """
+    Display genetic health assessment with consistent formatting across all sections.
+    """
+    # Summary section
+    st.markdown("<h3 style='color:#2E7D32; margin-top:0; border-bottom:2px solid #C8E6C9; padding-bottom:10px;'>Summary</h3>", unsafe_allow_html=True)
+    
+    st.markdown(
+        f'<div style="background-color:#E8F5E9; padding:15px; border-radius:5px; border-left:5px solid #4CAF50; margin-bottom:20px;">{structured_data["summary"]}</div>',
+        unsafe_allow_html=True
+    )
+    
+    # Diabetes Management Evaluation
+    st.markdown("<h3 style='color:#0D47A1; margin-top:0; border-bottom:2px solid #BBDEFB; padding-bottom:10px;'>Diabetes Management Evaluation</h3>", unsafe_allow_html=True)
+    
+    st.markdown(
+        f'<div style="background-color:#E3F2FD; padding:15px; border-radius:5px; border-left:5px solid #2196F3; margin-bottom:20px;">{structured_data["diabetes_management_evaluation"]}</div>',
+        unsafe_allow_html=True
+    )
+    
+    # Key Metrics Analysis
+    metrics = structured_data["key_metrics_analysis"]
+    
+    st.markdown("<h3 style='color:#4A148C; margin-top:0; border-bottom:2px solid #E1BEE7; padding-bottom:10px;'>Key Metrics Analysis</h3>", unsafe_allow_html=True)
+    
+    st.markdown(
+        f'<div style="background-color:#F3E5F5; padding:15px; border-radius:5px; border-left:5px solid #9C27B0; margin-bottom:10px;"><strong>Fasting Glucose:</strong> {metrics["fasting_glucose"]}</div>',
+        unsafe_allow_html=True
+    )
+    
+    st.markdown(
+        f'<div style="background-color:#F3E5F5; padding:15px; border-radius:5px; border-left:5px solid #9C27B0; margin-bottom:10px;"><strong>Post-meal Glucose:</strong> {metrics["postmeal_glucose"]}</div>',
+        unsafe_allow_html=True
+    )
+    
+    st.markdown(
+        f'<div style="background-color:#F3E5F5; padding:15px; border-radius:5px; border-left:5px solid #9C27B0; margin-bottom:10px;"><strong>HbA1c:</strong> {metrics["hba1c"]}</div>',
+        unsafe_allow_html=True
+    )
+    
+    # Genetic Profile Overview
+    st.markdown("<h3 style='color:#1A237E; margin-top:0; border-bottom:2px solid #C5CAE9; padding-bottom:10px;'>Genetic Profile Overview</h3>", unsafe_allow_html=True)
+    
+    # Display genetic insights if they exist in the structured data
+    if "genetic_profile_overview" in structured_data:
+        genetic_profile = structured_data["genetic_profile_overview"]
+        
+        st.markdown(
+            f'<div style="background-color:#E8EAF6; padding:15px; border-radius:5px; border-left:5px solid #3F51B5; margin-bottom:10px;"><strong>Carbohydrate Metabolism:</strong> {genetic_profile["carb_metabolism"]}</div>',
+            unsafe_allow_html=True
+        )
+        
+        st.markdown(
+            f'<div style="background-color:#E8EAF6; padding:15px; border-radius:5px; border-left:5px solid #3F51B5; margin-bottom:10px;"><strong>Fat Metabolism:</strong> {genetic_profile["fat_metabolism"]}</div>',
+            unsafe_allow_html=True
+        )
+        
+        st.markdown(
+            f'<div style="background-color:#E8EAF6; padding:15px; border-radius:5px; border-left:5px solid #3F51B5; margin-bottom:10px;"><strong>Inflammation Response:</strong> {genetic_profile["inflammation_response"]}</div>',
+            unsafe_allow_html=True
+        )
+        
+        st.markdown(
+            f'<div style="background-color:#E8EAF6; padding:15px; border-radius:5px; border-left:5px solid #3F51B5; margin-bottom:20px;"><strong>Caffeine Processing:</strong> {genetic_profile["caffeine_processing"]}</div>',
+            unsafe_allow_html=True
+        )
+    
+    # Potential Health Risks
+    st.markdown("<h3 style='color:#B71C1C; margin-top:0; border-bottom:2px solid #FFCDD2; padding-bottom:10px;'>Potential Health Risks</h3>", unsafe_allow_html=True)
+    
+    st.markdown(
+        f'<div style="background-color:#FFEBEE; padding:15px; border-radius:5px; border-left:5px solid #F44336; margin-bottom:20px;">{structured_data["potential_health_risks"]}</div>',
+        unsafe_allow_html=True
+    )
+    
+    # Suggested Diagnoses and Care Plans
+    st.markdown("<h3 style='color:#006064; margin-top:0; border-bottom:2px solid #B2EBF2; padding-bottom:10px;'>Suggested Diagnoses and Care Plans</h3>", unsafe_allow_html=True)
+    
+    st.markdown(
+        f'<div style="background-color:#E0F7FA; padding:15px; border-radius:5px; border-left:5px solid #00BCD4; margin-bottom:20px;">{structured_data["suggested_diagnoses_and_care_plans"]}</div>',
+        unsafe_allow_html=True
+    )
+    
+    # Areas of Concern
+    st.markdown("<h3 style='color:#E65100; margin-top:0; border-bottom:2px solid #FFE0B2; padding-bottom:10px;'>Areas of Concern for Discussion with a Healthcare Provider</h3>", unsafe_allow_html=True)
+    
+    st.markdown(
+        f'<div style="background-color:#FFF3E0; padding:15px; border-radius:5px; border-left:5px solid #FF9800; margin-bottom:20px;">{structured_data["areas_of_concern"]}</div>',
+        unsafe_allow_html=True
+    )
+    
+    # Personalized Recommendations
+    st.markdown("<h3 style='color:#33691E; margin-top:0; border-bottom:2px solid #DCEDC8; padding-bottom:10px;'>Personalized Recommendations</h3>", unsafe_allow_html=True)
+    
+    if "personalized_recommendations" in structured_data:
+        recommendations = structured_data["personalized_recommendations"]
+        
+        st.markdown(
+            f'<div style="background-color:#F1F8E9; padding:15px; border-radius:5px; border-left:5px solid #8BC34A; margin-bottom:10px;"><strong>Nutrition:</strong> {recommendations["nutrition"]}</div>',
+            unsafe_allow_html=True
+        )
+        
+        st.markdown(
+            f'<div style="background-color:#F1F8E9; padding:15px; border-radius:5px; border-left:5px solid #8BC34A; margin-bottom:10px;"><strong>Physical Activity:</strong> {recommendations["physical_activity"]}</div>',
+            unsafe_allow_html=True
+        )
+        
+        st.markdown(
+            f'<div style="background-color:#F1F8E9; padding:15px; border-radius:5px; border-left:5px solid #8BC34A; margin-bottom:10px;"><strong>Medication Considerations:</strong> {recommendations["medication_considerations"]}</div>',
+            unsafe_allow_html=True
+        )
+        
+        st.markdown(
+            f'<div style="background-color:#F1F8E9; padding:15px; border-radius:5px; border-left:5px solid #8BC34A; margin-bottom:10px;"><strong>Lifestyle Modifications:</strong> {recommendations["lifestyle_modifications"]}</div>',
+            unsafe_allow_html=True
+        )
+        
+        st.markdown(
+            f'<div style="background-color:#F1F8E9; padding:15px; border-radius:5px; border-left:5px solid #8BC34A; margin-bottom:20px;"><strong>Monitoring Approach:</strong> {recommendations["monitoring_approach"]}</div>',
+            unsafe_allow_html=True
+        )
+    else:
+        # If structured recommendations aren't available, use the standard recommendations field
+        st.markdown(
+            f'<div style="background-color:#F1F8E9; padding:15px; border-radius:5px; border-left:5px solid #8BC34A; margin-bottom:20px;">{structured_data["recommendations"]}</div>',
+            unsafe_allow_html=True
+        )
+
 def show_health_assessment():
     """Display the generated health assessment."""
     if 'health_data' not in st.session_state:
@@ -31,17 +231,30 @@ def show_health_assessment():
             st.rerun()
         return
     
+    # Check if genetic data is available
+    has_genetic_data = 'genetic_profile' in st.session_state and st.session_state.genetic_profile is not None
+    
+    # Check if an assessment exists
+    if has_genetic_data:
+        assessment_exists = 'structured_genetic_health_assessment' in st.session_state
+    else:
+        assessment_exists = 'structured_health_assessment' in st.session_state
+    
     # Check if data has changed since last assessment
-    if 'health_assessment' in st.session_state and 'last_assessed_data' in st.session_state:
+    data_changed = False
+    if assessment_exists and 'last_assessed_data' in st.session_state:
         # Compare current health data with the data used for the last assessment
         current_data_hash = hash(str(st.session_state.health_data))
         last_data_hash = hash(str(st.session_state.last_assessed_data))
         
-        if current_data_hash != last_data_hash:
-            st.warning("⚠️ Your health data has changed since the last assessment. Please run the health assessment again for updated results.")
-    
-    # Check if genetic data is available
-    has_genetic_data = 'genetic_profile' in st.session_state and st.session_state.genetic_profile is not None
+        # If genetic data is available, also check if it has changed
+        if has_genetic_data and 'last_assessed_genetic_data' in st.session_state:
+            current_genetic_hash = hash(str(st.session_state.genetic_profile))
+            last_genetic_hash = hash(str(st.session_state.last_assessed_genetic_data))
+            
+            data_changed = (current_data_hash != last_data_hash) or (current_genetic_hash != last_genetic_hash)
+        else:
+            data_changed = (current_data_hash != last_data_hash)
     
     # Create tabs for different sections - add Genetic Insights tab if genetic data is available
     if has_genetic_data:
@@ -49,6 +262,7 @@ def show_health_assessment():
     else:
         metrics_tab, assessment_tab = st.tabs(["Health Metrics", "Detailed Assessment"])
     
+    # Health Metrics tab content remains the same
     with metrics_tab:
         st.header("Key Health Indicators")
         st.write("These visualizations show where your metrics stand compared to standard health ranges.")
@@ -106,70 +320,64 @@ def show_health_assessment():
             - Obese Class II: 35-39.9
             - Obese Class III: 40+
             """)
-        
-    with assessment_tab:
-            st.header("Your Health Assessment")
-            
-            # Add "Run Health Assessment" button inside the Detailed Assessment tab
-            if 'health_assessment' not in st.session_state:
-                button_text = "Run Health Assessment" if not has_genetic_data else "Run Genetic Health Assessment"
-                run_assessment = st.button(button_text, type="primary", key="run_health_assessment_button")
-            else:
-                button_text = "Run Health Assessment Again" if not has_genetic_data else "Run Genetic Health Assessment Again"
-                run_assessment = st.button(button_text, type="primary", key="run_health_assessment_again_button")
-            
-            if run_assessment:
-                # Display loading animation while generating assessment
-                with st.spinner("Analyzing your health data... This may take a moment"):
-                    # Generate health assessment based on availability of genetic data
-                    if has_genetic_data:
-                        assessment = generate_genetic_health_assessment(
-                            st.session_state.health_data, 
-                            st.session_state.genetic_profile, 
-                            st.secrets["OPENAI_API_KEY"]
-                        )
-                    else:
-                        assessment = generate_health_assessment(
-                            st.session_state.health_data, 
-                            st.secrets["OPENAI_API_KEY"]
-                        )
-                        
-                    st.session_state.health_assessment = assessment
-                    
-                    # Store a copy of the data used for this assessment
-                    st.session_state.last_assessed_data = st.session_state.health_data.copy()
-                    st.rerun()  # Rerun to refresh the UI now that we have the assessment
-            
-            if 'health_assessment' not in st.session_state:
-                # Show message if assessment hasn't been generated yet
-                if has_genetic_data:
-                    st.info("Click the 'Run Genetic Health Assessment' button to generate your personalized assessment incorporating genetic insights.")
-                else:
-                    st.info("Click the 'Run Health Assessment' button to generate your personalized assessment.")
-            else:
-                assessment = st.session_state.health_assessment
-                
-                # Process the assessment to add styling
-                if '\n## ' in assessment:
-                    sections = assessment.split('\n## ')
-                    # Display first section (summary)
-                    st.info(sections[0])
-                    
-                    # Process and display remaining sections with dividers
-                    for section in sections[1:]:
-                        if section.strip():
-                            title_end = section.find('\n')
-                            if title_end > 0:  # Make sure there's a newline
-                                title = section[:title_end].strip()
-                                content = section[title_end:].strip()
-                                
-                                st.markdown(f"### {title}")
-                                st.info(content)
-                else:
-                    # If the assessment doesn't have clear sections, just display it all
-                    st.info(assessment)
+    pass
+
     
-  # Show genetic insights tab if genetic data is available
+    with assessment_tab:
+        st.header("Your Health Assessment")
+        
+        # Display a warning if data has changed
+        if data_changed:
+            st.warning("⚠️ Your health data has changed since the last assessment. Please run the health assessment again for updated results.")
+        
+        # Determine appropriate button text based on context
+        if data_changed:
+            button_text = "Re-run Assessment"
+        elif not assessment_exists:
+            button_text = "Run Health Assessment" if not has_genetic_data else "Run Genetic Health Assessment"
+        else:
+            button_text = "Run Health Assessment Again" if not has_genetic_data else "Run Genetic Health Assessment Again"
+        
+        # Single button for all assessment generation cases
+        run_assessment = st.button(button_text, type="primary")
+        
+        if run_assessment:
+            # Display loading animation while generating assessment
+            with st.spinner("Analyzing your health data... This may take a moment"):
+                # Generate health assessment based on availability of genetic data
+                if has_genetic_data:
+                    generate_genetic_health_assessment(
+                        st.session_state.health_data, 
+                        st.session_state.genetic_profile, 
+                        st.secrets["OPENAI_API_KEY"]
+                    )
+                    # Store copies of the data
+                    st.session_state.last_assessed_data = st.session_state.health_data.copy()
+                    st.session_state.last_assessed_genetic_data = st.session_state.genetic_profile.copy()
+                else:
+                    generate_health_assessment(
+                        st.session_state.health_data, 
+                        st.secrets["OPENAI_API_KEY"]
+                    )
+                    # Store a copy of the data
+                    st.session_state.last_assessed_data = st.session_state.health_data.copy()
+                
+                # Force a rerun to refresh the UI
+                st.rerun()
+        
+        # Display the appropriate assessment based on what's available
+        if has_genetic_data and 'structured_genetic_health_assessment' in st.session_state:
+            display_genetic_health_assessment(st.session_state.structured_genetic_health_assessment)
+        elif 'structured_health_assessment' in st.session_state:
+            display_health_assessment(st.session_state.structured_health_assessment)
+        else:
+            # Show message if assessment hasn't been generated yet
+            if has_genetic_data:
+                st.info("Click the 'Run Genetic Health Assessment' button to generate your personalized assessment incorporating genetic insights.")
+            else:
+                st.info("Click the 'Run Health Assessment' button to generate your personalized assessment.")
+    
+    # Show genetic insights tab if genetic data is available
     if has_genetic_data:
         with genetic_tab:
             st.header("Your Genetic Insights")
@@ -374,3 +582,6 @@ def show_health_assessment():
                 
                 These insights will help you understand how your genetic variants may influence your nutritional needs.
                 """)
+            pass
+
+            
