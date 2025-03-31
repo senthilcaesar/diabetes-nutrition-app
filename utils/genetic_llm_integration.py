@@ -9,6 +9,8 @@ import streamlit as st
 from typing import Dict, List, Optional, Any
 from utils.llm_integration import create_nutrition_plan_tools, format_structured_nutrition_plan
 
+GPT_MODEL = "gpt-4o"
+
 def generate_genetic_enhanced_nutrition_plan(user_data, genetic_profile, api_key):
     """
     Generate a nutrition plan that incorporates genetic insights.
@@ -20,7 +22,7 @@ def generate_genetic_enhanced_nutrition_plan(user_data, genetic_profile, api_key
     
     client = OpenAI(api_key=api_key)
     response = client.chat.completions.create(
-        model="gpt-4.5-preview",
+        model=GPT_MODEL,
         messages=[
             {"role": "system", "content": "You are a medical nutrition specialist with expertise in both diabetes management and nutrigenomics. Create a personalized nutrition plan that integrates both health data and genetic insights."},
             {"role": "user", "content": prompt}
@@ -313,7 +315,7 @@ def generate_genetic_health_assessment(user_data, genetic_profile, api_key):
     tools = create_genetic_health_assessment_tools()
     
     response = client.chat.completions.create(
-        model="gpt-4.5-preview",  # Use appropriate model
+        model=GPT_MODEL,  # Use appropriate model
         messages=[
             {"role": "system", "content": """
             You are an expert endocrinologist specializing in personalized diabetes care, metabolic health assessment and personalized medicine.
