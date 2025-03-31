@@ -84,13 +84,19 @@ def display_health_assessment(structured_data):
         unsafe_allow_html=True
     )
     
-    # Recommendations
+    # Recommendations as a list of points
     st.markdown("<h3 style='color:#33691E; margin-top:0; border-bottom:2px solid #DCEDC8; padding-bottom:10px;'>Recommendations for Health Management Improvement</h3>", unsafe_allow_html=True)
+
+    # Create a styled unordered list for recommendations
+    recommendations_html = '<div style="background-color:#F1F8E9; padding:15px; border-radius:5px; border-left:5px solid #8BC34A; margin-bottom:20px;"><ul style="list-style-type:disc; margin-left:20px; padding-left:0;">'
+
+    for recommendation in structured_data["recommendations"]:
+        recommendations_html += f'<li style="margin-bottom:8px;">{recommendation}</li>'
+
+    recommendations_html += '</ul></div>'
+
+    st.markdown(recommendations_html, unsafe_allow_html=True)
     
-    st.markdown(
-        f'<div style="background-color:#F1F8E9; padding:15px; border-radius:5px; border-left:5px solid #8BC34A; margin-bottom:20px;">{structured_data["recommendations"]}</div>',
-        unsafe_allow_html=True
-    )
     
 def display_genetic_health_assessment(structured_data):
     """

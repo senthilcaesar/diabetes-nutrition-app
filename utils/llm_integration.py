@@ -2,6 +2,8 @@ from openai import OpenAI
 import json
 import streamlit as st
 
+GPT_MODEL = "gpt-4o"  # Specify the model to use
+
 # This module handles all OpenAI API interactions for the diabetes nutrition plan application
 def initialize_openai_client(api_key):
     """Initialize and return an OpenAI client with the provided API key."""
@@ -53,8 +55,11 @@ def create_health_assessment_tools():
                             "description": "Areas of concern that should be discussed with a healthcare provider."
                         },
                         "recommendations": {
-                            "type": "string",
-                            "description": "Recommendations for health management improvement."
+                            "type": "array",
+                            "description": "List of specific recommendations for health management improvement.",
+                            "items": {
+                                "type": "string"
+                            }
                         },
                         "genetic_factors": {
                             "type": "object",
@@ -84,19 +89,19 @@ def generate_health_assessment(user_data, api_key):
     tools = create_health_assessment_tools()
     
     response = client.chat.completions.create(
-        model="gpt-4.5-preview",  # Use GPT-4 for more comprehensive medical analysis
+        model=GPT_MODEL,  # Use GPT-4 for more comprehensive medical analysis
         messages=[
             {"role": "system", "content": """
-            You are an expert endocrinologist specializing in personalized diabetes care and metabolic health assessment.
-            Your task is to transform patient data into actionable insights by analyzing all available patient data, 
-            suggesting diagnoses and generating care plans.
+            You are an expert endocrinologist specializing in personalized diabetes care and metabolic 
+            health assessment. Your task is to transform patient data into actionable insights by analyzing 
+            all available patient data, suggesting diagnoses and generating care plans.
             Please focus on diabetes management, identify potential risks and areas of concern, and recommend 
             strategies for improvement. You must return your assessment in the exact structured format requested.
             """
             },
             {"role": "user", "content": prompt}
         ],
-        temperature=0.2,  # Lower temperature for more consistent medical information
+        temperature=0.3,  # Lower temperature for more consistent medical information
         tools=tools,
         tool_choice={"type": "function", "function": {"name": "generate_structured_health_assessment"}}
     )
@@ -401,7 +406,7 @@ def generate_nutrition_plan(user_data, api_key):
     tools = create_nutrition_plan_tools()
     
     response = client.chat.completions.create(
-        model="gpt-4.5-preview",  # Adjust based on availability and needs
+        model=GPT_MODEL,  # Adjust based on availability and needs
         messages=[
             {"role": "system", "content": "You are a medical nutrition specialist with expertise in diabetes management. Create a personalized nutrition plan based on the provided health and socioeconomic data."},
             {"role": "user", "content": prompt}
@@ -716,7 +721,7 @@ def generate_visual_guidance(nutrition_plan, literacy_level, plan_complexity, ap
     
     client = OpenAI(api_key=api_key)
     response = client.chat.completions.create(
-        model="gpt-4",
+        model=GPT_MODEL,
         messages=[
             {"role": "system", "content": "You are a visual health educator specialized in creating accessible diabetes education materials."},
             {"role": "user", "content": prompt}
