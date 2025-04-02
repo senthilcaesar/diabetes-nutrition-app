@@ -96,8 +96,7 @@ def display_health_assessment(structured_data):
     recommendations_html += '</ul></div>'
 
     st.markdown(recommendations_html, unsafe_allow_html=True)
-    
-    
+      
 def display_genetic_health_assessment(structured_data):
     """
     Display genetic health assessment with consistent formatting across all sections.

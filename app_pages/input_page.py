@@ -5,14 +5,14 @@ Handles user input for health, socioeconomic, and genetic data.
 
 import streamlit as st
 import time
+import pandas as pd
 
 # Import from utils directory
 from utils.data_processing import combine_user_data
 from utils.ui_components import input_health_data, input_socioeconomic_data, navigate_to_view_plan
-# Update the import to use the correct module
 from utils.genetic_ui_components import input_genetic_data
 from utils.llm_integration import generate_nutrition_plan, generate_visual_guidance
-from utils.genetic_llm_integration import generate_genetic_enhanced_nutrition_plan, generate_genetic_health_assessment
+from utils.genetic_llm_integration import generate_genetic_enhanced_nutrition_plan
 from utils.genetic_processing import DIABETES_GENETIC_MARKERS
 
 def display_user_data_review():

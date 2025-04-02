@@ -1,6 +1,6 @@
 # Personalized Diabetes Nutrition Plan
 
-An AI-powered web application that provides personalized nutrition recommendations for individuals with diabetes, considering their health metrics, socioeconomic background, and genetic profile.
+The app is a Streamlit web application for diabetes nutrition planning with four main pages: input collection, personalized nutrition plans, health assessment, and educational resources. It uses OpenAI's GPT-4 to generate tailored recommendations based on the user's diabetes type, health metrics, and socioeconomic factors, with optional genetic data integration for more targeted advice.
 
 ## Live Application
 
