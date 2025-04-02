@@ -4,7 +4,7 @@ The app is a Streamlit web application for diabetes nutrition planning with four
 
 ## Live Application
 
-Access the live application at: [https://diabetes-nutrition-app.streamlit.app/](https://diabetes-nutrition-app.streamlit.app/)
+Access the live application at: [https://diabetes-nutrition.streamlit.app/](https://diabetes-nutrition.streamlit.app/)
 
 ## Project Structure
 
