@@ -9,7 +9,7 @@ import streamlit as st
 from typing import Dict, List, Optional, Any
 from utils.llm_integration import create_nutrition_plan_tools, format_structured_nutrition_plan
 
-GPT_MODEL = "gpt-4o"
+GPT_MODEL = "gpt-4.5-preview-2025-02-27"
 
 def generate_genetic_enhanced_nutrition_plan(user_data, genetic_profile, api_key):
     """
