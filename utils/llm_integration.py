@@ -562,11 +562,10 @@ def format_structured_nutrition_plan(structured_data):
     
         # Simple Recipes with chef hat icon
     if "recipes" in structured_data and structured_data["recipes"]:
-        recipes_tips += "# 👨‍🍳 Simple Recipes\n\n"
         
         for recipe in structured_data["recipes"]:
             recipes_tips += "<div class='recipe-card'>\n\n"
-            recipes_tips += f"### 🍳 {recipe['name']}\n\n"
+            recipes_tips += f"### {recipe['name']}\n\n"
             recipes_tips += f"**⏱️ Preparation Time:** {recipe['prep_time']}\n\n"
             recipes_tips += f"**🛒 Ingredients:**\n{recipe['ingredients']}\n\n"
             recipes_tips += f"**📝 Instructions:**\n{recipe['instructions']}\n\n"

@@ -7,16 +7,528 @@ from openai import OpenAI
 import json
 import streamlit as st
 from typing import Dict, List, Optional, Any
-from utils.llm_integration import create_nutrition_plan_tools, format_structured_nutrition_plan
 
 GPT_MODEL = "gpt-4.5-preview-2025-02-27"
+
+def format_structured_genetic_nutrition_plan(structured_data):
+    """
+    Convert the structured genetic nutrition plan data into four separate sections:
+    1. Overview - General nutrition plan overview with light genetic context
+    2. Meal Plan - Genetically optimized meal plan
+    3. Genetic Optimization - Dedicated genetic insights section
+    4. Recipes & Tips - Recipe suggestions and blood sugar management tips
+    
+    Returns:
+        tuple: (overview, meal_plan, genetic_section, recipes_tips) sections as formatted text
+    """
+    # SECTION 1: OVERVIEW
+    overview = ""
+    
+    # Daily Caloric Target
+    caloric = structured_data["nutritional_overview"]["daily_caloric_target"]
+    overview += f"### 🔥 Daily Caloric Target: {caloric['calories']} calories\n\n"
+    overview += f"{caloric['explanation']}\n\n"
+    
+    # Macronutrient Distribution with visualization-like formatting
+    overview += "### 🥗 Macronutrient Distribution\n\n"
+    
+    macro = structured_data["nutritional_overview"]["macronutrient_distribution"]
+    
+    # Create a visually appealing macronutrient table
+    overview += "| Nutrient | Percentage | Grams |\n"
+    overview += "|----------|------------|-------|\n"
+    overview += f"| **Carbohydrates** | {macro['carbohydrates']['percentage']}% | {macro['carbohydrates']['grams']}g |\n"
+    overview += f"| **Protein** | {macro['protein']['percentage']}% | {macro['protein']['grams']}g |\n"
+    overview += f"| **Fat** | {macro['fat']['percentage']}% | {macro['fat']['grams']}g |\n\n"
+    
+    # Carbohydrate recommendations - keep genetic mentions minimal here
+    overview += f"**Carbohydrates:** {macro['carbohydrates']['recommendations']}\n\n"
+    overview += f"**Protein:** {macro['protein']['recommendations']}\n\n"
+    overview += f"**Fat:** {macro['fat']['recommendations']}\n\n"
+    
+    # Meal Structure with clock icon
+    structure = structured_data["nutritional_overview"]["meal_structure"]
+    overview += "### ⏰ Meal Structure and Timing\n\n"
+    overview += f"**Meal Frequency:** {structure['meal_frequency']}\n\n"
+    overview += f"**Timing Recommendations:** {structure['timing_recommendations']}\n\n"
+    overview += f"**Portion Guidance:** {structure['portion_guidance']}\n\n"
+    
+    overview += "---\n\n"
+    
+    # Recommended Foods section with thumbs up icon
+    overview += "### Recommended Foods\n\n"
+
+    foods = structured_data["recommended_foods"]
+
+    # Create a table for foods with headers
+    overview += "| Category | Recommended Foods |\n"
+    overview += "|----------|-------------------|\n"
+
+    # Add carbohydrates to table
+    carbs_list = ", ".join(foods["carbohydrates"])
+    overview += f"| 🌾 **Carbohydrates** | {carbs_list} |\n"
+
+    # Add proteins to table
+    proteins_list = ", ".join(foods["proteins"])
+    overview += f"| 🥩 **Proteins** | {proteins_list} |\n"
+
+    # Add fats to table
+    fats_list = ", ".join(foods["fats"])
+    overview += f"| 🥑 **Fats** | {fats_list} |\n"
+
+    # Add vegetables to table
+    vegetables_list = ", ".join(foods["vegetables"])
+    overview += f"| 🥦 **Vegetables** | {vegetables_list} |\n"
+
+    # Add fruits to table
+    fruits_list = ", ".join(foods["fruits"])
+    overview += f"| 🍎 **Fruits** | {fruits_list} |\n"
+
+    # Add beverages to table
+    beverages_list = ", ".join(foods["beverages"])
+    overview += f"| 🥤 **Beverages** | {beverages_list} |\n\n"
+    
+    # SECTION 2: MEAL PLAN
+    meal_plan = ""
+    
+    # Sample Meal Plans with calendar icon and badge indicating genetic optimization
+    # meal_plan += """## 📅 Meal Plan
+
+
+    meal_plans = structured_data["meal_plans"]
+
+    # Create tables for each day
+    for day_num in range(1, 4):
+        day_key = f'day{day_num}'
+        day_meals = meal_plans[day_key]
+        
+        meal_plan += f"### 🍽️ Day {day_num}\n\n"
+        
+        # Create table header
+        meal_plan += "| Meal | Description |\n"
+        meal_plan += "|------|-------------|\n"
+        
+        # Add breakfast
+        meal_plan += f"| 🌞 **Breakfast** | {day_meals['breakfast']} |\n"
+        
+        # Add morning snack if available
+        if day_meals.get('morning_snack'):
+            meal_plan += f"| 🥪 **Morning Snack** | {day_meals['morning_snack']} |\n"
+        
+        # Add lunch
+        meal_plan += f"| 🍲 **Lunch** | {day_meals['lunch']} |\n"
+        
+        # Add afternoon snack if available
+        if day_meals.get('afternoon_snack'):
+            meal_plan += f"| 🍏 **Afternoon Snack** | {day_meals['afternoon_snack']} |\n"
+        
+        # Add dinner
+        meal_plan += f"| 🍽️ **Dinner** | {day_meals['dinner']} |\n"
+        
+        # Add evening snack if available
+        if day_meals.get('evening_snack'):
+            meal_plan += f"| 🥛 **Evening Snack** | {day_meals['evening_snack']} |\n"
+        
+        meal_plan += "\n\n"
+    
+    # SECTION 3: GENETIC OPTIMIZATION TAB - This section is fully dedicated to genetic insights
+    genetic_section = ""
+    
+    
+    # Add Genetic Optimization Strategies section
+    if "genetic_optimization_strategies" in structured_data:
+        genetic = structured_data["genetic_optimization_strategies"]
+        
+        # Add each genetic strategy with appropriate formatting
+        if "carb_metabolism" in genetic:
+            genetic_section += f"""
+### Carbohydrate Metabolism
+
+<div style="
+    background-color: #E8F5E9; 
+    border-left: 5px solid #4CAF50;
+    padding: 15px; 
+    border-radius: 5px;
+    margin-bottom: 20px;
+">
+{genetic['carb_metabolism']}
+</div>
+"""
+        
+        if "fat_metabolism" in genetic:
+            genetic_section += f"""
+### Fat Metabolism
+
+<div style="
+    background-color: #FFF8E1; 
+    border-left: 5px solid #FFC107;
+    padding: 15px; 
+    border-radius: 5px;
+    margin-bottom: 20px;
+">
+{genetic['fat_metabolism']}
+</div>
+"""
+        
+        if "inflammation_response" in genetic:
+            genetic_section += f"""
+### Inflammation Response
+
+<div style="
+    background-color: #FFEBEE; 
+    border-left: 5px solid #F44336;
+    padding: 15px; 
+    border-radius: 5px;
+    margin-bottom: 20px;
+">
+{genetic['inflammation_response']}
+</div>
+"""
+            
+        if "nutrient_processing" in genetic:
+            genetic_section += f"""
+### Nutrient Processing
+
+<div style="
+    background-color: #E1F5FE; 
+    border-left: 5px solid #03A9F4;
+    padding: 15px; 
+    border-radius: 5px;
+    margin-bottom: 20px;
+">
+{genetic['nutrient_processing']}
+</div>
+"""
+            
+        if "caffeine_metabolism" in genetic:
+            genetic_section += f"""
+### Caffeine Metabolism
+
+<div style="
+    background-color: #F3E5F5; 
+    border-left: 5px solid #9C27B0;
+    padding: 15px; 
+    border-radius: 5px;
+    margin-bottom: 20px;
+">
+{genetic['caffeine_metabolism']}
+</div>
+"""
+    
+    # Add specific foods section based on genetics
+    genetic_section += """
+### Recommended Foods Based on Your Genetic Profile
+"""
+    
+    # Create a list of genetically recommended foods from the structured data
+    # This would typically be custom-filtered from the recommended_foods based on genetic profile
+    genetic_section += "| Category | Reason | Foods |\n"
+    genetic_section += "|----------|--------|-------|\n"
+    
+    # Add some genetic-specific food recommendations
+    # These would normally come from the structured data, but we're creating examples
+    if "genetic_food_recommendations" in structured_data:
+        for rec in structured_data.get("genetic_food_recommendations", []):
+            genetic_section += f"| **{rec.get('category', '')}** | {rec.get('reason', '')} | {rec.get('foods', '')} |\n"
+    else:
+        # Default recommendations if not provided
+        genetic_section += "| **Omega-3 Sources** | Beneficial for your inflammation profile | Fatty fish, walnuts, flaxseeds |\n"
+        genetic_section += "| **Antioxidant-Rich Foods** | Support your genetic response to oxidative stress | Berries, colorful vegetables, green tea |\n"
+        genetic_section += "| **Fiber Sources** | Optimal for your carbohydrate metabolism | Legumes, whole grains, vegetables |\n"
+    
+    # Add disclaimer
+    genetic_section += """
+### Genetic Nutrition Disclaimer
+
+<div style="
+    background-color: #F3E5F5; 
+    padding: 15px; 
+    border-radius: 5px;
+    margin: 20px 0;
+">
+<p>The genetic optimization suggestions provided are based on a limited set of genetic markers and current scientific understanding, which continues to evolve. Individual responses may vary, and these recommendations should be considered as complementary to standard diabetes management practices.</p>
+
+<p>Always consult with healthcare providers before making significant changes to your diet or lifestyle based on genetic information.</p>
+</div>
+"""
+    
+    # SECTION 4: RECIPES & TIPS
+    recipes_tips = ""
+    
+    # Simple Recipes with chef hat icon
+    if "recipes" in structured_data and structured_data["recipes"]:
+        
+        for recipe in structured_data["recipes"]:
+            recipes_tips += "<div class='recipe-card'>\n\n"
+            recipes_tips += f"## {recipe['name']}\n\n"
+            recipes_tips += f"**⏱️ Preparation Time:** {recipe['prep_time']}\n\n"
+            recipes_tips += f"**🛒 Ingredients:**\n{recipe['ingredients']}\n\n"
+            recipes_tips += f"**📝 Instructions:**\n{recipe['instructions']}\n\n"
+            recipes_tips += f"**💪 Nutritional Benefits:** {recipe['nutritional_benefits']}\n\n"
+            
+            # Add genetic note if available
+            if 'genetic_note' in recipe:
+                recipes_tips += f"**🧬 Genetic Benefit:** {recipe['genetic_note']}\n\n"
+                
+            recipes_tips += "</div>\n\n"
+        
+        recipes_tips += "---\n\n"
+
+    # Foods to Limit section with stop sign icon
+    recipes_tips += "# 🛑 Foods to Limit or Avoid\n\n"
+
+    # Create table header
+    recipes_tips += "| Food Category | Why to Limit | Better Alternatives |\n"
+    recipes_tips += "|---------------|-------------|---------------------|\n"
+
+    # Add each food item as a row in the table
+    for item in structured_data["foods_to_limit"]:
+        recipes_tips += f"| **{item['food_category']}** | {item['reason']} | {item['alternatives']} |\n"
+
+    recipes_tips += "---\n\n"
+    
+    # Blood Sugar Management with chart icon
+    if "blood_sugar_management" in structured_data:
+        recipes_tips += "# 📈 Blood Sugar Management Strategies\n\n"
+        
+        bsm = structured_data["blood_sugar_management"]
+        
+        recipes_tips += "<div class='management-card'>\n\n"
+        recipes_tips += "### 📉 Preventing Low Blood Sugar (Hypoglycemia)\n\n"
+        recipes_tips += f"{bsm['hypoglycemia_prevention']}\n\n"
+        recipes_tips += "</div>\n\n"
+        
+        recipes_tips += "<div class='management-card'>\n\n"
+        recipes_tips += "### 📈 Managing High Blood Sugar (Hyperglycemia)\n\n"
+        recipes_tips += f"{bsm['hyperglycemia_management']}\n\n"
+        recipes_tips += "</div>\n\n"
+        
+        recipes_tips += "<div class='management-card'>\n\n"
+        recipes_tips += "### ⏰ Meal Timing Strategies\n\n"
+        recipes_tips += f"{bsm['meal_timing_strategies']}\n\n"
+        recipes_tips += "</div>\n\n"
+        
+        recipes_tips += "<div class='management-card'>\n\n"
+        recipes_tips += "### 🥕 Smart Snacking\n\n"
+        recipes_tips += f"{bsm['snack_recommendations']}\n\n"
+        recipes_tips += "</div>\n\n"
+    
+    # Make sure to return all four values
+    return overview, meal_plan, genetic_section, recipes_tips
+
+def create_genetic_nutrition_plan_tools():
+    """
+    Create a structured tools schema for generating genetically optimized nutrition plans.
+    
+    Returns:
+        list: A list containing the function schema for genetic nutrition plan
+    """
+    tools = [
+        {
+            "type": "function",
+            "function": {
+                "name": "generate_structured_genetic_nutrition_plan",
+                "description": "Generate a structured nutrition plan for a diabetes patient that incorporates genetic insights alongside health and socioeconomic data.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "introduction": {
+                            "type": "string",
+                            "description": "A personalized introduction to the nutrition plan that addresses the individual's specific situation including genetic factors."
+                        },
+                        "nutritional_overview": {
+                            "type": "object",
+                            "description": "Overview of the nutritional approach and guidelines with genetic optimization",
+                            "properties": {
+                                "daily_caloric_target": {
+                                    "type": "object",
+                                    "properties": {
+                                        "calories": {"type": "number"},
+                                        "explanation": {"type": "string"}
+                                    }
+                                },
+                                "macronutrient_distribution": {
+                                    "type": "object",
+                                    "properties": {
+                                        "carbohydrates": {
+                                            "type": "object",
+                                            "properties": {
+                                                "percentage": {"type": "number"},
+                                                "grams": {"type": "number"},
+                                                "recommendations": {"type": "string"}
+                                            }
+                                        },
+                                        "protein": {
+                                            "type": "object",
+                                            "properties": {
+                                                "percentage": {"type": "number"},
+                                                "grams": {"type": "number"},
+                                                "recommendations": {"type": "string"}
+                                            }
+                                        },
+                                        "fat": {
+                                            "type": "object",
+                                            "properties": {
+                                                "percentage": {"type": "number"},
+                                                "grams": {"type": "number"},
+                                                "recommendations": {"type": "string"}
+                                            }
+                                        }
+                                    }
+                                },
+                                "meal_structure": {
+                                    "type": "object",
+                                    "properties": {
+                                        "meal_frequency": {"type": "string"},
+                                        "timing_recommendations": {"type": "string"},
+                                        "portion_guidance": {"type": "string"}
+                                    }
+                                }
+                            }
+                        },
+                        "genetic_optimization_strategies": {
+                            "type": "object",
+                            "description": "Specific nutrition strategies based on genetic profile",
+                            "properties": {
+                                "carb_metabolism": {"type": "string"},
+                                "fat_metabolism": {"type": "string"},
+                                "inflammation_response": {"type": "string"},
+                                "nutrient_processing": {"type": "string"},
+                                "caffeine_metabolism": {"type": "string"}
+                            }
+                        },
+                        "recommended_foods": {
+                            "type": "object",
+                            "description": "Foods that are recommended based on both diabetes management and genetic profile",
+                            "properties": {
+                                "carbohydrates": {
+                                    "type": "array",
+                                    "items": {"type": "string"}
+                                },
+                                "proteins": {
+                                    "type": "array",
+                                    "items": {"type": "string"}
+                                },
+                                "fats": {
+                                    "type": "array",
+                                    "items": {"type": "string"}
+                                },
+                                "vegetables": {
+                                    "type": "array",
+                                    "items": {"type": "string"}
+                                },
+                                "fruits": {
+                                    "type": "array",
+                                    "items": {"type": "string"}
+                                },
+                                "beverages": {
+                                    "type": "array",
+                                    "items": {"type": "string"}
+                                }
+                            }
+                        },
+                        "foods_to_limit": {
+                            "type": "array",
+                            "description": "Foods that should be limited or avoided based on both diabetes management and genetic factors",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "food_category": {"type": "string"},
+                                    "reason": {"type": "string"},
+                                    "alternatives": {"type": "string"},
+                                    "genetic_context": {"type": "string"}
+                                }
+                            }
+                        },
+                        "meal_plans": {
+                            "type": "object",
+                            "description": "Sample genetically-optimized meal plans for different days",
+                            "properties": {
+                                "day1": {
+                                    "type": "object",
+                                    "properties": {
+                                        "breakfast": {"type": "string"},
+                                        "morning_snack": {"type": "string"},
+                                        "lunch": {"type": "string"},
+                                        "afternoon_snack": {"type": "string"},
+                                        "dinner": {"type": "string"},
+                                        "evening_snack": {"type": "string"}
+                                    }
+                                },
+                                "day2": {
+                                    "type": "object",
+                                    "properties": {
+                                        "breakfast": {"type": "string"},
+                                        "morning_snack": {"type": "string"},
+                                        "lunch": {"type": "string"},
+                                        "afternoon_snack": {"type": "string"},
+                                        "dinner": {"type": "string"},
+                                        "evening_snack": {"type": "string"}
+                                    }
+                                },
+                                "day3": {
+                                    "type": "object",
+                                    "properties": {
+                                        "breakfast": {"type": "string"},
+                                        "morning_snack": {"type": "string"},
+                                        "lunch": {"type": "string"},
+                                        "afternoon_snack": {"type": "string"},
+                                        "dinner": {"type": "string"},
+                                        "evening_snack": {"type": "string"}
+                                    }
+                                }
+                            }
+                        },
+                        "recipes": {
+                            "type": "array",
+                            "description": "Simple recipes tailored to the individual's preferences, resources, and genetic profile",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {"type": "string"},
+                                    "ingredients": {"type": "string"},
+                                    "instructions": {"type": "string"},
+                                    "prep_time": {"type": "string"},
+                                    "nutritional_benefits": {"type": "string"},
+                                    "genetic_note": {"type": "string"}
+                                }
+                            }
+                        },
+                        "blood_sugar_management": {
+                            "type": "object",
+                            "description": "Strategies for managing blood sugar through nutrition with genetic optimization",
+                            "properties": {
+                                "hypoglycemia_prevention": {"type": "string"},
+                                "hyperglycemia_management": {"type": "string"},
+                                "meal_timing_strategies": {"type": "string"},
+                                "snack_recommendations": {"type": "string"},
+                                "genetic_considerations": {"type": "string"}
+                            }
+                        },
+                        "genetic_disclaimer": {
+                            "type": "string",
+                            "description": "Disclaimer about genetic-based nutrition recommendations and their limitations"
+                        }
+                    },
+                    "required": ["introduction", "nutritional_overview", "genetic_optimization_strategies", "recommended_foods", "foods_to_limit", "meal_plans"]
+                }
+            }
+        }
+    ]
+    
+    return tools
 
 def generate_genetic_enhanced_nutrition_plan(user_data, genetic_profile, api_key):
     """
     Generate a nutrition plan that incorporates genetic insights.
     
+    Args:
+        user_data (dict): Dictionary containing user health and socioeconomic data
+        genetic_profile (dict): Dictionary containing genetic nutrition profile
+        api_key (str): OpenAI API key
+        
     Returns:
-        tuple: (nutrition_plan, overview, meal_plan, recipes_tips) - complete plan and individual sections
+        tuple: (nutrition_plan, overview, meal_plan, genetic_section, recipes_tips) - complete plan and individual sections
     """
     prompt = create_genetic_nutrition_plan_prompt(user_data, genetic_profile)
     
@@ -28,8 +540,8 @@ def generate_genetic_enhanced_nutrition_plan(user_data, genetic_profile, api_key
             {"role": "user", "content": prompt}
         ],
         temperature=0.3,
-        tools=create_nutrition_plan_tools(),
-        tool_choice={"type": "function", "function": {"name": "generate_structured_nutrition_plan"}}
+        tools=create_genetic_nutrition_plan_tools(),
+        tool_choice={"type": "function", "function": {"name": "generate_structured_genetic_nutrition_plan"}}
     )
     
     # Extract the structured response
@@ -37,12 +549,19 @@ def generate_genetic_enhanced_nutrition_plan(user_data, genetic_profile, api_key
     structured_plan = json.loads(function_call.function.arguments)
     
     # Format the structured data into separate sections
-    overview, meal_plan, recipes_tips = format_structured_nutrition_plan(structured_plan)
+    overview, meal_plan, genetic_section, recipes_tips = format_structured_genetic_nutrition_plan(structured_plan)
     
     # Also create a complete plan by combining all sections (for backward compatibility)
-    nutrition_plan = overview + "\n" + meal_plan + "\n" + recipes_tips
+    nutrition_plan = overview + "\n" + meal_plan + "\n" + genetic_section + "\n" + recipes_tips
     
-    return nutrition_plan, overview, meal_plan, recipes_tips
+    # Store all sections in session state
+    st.session_state.nutrition_plan = nutrition_plan
+    st.session_state.nutrition_overview = overview
+    st.session_state.nutrition_meal_plan = meal_plan
+    st.session_state.nutrition_genetic_section = genetic_section
+    st.session_state.nutrition_recipes_tips = recipes_tips
+    
+    return nutrition_plan, overview, meal_plan, genetic_section, recipes_tips
 
 def create_genetic_nutrition_plan_prompt(user_data: Dict, genetic_profile: Dict) -> str:
     """
@@ -208,6 +727,8 @@ def create_genetic_nutrition_plan_prompt(user_data: Dict, genetic_profile: Dict)
     Return the plan in a well-formatted structure with clear sections, including a specific section called "Genetic Optimization Strategies" that explains how this plan is tailored to their unique genetic profile.
     """
     
+    print(prompt)
+
     return prompt
 
 def create_genetic_health_assessment_tools():

@@ -23,6 +23,9 @@ def show_nutrition_plan():
             st.rerun()
         return
     
+    # Get the nutrition plan from session state
+    nutrition_plan = st.session_state.nutrition_plan
+    
     # Check if genetic data is available
     has_genetic_data = 'genetic_profile' in st.session_state and st.session_state.genetic_profile is not None
     
@@ -36,136 +39,122 @@ def show_nutrition_plan():
             "Overview", "Meal Plan", "Recipes & Tips", "Visual Guides"
         ])
     
-    # Split the nutrition plan into sections
-    nutrition_plan = st.session_state.nutrition_plan
-    if "\n## " in nutrition_plan:
-        sections = nutrition_plan.split("\n## ")
-        sections = ["## " + section if i > 0 else section for i, section in enumerate(sections)]
-    else:
-        sections = nutrition_plan.split("\n### ")
-        sections = ["### " + section if i > 0 else section for i, section in enumerate(sections)]
-    
-    # Extract main sections
-    overview_sections = [s for s in sections if any(x in s.lower() for x in [
-        "introduction", "overview", "caloric", "macronutrient", "recommended"
-    ])]
-    
-    meal_plan_sections = [s for s in sections if any(x in s.lower() for x in [
-        "meal plan", "sample meal", "day 1", "day 2", "day 3"
-    ])]
-    
-    # Look for genetic-specific sections if genetic data is available
-    if has_genetic_data:
-        genetic_sections = [s for s in sections if any(x in s.lower() for x in [
-            "genetic", "gene", "dna", "nutrigenomics", "personalized metabolism"
-        ])]
-    else:
-        genetic_sections = []
-    
-    recipe_sections = [s for s in sections if any(x in s.lower() for x in [
-        "recipe", "tips", "avoid", "limit", "portion", "guideline", "stabilize"
-    ]) and not any(x in s.lower() for x in ["genetic", "gene", "dna"])]  # Exclude genetic sections
-    
-    # Display sections in their respective tabs
+    # Display genetic badge at the top if genetic data is used
+    # Overview tab content
     with overview_tab:
         # Display genetic badge at the top if genetic data is used
-        if has_genetic_data:
-            st.markdown(
-                """
-                <div style="
-                    background-color: #E8EAF6; 
-                    border-left: 5px solid #3F51B5;
-                    padding: 10px; 
-                    border-radius: 4px;
-                    margin-bottom: 20px;
-                    display: flex;
-                    align-items: center;
-                ">
-                    <span style="font-size: 24px; margin-right: 10px;">🧬</span>
-                    <span>This nutrition plan has been optimized based on your genetic profile.</span>
-                </div>
-                """, 
-                unsafe_allow_html=True
-            )
             
         if 'nutrition_overview' in st.session_state:
             st.markdown(st.session_state.nutrition_overview, unsafe_allow_html=True)
         else:
-            # Fall back to extracting from the complete plan
-            overview_sections = [s for s in sections if any(x in s.lower() for x in [
+            # Fall back to extracting from the complete plan if separate sections aren't available
+            overview_sections = [s for s in nutrition_plan.split("\n## ") if any(x in s.lower() for x in [
                 "introduction", "overview", "caloric", "macronutrient", "recommended"
             ])]
             for section in overview_sections:
                 st.markdown(section, unsafe_allow_html=True)
     
+    # Meal Plan tab content
     with meal_plan_tab:
+        # For genetic plans, add a small indicator that this is genetically optimized
+            
         if 'nutrition_meal_plan' in st.session_state:
             st.markdown(st.session_state.nutrition_meal_plan, unsafe_allow_html=True)
         else:
             # Fall back to extracting from the complete plan
-            meal_plan_sections = [s for s in sections if any(x in s.lower() for x in [
+            meal_plan_sections = [s for s in nutrition_plan.split("\n## ") if any(x in s.lower() for x in [
                 "meal plan", "sample meal", "day 1", "day 2", "day 3"
             ])]
             for section in meal_plan_sections:
                 st.markdown(section, unsafe_allow_html=True)
     
-    # Show genetic optimization tab if genetic data is available
+    # Genetic Optimization tab (only shown if genetic data is available)
     if has_genetic_data:
         with genetic_tab:
-            st.header("Genetic Optimization Strategies")
             
-            if genetic_sections:
-                for section in genetic_sections:
-                    st.markdown(section)
+            # If we have the dedicated genetic section from the structured plan, use it
+            if 'nutrition_genetic_section' in st.session_state:
+                st.markdown(st.session_state.nutrition_genetic_section, unsafe_allow_html=True)
             else:
-                # If no explicit genetic sections found, display genetic profile information
-                genetic_profile = st.session_state.genetic_profile
+                # If no structured genetic section is available, try to find relevant sections
+                # from the complete plan or fall back to the genetic profile
+                genetic_sections = [s for s in nutrition_plan.split("\n## ") if any(x in s.lower() for x in [
+                    "genetic", "gene", "dna", "nutrigenomics", "personalized metabolism"
+                ])]
                 
-                st.subheader("Your Genetic Profile Summary")
-                st.info(genetic_profile.get('overall_summary', 'No genetic summary available.'))
-                
-                st.subheader("How Your Nutrition Plan Has Been Optimized")
-                
-                # Create columns for each major genetic factor
-                col1, col2 = st.columns(2)
-                
-                with col1:
-                    st.markdown("#### Carbohydrate Metabolism")
-                    carb_data = genetic_profile.get("carb_metabolism", {})
-                    st.markdown(f"**Your Profile:** {carb_data.get('carb_sensitivity', 'Normal').title()}")
-                    st.markdown(f"**What this means:** {carb_data.get('explanation', '')}")
+                if genetic_sections:
+                    for section in genetic_sections:
+                        st.markdown(section, unsafe_allow_html=True)
+                else:
+                    # If no explicit genetic sections found, display genetic profile information
+                    genetic_profile = st.session_state.genetic_profile
                     
-                    st.markdown("#### Fat Metabolism")
-                    fat_data = genetic_profile.get("fat_metabolism", {})
-                    st.markdown(f"**Your Profile:** {fat_data.get('saturated_fat_sensitivity', 'Normal').title()} sensitivity to saturated fats")
-                    st.markdown(f"**What this means:** {fat_data.get('explanation', '')}")
-                
-                with col2:
-                    st.markdown("#### Inflammation Response")
-                    inflammation_data = genetic_profile.get("inflammation_response", {})
-                    st.markdown(f"**Your Profile:** {inflammation_data.get('inflammatory_response', 'Normal').title()}")
-                    st.markdown(f"**What this means:** {inflammation_data.get('explanation', '')}")
+                    st.subheader("Your Genetic Profile Summary")
+                    st.info(genetic_profile.get('overall_summary', 'No genetic summary available.'))
                     
-                    st.markdown("#### Caffeine Metabolism")
-                    caffeine_data = genetic_profile.get("caffeine_metabolism", {})
-                    st.markdown(f"**Your Profile:** {caffeine_data.get('caffeine_metabolism', 'Normal').title()}")
-                    st.markdown(f"**What this means:** {caffeine_data.get('explanation', '')}")
-            
-                st.subheader("Key Recommendations Based on Your Genetic Profile")
-                for i, rec in enumerate(genetic_profile.get('key_recommendations', [])):
-                    st.markdown(f"- {rec}")
+                    st.subheader("How Your Nutrition Plan Has Been Optimized")
+                    
+                    # Create columns for each major genetic factor
+                    col1, col2 = st.columns(2)
+                    
+                    with col1:
+                        st.markdown("#### Carbohydrate Metabolism")
+                        carb_data = genetic_profile.get("carb_metabolism", {})
+                        st.markdown(f"**Your Profile:** {carb_data.get('carb_sensitivity', 'Normal').title()}")
+                        st.markdown(f"**What this means:** {carb_data.get('explanation', '')}")
+                        
+                        st.markdown("#### Fat Metabolism")
+                        fat_data = genetic_profile.get("fat_metabolism", {})
+                        st.markdown(f"**Your Profile:** {fat_data.get('saturated_fat_sensitivity', 'Normal').title()} sensitivity to saturated fats")
+                        st.markdown(f"**What this means:** {fat_data.get('explanation', '')}")
+                    
+                    with col2:
+                        st.markdown("#### Inflammation Response")
+                        inflammation_data = genetic_profile.get("inflammation_response", {})
+                        st.markdown(f"**Your Profile:** {inflammation_data.get('inflammatory_response', 'Normal').title()}")
+                        st.markdown(f"**What this means:** {inflammation_data.get('explanation', '')}")
+                        
+                        st.markdown("#### Caffeine Metabolism")
+                        caffeine_data = genetic_profile.get("caffeine_metabolism", {})
+                        st.markdown(f"**Your Profile:** {caffeine_data.get('caffeine_metabolism', 'Normal').title()}")
+                        st.markdown(f"**What this means:** {caffeine_data.get('explanation', '')}")
+                
+                    st.subheader("Food Recommendations Based on Your Genetic Profile")
+                    st.markdown("""
+                    | Category | Recommended Foods based on Genetics |
+                    |----------|-------------------------------------|
+                    | **Carbohydrates** | Whole grains, legumes, vegetables (personalized based on your carbohydrate metabolism) |
+                    | **Proteins** | Lean proteins, fatty fish (optimized for your inflammatory profile) |
+                    | **Fats** | Olive oil, avocados, nuts (tailored to your fat metabolism) |
+                    | **Supplements to Consider** | B-vitamins, omega-3 fatty acids (based on your genetic profile) |
+                    """)
+                    
+                    st.subheader("Key Recommendations Based on Your Genetic Profile")
+                    for i, rec in enumerate(genetic_profile.get('key_recommendations', [])):
+                        st.markdown(f"- {rec}")
+                    
+                    # Add genetic nutrition disclaimer
+                    st.markdown("""
+                    ### Genetic Nutrition Disclaimer
+                    
+                    The genetic optimization suggestions provided are based on a limited set of genetic markers and current scientific understanding, which continues to evolve. Individual responses may vary, and these recommendations should be considered as complementary to standard diabetes management practices.
+                    
+                    Always consult with healthcare providers before making significant changes to your diet or lifestyle based on genetic information.
+                    """)
     
+    # Recipes & Tips tab content
     with recipes_tab:
         if 'nutrition_recipes_tips' in st.session_state:
             st.markdown(st.session_state.nutrition_recipes_tips, unsafe_allow_html=True)
         else:
             # Fall back to extracting from the complete plan
-            recipe_sections = [s for s in sections if any(x in s.lower() for x in [
+            recipe_sections = [s for s in nutrition_plan.split("\n## ") if any(x in s.lower() for x in [
                 "recipe", "tips", "avoid", "limit", "portion", "guideline", "stabilize"
             ]) and not any(x in s.lower() for x in ["genetic", "gene", "dna"])]
             for section in recipe_sections:
                 st.markdown(section, unsafe_allow_html=True)
             
+    # Visual Guides tab content
     with visuals_tab:
         if 'visual_guidance' in st.session_state:
             display_visual_guidance(has_genetic_data)

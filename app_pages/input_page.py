@@ -185,7 +185,7 @@ def generate_nutrition_plan_workflow():
 
             if using_genetic_data:
                 # Generate nutrition plan with genetic insights
-                nutrition_plan, overview, meal_plan, recipes_tips = generate_genetic_enhanced_nutrition_plan(
+                nutrition_plan, overview, meal_plan, genetic_section, recipes_tips = generate_genetic_enhanced_nutrition_plan(
                     combined_data, 
                     st.session_state.genetic_profile,
                     st.secrets["OPENAI_API_KEY"]
@@ -201,6 +201,8 @@ def generate_nutrition_plan_workflow():
             st.session_state.nutrition_plan = nutrition_plan
             st.session_state.nutrition_overview = overview
             st.session_state.nutrition_meal_plan = meal_plan
+            if using_genetic_data:
+                st.session_state.nutrition_genetic_section = genetic_section
             st.session_state.nutrition_recipes_tips = recipes_tips
             
             progress_bar.progress(98/100)
@@ -227,12 +229,6 @@ def generate_nutrition_plan_workflow():
             
             # Show completion animation
             st.balloons()
-            
-            # Different success message based on whether genetic data was used
-            if using_genetic_data:
-                st.success("✅ Your genetically-optimized nutrition plan has been generated! To see your health assessment, go to the Health Assessment page and click 'Run Genetic Health Assessment'.")
-            else:
-                st.success("✅ Your personalized nutrition plan has been generated! To see your health assessment, go to the Health Assessment page and click 'Run Health Assessment'.")
             
             # Add button to navigate to View Plan page
             if st.button("View My Nutrition Plan →", type="primary", key="view_plan_button", 
