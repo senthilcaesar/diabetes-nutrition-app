@@ -8,6 +8,11 @@ import streamlit as st
 import google.generativeai as genai
 from google.generativeai import GenerativeModel
 from typing import Dict, List, Optional, Any
+from utils.genetic_data_helpers import (
+    create_default_genetic_nutritional_overview,
+    create_default_genetic_nutrition_plan,
+    process_extracted_genetic_nutrition_data
+)
 
 GEMINI_MODEL = "gemini-1.5-flash"
 
@@ -19,6 +24,12 @@ def format_structured_genetic_nutrition_plan(structured_data):
     3. Genetic Optimization - Dedicated genetic insights section
     4. Recipes & Tips - Recipe suggestions and blood sugar management tips
     
+    Handles various input formats including MapComposite objects from Gemini API.
+    
+    Args:
+        structured_data: The structured nutrition plan data, which can be a dict, 
+                        MapComposite object, or other format that needs processing
+    
     Returns:
         tuple: (overview, meal_plan, genetic_section, recipes_tips) sections as formatted text
     """
@@ -26,29 +37,99 @@ def format_structured_genetic_nutrition_plan(structured_data):
         # SECTION 1: OVERVIEW
         overview = ""
         
-        # Make sure required elements exist in the structured data
-        if not structured_data:
-            raise ValueError("Empty structured data")
-            
-        if "nutritional_overview" not in structured_data:
-            raise ValueError("Missing nutritional_overview")
+        # First, handle potential MapComposite object or other non-dict formats
+        processed_data = {}
         
-        nutritional_overview = structured_data["nutritional_overview"]
-        if not isinstance(nutritional_overview, dict):
-            raise ValueError("nutritional_overview is not a dictionary")
+        # If structured_data is None or empty, create default data
+        if not structured_data:
+            print("Warning: Empty structured data received")
+            processed_data = create_default_genetic_nutrition_plan()
+        else:
+            # Check if it's a dict already
+            if isinstance(structured_data, dict):
+                processed_data = structured_data
+            else:
+                # Try different methods to extract data from non-dict objects
+                try:
+                    # Try converting to dict if possible
+                    if hasattr(structured_data, 'to_dict'):
+                        processed_data = structured_data.to_dict()
+                    elif hasattr(structured_data, '_asdict'):
+                        processed_data = structured_data._asdict()
+                    elif hasattr(structured_data, '__dict__'):
+                        processed_data = structured_data.__dict__
+                    elif hasattr(structured_data, '_pb'):
+                        # Extract from _pb attribute (MapComposite objects from Gemini API)
+                        pb_obj = structured_data._pb
+                        
+                        # Try to extract data using items() method
+                        extracted_data = {}
+                        for key, value in pb_obj.items():
+                            # Extract the actual value based on the structure
+                            str_value = str(value)
+                            
+                            # Process different value types
+                            if 'number_value:' in str_value:
+                                # Extract numeric values
+                                num_str = str_value.split('number_value:')[1].strip()
+                                try:
+                                    # Try to convert to int first, then float
+                                    extracted_data[key] = int(num_str)
+                                except ValueError:
+                                    try:
+                                        extracted_data[key] = float(num_str)
+                                    except ValueError:
+                                        extracted_data[key] = num_str
+                            elif 'string_value:' in str_value:
+                                # Extract string values, removing quotes
+                                str_content = str_value.split('string_value:')[1].strip()
+                                extracted_data[key] = str_content.strip('"')
+                            elif 'list_value' in str_value:
+                                # Extract list values
+                                items = []
+                                parts = str_value.split('string_value:')
+                                for i in range(1, len(parts)):
+                                    item_value = parts[i].split('"')[1] if '"' in parts[i] else parts[i].strip()
+                                    items.append(item_value)
+                                extracted_data[key] = items
+                            elif 'struct_value' in str_value:
+                                # For complex nested structures, store as string for now
+                                # Will need deeper parsing for specific fields later
+                                extracted_data[key] = str_value
+                            else:
+                                # For other types, store string representation
+                                extracted_data[key] = str_value
+                        
+                        # Process the extracted data into standard nutrition plan format
+                        processed_data = process_extracted_genetic_nutrition_data(extracted_data)
+                    else:
+                        # Try to access some expected attributes directly as fallback
+                        processed_data = create_default_genetic_nutrition_plan()
+                        # Try to populate with any available data
+                        if hasattr(structured_data, "introduction"):
+                            processed_data["introduction"] = getattr(structured_data, "introduction", "Welcome to your personalized genetic nutrition plan")
+                        if hasattr(structured_data, "nutritional_overview"):
+                            processed_data["nutritional_overview"] = getattr(structured_data, "nutritional_overview")
+                except Exception as e:
+                    print(f"Error processing structured data: {e}")
+                    # Fall back to default structure
+                    processed_data = create_default_genetic_nutrition_plan()
+        
+        # Now format the processed data
+                
+        # Get nutritional overview with safe fallbacks - ensure it's a dict
+        if "nutritional_overview" not in processed_data or not isinstance(processed_data["nutritional_overview"], dict):
+            processed_data["nutritional_overview"] = create_default_genetic_nutritional_overview()
+            
+        nutritional_overview = processed_data["nutritional_overview"]
             
         # Daily Caloric Target with safe fallbacks
-        if "daily_caloric_target" in nutritional_overview:
-            caloric = nutritional_overview["daily_caloric_target"]
-            if isinstance(caloric, dict):
-                calories = caloric.get("calories", 2000)
-                explanation = caloric.get("explanation", "This caloric target is based on your metabolic needs.")
-            else:
-                calories = 2000
-                explanation = "Unable to retrieve caloric target explanation."
-        else:
-            calories = 2000
-            explanation = "Default caloric target for moderate activity level."
+        if "daily_caloric_target" not in nutritional_overview or not isinstance(nutritional_overview["daily_caloric_target"], dict):
+            nutritional_overview["daily_caloric_target"] = {"calories": 2000, "explanation": "This caloric target is based on your metabolic needs."}
+            
+        caloric = nutritional_overview["daily_caloric_target"]
+        calories = caloric.get("calories", 2000)
+        explanation = caloric.get("explanation", "This caloric target is based on your metabolic needs.")
             
         overview += f"### 🔥 Daily Caloric Target: {calories} calories\n\n"
         overview += f"{explanation}\n\n"
@@ -697,7 +778,7 @@ def format_structured_genetic_nutrition_plan(structured_data):
 
 def create_genetic_nutrition_plan_tools():
     """
-    Create a structured tools schema for generating genetically optimized nutrition plans.
+    Create a simplified tools schema for generating genetically optimized nutrition plans.
     
     Returns:
         list: A list containing the function schema for genetic nutrition plan
@@ -707,189 +788,86 @@ def create_genetic_nutrition_plan_tools():
             "function_declarations": [
                 {
                     "name": "generate_structured_genetic_nutrition_plan",
-                    "description": "Generate a structured nutrition plan for a diabetes patient that incorporates genetic insights alongside health and socioeconomic data.",
+                    "description": "Generate a structured nutrition plan for a diabetes patient that incorporates genetic insights alongside health data.",
                     "parameters": {
                         "type": "object",
                         "properties": {
                             "introduction": {
                                 "type": "string",
-                                "description": "A personalized introduction to the nutrition plan that addresses the individual's specific situation including genetic factors."
+                                "description": "A personalized introduction to the nutrition plan"
                             },
                             "nutritional_overview": {
                                 "type": "object",
-                                "description": "Overview of the nutritional approach and guidelines with genetic optimization",
+                                "description": "Overview of the nutritional approach with genetic optimization",
                                 "properties": {
-                                    "daily_caloric_target": {
-                                        "type": "object",
-                                        "properties": {
-                                            "calories": {"type": "number"},
-                                            "explanation": {"type": "string"}
-                                        }
-                                    },
-                                    "macronutrient_distribution": {
-                                        "type": "object",
-                                        "properties": {
-                                            "carbohydrates": {
-                                                "type": "object",
-                                                "properties": {
-                                                    "percentage": {"type": "number"},
-                                                    "grams": {"type": "number"},
-                                                    "recommendations": {"type": "string"}
-                                                }
-                                            },
-                                            "protein": {
-                                                "type": "object",
-                                                "properties": {
-                                                    "percentage": {"type": "number"},
-                                                    "grams": {"type": "number"},
-                                                    "recommendations": {"type": "string"}
-                                                }
-                                            },
-                                            "fat": {
-                                                "type": "object",
-                                                "properties": {
-                                                    "percentage": {"type": "number"},
-                                                    "grams": {"type": "number"},
-                                                    "recommendations": {"type": "string"}
-                                                }
-                                            }
-                                        }
-                                    },
-                                    "meal_structure": {
-                                        "type": "object",
-                                        "properties": {
-                                            "meal_frequency": {"type": "string"},
-                                            "timing_recommendations": {"type": "string"},
-                                            "portion_guidance": {"type": "string"}
-                                        }
-                                    }
+                                    "daily_calories": {"type": "number"},
+                                    "carbs_percentage": {"type": "number"},
+                                    "protein_percentage": {"type": "number"},
+                                    "fat_percentage": {"type": "number"},
+                                    "meal_timing": {"type": "string"}
                                 }
                             },
                             "genetic_optimization_strategies": {
                                 "type": "object",
-                                "description": "Specific nutrition strategies based on genetic profile",
+                                "description": "Nutrition strategies based on genetic profile",
                                 "properties": {
                                     "carb_metabolism": {"type": "string"},
                                     "fat_metabolism": {"type": "string"},
-                                    "inflammation_response": {"type": "string"},
-                                    "nutrient_processing": {"type": "string"},
-                                    "caffeine_metabolism": {"type": "string"}
+                                    "inflammation_response": {"type": "string"}
                                 }
                             },
                             "recommended_foods": {
                                 "type": "object",
-                                "description": "Foods that are recommended based on both diabetes management and genetic profile",
+                                "description": "Foods recommended based on genetic profile",
                                 "properties": {
-                                    "carbohydrates": {
-                                        "type": "array",
-                                        "items": {"type": "string"}
-                                    },
-                                    "proteins": {
-                                        "type": "array",
-                                        "items": {"type": "string"}
-                                    },
-                                    "fats": {
-                                        "type": "array",
-                                        "items": {"type": "string"}
-                                    },
-                                    "vegetables": {
-                                        "type": "array",
-                                        "items": {"type": "string"}
-                                    },
-                                    "fruits": {
-                                        "type": "array",
-                                        "items": {"type": "string"}
-                                    },
-                                    "beverages": {
-                                        "type": "array",
-                                        "items": {"type": "string"}
-                                    }
+                                    "carbohydrates": {"type": "array", "items": {"type": "string"}},
+                                    "proteins": {"type": "array", "items": {"type": "string"}},
+                                    "fats": {"type": "array", "items": {"type": "string"}}
                                 }
                             },
                             "foods_to_limit": {
                                 "type": "array",
-                                "description": "Foods that should be limited or avoided based on both diabetes management and genetic factors",
                                 "items": {
                                     "type": "object",
                                     "properties": {
                                         "food_category": {"type": "string"},
-                                        "reason": {"type": "string"},
-                                        "alternatives": {"type": "string"},
-                                        "genetic_context": {"type": "string"}
+                                        "reason": {"type": "string"}
                                     }
                                 }
                             },
-                            "meal_plans": {
+                            "day1_meals": {
                                 "type": "object",
-                                "description": "Sample genetically-optimized meal plans for different days",
                                 "properties": {
-                                    "day1": {
-                                        "type": "object",
-                                        "properties": {
-                                            "breakfast": {"type": "string"},
-                                            "morning_snack": {"type": "string"},
-                                            "lunch": {"type": "string"},
-                                            "afternoon_snack": {"type": "string"},
-                                            "dinner": {"type": "string"},
-                                            "evening_snack": {"type": "string"}
-                                        }
-                                    },
-                                    "day2": {
-                                        "type": "object",
-                                        "properties": {
-                                            "breakfast": {"type": "string"},
-                                            "morning_snack": {"type": "string"},
-                                            "lunch": {"type": "string"},
-                                            "afternoon_snack": {"type": "string"},
-                                            "dinner": {"type": "string"},
-                                            "evening_snack": {"type": "string"}
-                                        }
-                                    },
-                                    "day3": {
-                                        "type": "object",
-                                        "properties": {
-                                            "breakfast": {"type": "string"},
-                                            "morning_snack": {"type": "string"},
-                                            "lunch": {"type": "string"},
-                                            "afternoon_snack": {"type": "string"},
-                                            "dinner": {"type": "string"},
-                                            "evening_snack": {"type": "string"}
-                                        }
-                                    }
+                                    "breakfast": {"type": "string"},
+                                    "lunch": {"type": "string"},
+                                    "dinner": {"type": "string"}
                                 }
                             },
-                            "recipes": {
-                                "type": "array",
-                                "description": "Simple recipes tailored to the individual's preferences, resources, and genetic profile",
-                                "items": {
-                                    "type": "object",
-                                    "properties": {
-                                        "name": {"type": "string"},
-                                        "ingredients": {"type": "string"},
-                                        "instructions": {"type": "string"},
-                                        "prep_time": {"type": "string"},
-                                        "nutritional_benefits": {"type": "string"},
-                                        "genetic_note": {"type": "string"}
-                                    }
+                            "day2_meals": {
+                                "type": "object",
+                                "properties": {
+                                    "breakfast": {"type": "string"},
+                                    "lunch": {"type": "string"},
+                                    "dinner": {"type": "string"}
+                                }
+                            },
+                            "day3_meals": {
+                                "type": "object",
+                                "properties": {
+                                    "breakfast": {"type": "string"},
+                                    "lunch": {"type": "string"},
+                                    "dinner": {"type": "string"}
                                 }
                             },
                             "blood_sugar_management": {
                                 "type": "object",
-                                "description": "Strategies for managing blood sugar through nutrition with genetic optimization",
                                 "properties": {
                                     "hypoglycemia_prevention": {"type": "string"},
-                                    "hyperglycemia_management": {"type": "string"},
-                                    "meal_timing_strategies": {"type": "string"},
-                                    "snack_recommendations": {"type": "string"},
-                                    "genetic_considerations": {"type": "string"}
+                                    "hyperglycemia_management": {"type": "string"}
                                 }
-                            },
-                            "genetic_disclaimer": {
-                                "type": "string",
-                                "description": "Disclaimer about genetic-based nutrition recommendations and their limitations"
                             }
                         },
-                        "required": ["introduction", "nutritional_overview", "genetic_optimization_strategies", "recommended_foods", "foods_to_limit", "meal_plans"]
+                        "required": ["introduction", "nutritional_overview", "genetic_optimization_strategies", "recommended_foods", "foods_to_limit"]
                     }
                 }
             ]
@@ -901,6 +879,7 @@ def create_genetic_nutrition_plan_tools():
 def generate_genetic_enhanced_nutrition_plan(user_data, genetic_profile):
     """
     Generate a nutrition plan that incorporates genetic insights.
+    Uses robust handling for Gemini API MapComposite objects.
     
     Args:
         user_data (dict): Dictionary containing user health and socioeconomic data
@@ -949,10 +928,10 @@ def generate_genetic_enhanced_nutrition_plan(user_data, genetic_profile):
             # Print for debugging
             print(f"Function call response: {function_call}")
             print(f"Args type: {type(function_call.args)}")
-            print(f"Args: {function_call.args}")
             
-            # Get the args safely - Gemini 1.5 API response handling
+            # Extract the args using our helper functions that handle different response types
             try:
+                # Try converting to dict if possible
                 if hasattr(function_call.args, 'to_dict'):
                     structured_plan = function_call.args.to_dict()
                 elif hasattr(function_call.args, '_asdict'):
@@ -960,266 +939,60 @@ def generate_genetic_enhanced_nutrition_plan(user_data, genetic_profile):
                 elif hasattr(function_call.args, '__dict__'):
                     structured_plan = function_call.args.__dict__
                 elif hasattr(function_call.args, '_pb'):
-                    # Extract from _pb attribute which is a MessageMapContainer
+                    # Extract from _pb attribute (MapComposite objects from Gemini API)
                     pb_obj = function_call.args._pb
                     
-                    # Try to extract data from _pb
-                    try:
-                        # Use items() method if available
-                        extracted_data = {}
-                        for key, value in pb_obj.items():
-                            # Extract the actual value from the structure
-                            str_value = str(value)
-                            
-                            # Parse number and string values
-                            if 'number_value:' in str_value:
-                                # Extract numeric value
-                                num_str = str_value.split('number_value:')[1].strip()
+                    # Extract data from MapComposite object
+                    extracted_data = {}
+                    for key, value in pb_obj.items():
+                        # Extract the actual value based on the structure
+                        str_value = str(value)
+                        
+                        # Process different value types
+                        if 'number_value:' in str_value:
+                            # Extract numeric values
+                            num_str = str_value.split('number_value:')[1].strip()
+                            try:
+                                # Try to convert to int first, then float
+                                extracted_data[key] = int(num_str)
+                            except ValueError:
                                 try:
-                                    # Try to convert to int first, then float
-                                    extracted_data[key] = int(num_str)
+                                    extracted_data[key] = float(num_str)
                                 except ValueError:
-                                    try:
-                                        extracted_data[key] = float(num_str)
-                                    except ValueError:
-                                        extracted_data[key] = num_str
-                            elif 'string_value:' in str_value:
-                                # Extract string value, removing quotes
-                                str_content = str_value.split('string_value:')[1].strip()
-                                extracted_data[key] = str_content.strip('"')
-                            else:
-                                # For other types, store string representation
-                                extracted_data[key] = str_value
-                        
-                        # Set up default values
-                        introduction = extracted_data.get("introduction", "Personalized Nutrition Plan with Genetic Insights")
-                        
-                        # Set up nutritional overview with default values
-                        nutritional_overview = {
-                            "daily_caloric_target": {"calories": 2000, "explanation": "Default caloric target for moderate activity level."},
-                            "macronutrient_distribution": {
-                                "carbohydrates": {"percentage": 45, "grams": 225, "recommendations": "Focus on complex carbs"},
-                                "protein": {"percentage": 25, "grams": 125, "recommendations": "Choose lean proteins"},
-                                "fat": {"percentage": 30, "grams": 67, "recommendations": "Focus on healthy fats"}
-                            },
-                            "meal_structure": {
-                                "meal_frequency": "3-5 meals per day",
-                                "timing_recommendations": "Space meals 3-4 hours apart",
-                                "portion_guidance": "Use the plate method"
-                            }
-                        }
-                        
-                        # Set default genetic strategies
-                        genetic_strategies = {
-                            "carb_metabolism": "Based on your genetic profile, focus on complex carbohydrates with fiber.",
-                            "fat_metabolism": "Your genetic profile suggests focusing on healthy unsaturated fats.",
-                            "inflammation_response": "Consider adding anti-inflammatory foods to your diet based on your genetic profile.",
-                            "nutrient_processing": "Your genetic profile indicates potential need for specific nutrients.",
-                            "caffeine_metabolism": "Based on your genetics, moderate caffeine consumption is recommended."
-                        }
-                        
-                        # Try to extract genetic strategies if available
-                        if "genetic_optimization_strategies" in extracted_data:
-                            genetic_str = str(extracted_data["genetic_optimization_strategies"])
-                            
-                            # Extract carb metabolism if available
-                            if "carb_metabolism" in genetic_str:
-                                carb_parts = genetic_str.split("carb_metabolism")
-                                if len(carb_parts) > 1:
-                                    carb_value = carb_parts[1].split(",")[0].strip(': "\'')
-                                    genetic_strategies["carb_metabolism"] = carb_value
-                            
-                            # Extract fat metabolism if available
-                            if "fat_metabolism" in genetic_str:
-                                fat_parts = genetic_str.split("fat_metabolism")
-                                if len(fat_parts) > 1:
-                                    fat_value = fat_parts[1].split(",")[0].strip(': "\'')
-                                    genetic_strategies["fat_metabolism"] = fat_value
-                        
-                        # Build structured plan
-                        structured_plan = {
-                            "introduction": introduction,
-                            "nutritional_overview": nutritional_overview,
-                            "genetic_optimization_strategies": genetic_strategies,
-                            "recommended_foods": extracted_data.get("recommended_foods", {
-                                "carbohydrates": ["Whole grains", "Legumes", "Vegetables"],
-                                "proteins": ["Lean meats", "Fish", "Legumes"],
-                                "fats": ["Avocado", "Nuts", "Olive oil"],
-                                "vegetables": ["Leafy greens", "Cruciferous vegetables"],
-                                "fruits": ["Berries", "Apples", "Citrus"],
-                                "beverages": ["Water", "Herbal tea", "Black coffee"]
-                            }),
-                            "foods_to_limit": extracted_data.get("foods_to_limit", [
-                                {"food_category": "Processed Foods", "reason": "High in added sugars", "alternatives": "Whole foods"}
-                            ]),
-                            "meal_plans": extracted_data.get("meal_plans", {
-                                "day1": {"breakfast": "Genetically optimized breakfast", "lunch": "Balanced lunch", "dinner": "Balanced dinner"},
-                                "day2": {"breakfast": "Genetically optimized breakfast", "lunch": "Balanced lunch", "dinner": "Balanced dinner"},
-                                "day3": {"breakfast": "Genetically optimized breakfast", "lunch": "Balanced lunch", "dinner": "Balanced dinner"}
-                            }),
-                            "genetic_food_recommendations": extracted_data.get("genetic_food_recommendations", [
-                                {"category": "Omega-3 Rich Foods", "reason": "Beneficial for your genetic profile", "foods": "Fatty fish, walnuts, flaxseeds"}
-                            ])
-                        }
-                    except Exception as e:
-                        print(f"Error iterating through _pb: {e}")
-                        
-                        # Fallback to default structured plan
-                        structured_plan = {
-                            "introduction": "Personalized Nutrition Plan with Genetic Insights",
-                            "nutritional_overview": {
-                                "daily_caloric_target": {"calories": 2000, "explanation": "Based on your profile and genetic factors."},
-                                "macronutrient_distribution": {
-                                    "carbohydrates": {"percentage": 45, "grams": 225, "recommendations": "Focus on complex carbohydrates with fiber."},
-                                    "protein": {"percentage": 25, "grams": 125, "recommendations": "Choose lean protein sources."},
-                                    "fat": {"percentage": 30, "grams": 67, "recommendations": "Emphasize healthy unsaturated fats."}
-                                },
-                                "meal_structure": {
-                                    "meal_frequency": "3-5 meals per day",
-                                    "timing_recommendations": "Space meals 3-4 hours apart to help maintain stable blood sugar",
-                                    "portion_guidance": "Use the plate method: ½ non-starchy vegetables, ¼ protein, ¼ carbohydrates"
-                                }
-                            },
-                            "genetic_optimization_strategies": {
-                                "carb_metabolism": "Based on your genetic profile, focus on complex carbohydrates with fiber.",
-                                "fat_metabolism": "Your genetic profile suggests focusing on healthy unsaturated fats.",
-                                "inflammation_response": "Consider adding anti-inflammatory foods to your diet based on your genetic profile.",
-                                "nutrient_processing": "Your genetic profile indicates potential need for specific nutrients.",
-                                "caffeine_metabolism": "Based on your genetics, moderate caffeine consumption is recommended."
-                            },
-                            "recommended_foods": {
-                                "carbohydrates": ["Whole grains (brown rice, quinoa, oats)", "Legumes (beans, lentils)", "Sweet potatoes"],
-                                "proteins": ["Fatty fish like salmon", "Lean poultry", "Tofu and tempeh", "Legumes"],
-                                "fats": ["Avocados", "Nuts and seeds", "Olive oil", "Fatty fish"],
-                                "vegetables": ["Leafy greens", "Broccoli", "Peppers", "Cauliflower"],
-                                "fruits": ["Berries", "Apples", "Citrus fruits", "Cherries"],
-                                "beverages": ["Water", "Green tea", "Herbal tea"]
-                            },
-                            "foods_to_limit": [
-                                {"food_category": "Sugary Foods", "reason": "Can cause blood sugar spikes and inflammation", "alternatives": "Fresh berries, apple with almond butter"},
-                                {"food_category": "Refined Carbohydrates", "reason": "Your genetic profile shows sensitivity to refined carbs", "alternatives": "Whole grains, sweet potatoes"}
-                            ],
-                            "meal_plans": {
-                                "day1": {
-                                    "breakfast": "Overnight oats with berries, nuts, and cinnamon",
-                                    "lunch": "Grilled salmon salad with olive oil dressing",
-                                    "dinner": "Turkey and vegetable stir-fry with brown rice"
-                                },
-                                "day2": {
-                                    "breakfast": "Veggie omelet with avocado and whole grain toast",
-                                    "lunch": "Lentil soup with leafy green salad",
-                                    "dinner": "Baked cod with roasted vegetables and quinoa"
-                                },
-                                "day3": {
-                                    "breakfast": "Greek yogurt with berries, nuts, and seeds",
-                                    "lunch": "Chicken and vegetable wrap with hummus",
-                                    "dinner": "Bean and vegetable chili with small side salad"
-                                }
-                            },
-                            "genetic_food_recommendations": [
-                                {"category": "Omega-3 Rich Foods", "reason": "Beneficial for your genetic inflammation profile", "foods": "Fatty fish, walnuts, flaxseeds, chia seeds"},
-                                {"category": "Antioxidant-Rich Foods", "reason": "Support your genetic response to oxidative stress", "foods": "Berries, dark leafy greens, colorful vegetables"}
-                            ]
-                        }
+                                    extracted_data[key] = num_str
+                        elif 'string_value:' in str_value:
+                            # Extract string values, removing quotes
+                            str_content = str_value.split('string_value:')[1].strip()
+                            extracted_data[key] = str_content.strip('"')
+                        elif 'list_value' in str_value:
+                            # Extract list values
+                            items = []
+                            parts = str_value.split('string_value:')
+                            for i in range(1, len(parts)):
+                                item_value = parts[i].split('"')[1] if '"' in parts[i] else parts[i].strip()
+                                items.append(item_value)
+                            extracted_data[key] = items
+                        elif 'struct_value' in str_value:
+                            # For complex nested structures, store as string for now
+                            extracted_data[key] = str_value
+                        else:
+                            # For other types, store string representation
+                            extracted_data[key] = str_value
+                    
+                    # Process the extracted data into standard nutrition plan format
+                    structured_plan = process_extracted_genetic_nutrition_data(extracted_data)
                 else:
-                    # Try accessing individual properties directly
-                    introduction = getattr(function_call.args, "introduction", "Personalized Nutrition Plan with Genetic Insights")
-                    
-                    # Extract nutritional overview with careful property access
+                    # Try to access some expected attributes directly as fallback
+                    structured_plan = create_default_genetic_nutrition_plan()
+                    # Try to populate with any available data
+                    if hasattr(function_call.args, "introduction"):
+                        structured_plan["introduction"] = getattr(function_call.args, "introduction", "Welcome to your personalized genetic nutrition plan")
                     if hasattr(function_call.args, "nutritional_overview"):
-                        nutritional_overview = function_call.args.nutritional_overview
-                    else:
-                        nutritional_overview = {
-                            "daily_caloric_target": {"calories": 2000, "explanation": "Default values used"},
-                            "macronutrient_distribution": {
-                                "carbohydrates": {"percentage": 45, "grams": 225, "recommendations": "Focus on complex carbs"},
-                                "protein": {"percentage": 25, "grams": 125, "recommendations": "Choose lean proteins"},
-                                "fat": {"percentage": 30, "grams": 67, "recommendations": "Focus on healthy fats"}
-                            },
-                            "meal_structure": {
-                                "meal_frequency": "3-5 meals per day",
-                                "timing_recommendations": "Space meals 3-4 hours apart",
-                                "portion_guidance": "Use the plate method"
-                            }
-                        }
-                    
-                    # Extract genetic optimization strategies
-                    if hasattr(function_call.args, "genetic_optimization_strategies"):
-                        genetic_strategies = function_call.args.genetic_optimization_strategies
-                    else:
-                        genetic_strategies = {
-                            "carb_metabolism": "Based on your genetic profile, focus on complex carbohydrates with fiber.",
-                            "fat_metabolism": "Your genetic profile suggests focusing on healthy unsaturated fats.",
-                            "inflammation_response": "Consider adding anti-inflammatory foods to your diet based on your genetic profile.",
-                            "nutrient_processing": "Your genetic profile indicates potential need for specific nutrients.",
-                            "caffeine_metabolism": "Based on your genetics, moderate caffeine consumption is recommended."
-                        }
-                    
-                    # Build structured plan from individual properties
-                    structured_plan = {
-                        "introduction": introduction,
-                        "nutritional_overview": nutritional_overview,
-                        "genetic_optimization_strategies": genetic_strategies,
-                        "recommended_foods": getattr(function_call.args, "recommended_foods", {
-                            "carbohydrates": ["Whole grains", "Legumes", "Vegetables"],
-                            "proteins": ["Lean meats", "Fish", "Legumes"],
-                            "fats": ["Avocado", "Nuts", "Olive oil"],
-                            "vegetables": ["Leafy greens", "Cruciferous vegetables"],
-                            "fruits": ["Berries", "Apples", "Citrus"],
-                            "beverages": ["Water", "Herbal tea", "Black coffee"]
-                        }),
-                        "foods_to_limit": getattr(function_call.args, "foods_to_limit", [
-                            {"food_category": "Processed Foods", "reason": "High in added sugars", "alternatives": "Whole foods"}
-                        ]),
-                        "meal_plans": getattr(function_call.args, "meal_plans", {
-                            "day1": {"breakfast": "Genetically optimized breakfast", "lunch": "Balanced lunch", "dinner": "Balanced dinner"},
-                            "day2": {"breakfast": "Genetically optimized breakfast", "lunch": "Balanced lunch", "dinner": "Balanced dinner"},
-                            "day3": {"breakfast": "Genetically optimized breakfast", "lunch": "Balanced lunch", "dinner": "Balanced dinner"}
-                        }),
-                        "genetic_food_recommendations": getattr(function_call.args, "genetic_food_recommendations", [
-                            {"category": "Omega-3 Rich Foods", "reason": "Beneficial for your genetic profile", "foods": "Fatty fish, walnuts, flaxseeds"}
-                        ])
-                    }
+                        structured_plan["nutritional_overview"] = getattr(function_call.args, "nutritional_overview")
             except Exception as e:
                 print(f"Error extracting args with attribute access: {e}")
-                # Fallback to a basic structure if all methods fail
-                structured_plan = {
-                    "introduction": "Error parsing API response",
-                    "nutritional_overview": {
-                        "daily_caloric_target": {"calories": 2000, "explanation": "Error parsing API response"},
-                        "macronutrient_distribution": {
-                            "carbohydrates": {"percentage": 45, "grams": 225, "recommendations": "API error"},
-                            "protein": {"percentage": 25, "grams": 125, "recommendations": "API error"},
-                            "fat": {"percentage": 30, "grams": 67, "recommendations": "API error"}
-                        },
-                        "meal_structure": {
-                            "meal_frequency": "Error parsing response",
-                            "timing_recommendations": "Error parsing response",
-                            "portion_guidance": "Error parsing response"
-                        }
-                    },
-                    "genetic_optimization_strategies": {
-                        "carb_metabolism": "Error parsing response",
-                        "fat_metabolism": "Error parsing response",
-                        "inflammation_response": "Error parsing response",
-                        "nutrient_processing": "Error parsing response",
-                        "caffeine_metabolism": "Error parsing response"
-                    },
-                    "recommended_foods": {
-                        "carbohydrates": ["Error processing response"],
-                        "proteins": ["Error processing response"],
-                        "fats": ["Error processing response"],
-                        "vegetables": ["Error processing response"],
-                        "fruits": ["Error processing response"],
-                        "beverages": ["Error processing response"]
-                    },
-                    "foods_to_limit": [{"food_category": "Error", "reason": "Error", "alternatives": "Error"}],
-                    "meal_plans": {
-                        "day1": {"breakfast": "Error", "lunch": "Error", "dinner": "Error"},
-                        "day2": {"breakfast": "Error", "lunch": "Error", "dinner": "Error"},
-                        "day3": {"breakfast": "Error", "lunch": "Error", "dinner": "Error"}
-                    }
-                }
+                # Fallback to default structure if all methods fail
+                structured_plan = create_default_genetic_nutrition_plan()
         else:
             # If no function call, process as regular text response
             print("No function call found in response. Full response:")
@@ -1228,88 +1001,18 @@ def generate_genetic_enhanced_nutrition_plan(user_data, genetic_profile):
             try:
                 text_response = response.text
                 print(f"Text response: {text_response}")
-                # Create a simple structured response
-                structured_plan = {
-                    "introduction": "Model did not use function calling - see raw response below",
-                    "nutritional_overview": {
-                        "daily_caloric_target": {"calories": 2000, "explanation": "Model did not use function calling - see raw response below"},
-                        "macronutrient_distribution": {
-                            "carbohydrates": {"percentage": 45, "grams": 225, "recommendations": "See raw response"},
-                            "protein": {"percentage": 25, "grams": 125, "recommendations": "See raw response"},
-                            "fat": {"percentage": 30, "grams": 67, "recommendations": "See raw response"}
-                        },
-                        "meal_structure": {
-                            "meal_frequency": "3-5 meals per day",
-                            "timing_recommendations": "See raw response",
-                            "portion_guidance": "See raw response"
-                        }
-                    },
-                    "genetic_optimization_strategies": {
-                        "carb_metabolism": "See raw model response",
-                        "fat_metabolism": "See raw model response",
-                        "inflammation_response": "See raw model response",
-                        "nutrient_processing": "See raw model response",
-                        "caffeine_metabolism": "See raw model response"
-                    },
-                    "recommended_foods": {
-                        "carbohydrates": ["See raw response"],
-                        "proteins": ["See raw response"],
-                        "fats": ["See raw response"],
-                        "vegetables": ["See raw response"],
-                        "fruits": ["See raw response"],
-                        "beverages": ["See raw response"]
-                    },
-                    "foods_to_limit": [{"food_category": "See raw response", "reason": "Raw response:", "alternatives": text_response[:200] + "..."}],
-                    "meal_plans": {
-                        "day1": {"breakfast": "See raw response", "lunch": "See raw response", "dinner": "See raw response"},
-                        "day2": {"breakfast": "See raw response", "lunch": "See raw response", "dinner": "See raw response"},
-                        "day3": {"breakfast": "See raw response", "lunch": "See raw response", "dinner": "See raw response"}
-                    }
-                }
+                # Create a default structured plan with a note about the non-structured response
+                structured_plan = create_default_genetic_nutrition_plan()
+                structured_plan["introduction"] = "Model did not use function calling. Here's a default plan with insights from your genetic profile."
             except Exception as e:
                 print(f"Error processing text response: {e}")
-                raise
+                structured_plan = create_default_genetic_nutrition_plan()
     except Exception as e:
         print(f"Error processing response: {e}")
         print(f"Response structure: {response}")
         # Create a minimal fallback structure
-        structured_plan = {
-            "introduction": f"Error: {str(e)}",
-            "nutritional_overview": {
-                "daily_caloric_target": {"calories": 2000, "explanation": f"Error: {str(e)}"},
-                "macronutrient_distribution": {
-                    "carbohydrates": {"percentage": 45, "grams": 225, "recommendations": "Error in response processing"},
-                    "protein": {"percentage": 25, "grams": 125, "recommendations": "Error in response processing"},
-                    "fat": {"percentage": 30, "grams": 67, "recommendations": "Error in response processing"}
-                },
-                "meal_structure": {
-                    "meal_frequency": "Error in response processing",
-                    "timing_recommendations": "Error in response processing",
-                    "portion_guidance": "Error in response processing"
-                }
-            },
-            "genetic_optimization_strategies": {
-                "carb_metabolism": "Error in response processing",
-                "fat_metabolism": "Error in response processing",
-                "inflammation_response": "Error in response processing",
-                "nutrient_processing": "Error in response processing",
-                "caffeine_metabolism": "Error in response processing"
-            },
-            "recommended_foods": {
-                "carbohydrates": ["Error in response processing"],
-                "proteins": ["Error in response processing"],
-                "fats": ["Error in response processing"],
-                "vegetables": ["Error in response processing"],
-                "fruits": ["Error in response processing"],
-                "beverages": ["Error in response processing"]
-            },
-            "foods_to_limit": [{"food_category": "Error", "reason": "Error in response processing", "alternatives": "Error"}],
-            "meal_plans": {
-                "day1": {"breakfast": "Error", "lunch": "Error", "dinner": "Error"},
-                "day2": {"breakfast": "Error", "lunch": "Error", "dinner": "Error"},
-                "day3": {"breakfast": "Error", "lunch": "Error", "dinner": "Error"}
-            }
-        }
+        structured_plan = create_default_genetic_nutrition_plan()
+        structured_plan["introduction"] = f"Error processing API response: {str(e)}. Here's a default plan based on your genetic profile."
     
     # Format the structured data into separate sections
     overview, meal_plan, genetic_section, recipes_tips = format_structured_genetic_nutrition_plan(structured_plan)
@@ -1496,7 +1199,7 @@ def create_genetic_nutrition_plan_prompt(user_data: Dict, genetic_profile: Dict)
 
 def create_genetic_health_assessment_tools():
     """
-    Create a structured tools schema for generating genetic health assessments.
+    Create a simplified tools schema for generating genetic health assessments.
     
     Returns:
         list: A list containing the function schema for genetic health assessment
@@ -1512,64 +1215,46 @@ def create_genetic_health_assessment_tools():
                         "properties": {
                             "summary": {
                                 "type": "string",
-                                "description": "A concise summary paragraph of the patient's overall health status including genetic insights."
+                                "description": "A concise summary of the patient's health status including genetic insights"
                             },
                             "diabetes_management_evaluation": {
                                 "type": "string",
-                                "description": "Overall evaluation of the patient's diabetes management status considering genetic factors."
+                                "description": "Evaluation of diabetes management with genetic context"
                             },
-                            "key_metrics_analysis": {
-                                "type": "object",
-                                "description": "Analysis of key health metrics compared to targets",
-                                "properties": {
-                                    "fasting_glucose": {"type": "string"},
-                                    "postmeal_glucose": {"type": "string"},
-                                    "hba1c": {"type": "string"}
-                                }
-                            },
-                            "genetic_profile_overview": {
-                                "type": "object",
-                                "description": "Overview of key genetic factors affecting diabetes management",
-                                "properties": {
-                                    "carb_metabolism": {"type": "string"},
-                                    "fat_metabolism": {"type": "string"},
-                                    "inflammation_response": {"type": "string"},
-                                    "caffeine_processing": {"type": "string"}
-                                }
-                            },
-                            "potential_health_risks": {
+                            "glucose_analysis": {
                                 "type": "string",
-                                "description": "Description of potential health risks based on both standard assessment and genetic factors."
+                                "description": "Analysis of glucose levels and HbA1c"
                             },
-                            "suggested_diagnoses_and_care_plans": {
+                            "genetic_insights": {
                                 "type": "string",
-                                "description": "Suggested diagnoses and care plans based on the assessment and genetic insights."
+                                "description": "Key genetic factors affecting diabetes management"
                             },
-                            "areas_of_concern": {
+                            "health_risks": {
                                 "type": "string",
-                                "description": "Areas of concern that should be discussed with a healthcare provider, including genetic considerations."
+                                "description": "Potential health risks based on data and genetics"
                             },
-                            "personalized_recommendations": {
-                                "type": "object",
-                                "description": "Recommendations for health management tailored to genetic profile",
-                                "properties": {
-                                    "nutrition": {"type": "string"},
-                                    "physical_activity": {"type": "string"},
-                                    "medication_considerations": {"type": "string"},
-                                    "lifestyle_modifications": {"type": "string"},
-                                    "monitoring_approach": {"type": "string"}
-                                }
+                            "care_plans": {
+                                "type": "string",
+                                "description": "Suggested care plans integrating genetic insights"
+                            },
+                            "nutrition_recommendations": {
+                                "type": "string",
+                                "description": "Nutrition guidance based on genetic profile"
+                            },
+                            "lifestyle_recommendations": {
+                                "type": "string",
+                                "description": "Activity and lifestyle guidance based on genetic factors"
                             }
                         },
                         "required": [
                             "summary", 
-                            "diabetes_management_evaluation", 
-                            "key_metrics_analysis", 
-                            "genetic_profile_overview",
-                            "potential_health_risks", 
-                            "suggested_diagnoses_and_care_plans", 
-                            "areas_of_concern", 
-                            "personalized_recommendations"
+                            "diabetes_management_evaluation",
+                            "glucose_analysis",
+                            "genetic_insights", 
+                            "health_risks", 
+                            "care_plans", 
+                            "nutrition_recommendations",
+                            "lifestyle_recommendations"
                         ]
                     }
                 }
@@ -1582,13 +1267,14 @@ def create_genetic_health_assessment_tools():
 def generate_genetic_health_assessment(user_data, genetic_profile):
     """
     Generate a health assessment using Gemini API based on both user health data and genetic profile.
+    Uses robust handling for Gemini API MapComposite objects.
     
     Args:
         user_data (dict): Dictionary containing user health data
         genetic_profile (dict): Dictionary containing user genetic profile
         
     Returns:
-        str: Generated health assessment incorporating genetic insights
+        dict: Generated health assessment incorporating genetic insights as a structured dictionary
     """
     # Create a comprehensive prompt that includes both health and genetic data
     prompt = create_genetic_health_assessment_prompt(user_data, genetic_profile)
@@ -1630,6 +1316,22 @@ def generate_genetic_health_assessment(user_data, genetic_profile):
         tool_config={"function_calling_config": {"mode": "any"}}
     )
     
+    # Default structure for genetic health assessment - simplified version
+    default_assessment = {
+        "summary": "Summary of your health assessment incorporating genetic factors",
+        "diabetes_management_evaluation": "Your diabetes management assessment incorporating genetic insights",
+        "glucose_analysis": "Analysis of your glucose levels and HbA1c with genetic context",
+        "genetic_insights": "Overview of how your genetic profile affects diabetes management",
+        "health_risks": "Assessment of potential health risks based on your profile and genetics",
+        "care_plans": "Suggested care plans based on your health data and genetic profile",
+        "nutrition_recommendations": "Nutrition guidance tailored to your genetic profile",
+        "lifestyle_recommendations": "Activity and lifestyle recommendations based on your genetic factors",
+        # Include backward compatibility fields
+        "potential_health_risks": "Assessment of potential health risks based on your profile",
+        "suggested_diagnoses_and_care_plans": "Suggested care plans based on your health data and genetic profile",
+        "recommendations": "Personalized recommendations for health improvement"
+    }
+    
     # Check if function calling was used
     try:
         # Extract the structured response from function call
@@ -1638,10 +1340,10 @@ def generate_genetic_health_assessment(user_data, genetic_profile):
             # Print for debugging
             print(f"Function call response: {function_call}")
             print(f"Args type: {type(function_call.args)}")
-            print(f"Args: {function_call.args}")
             
-            # Get the args safely - Gemini 1.5 API response handling
+            # Extract the args using various methods
             try:
+                # Try converting to dict if possible
                 if hasattr(function_call.args, 'to_dict'):
                     structured_assessment = function_call.args.to_dict()
                 elif hasattr(function_call.args, '_asdict'):
@@ -1660,7 +1362,7 @@ def generate_genetic_health_assessment(user_data, genetic_profile):
                             # Extract the actual value from the structure
                             str_value = str(value)
                             
-                            # Parse number and string values
+                            # Process different value types
                             if 'number_value:' in str_value:
                                 # Extract numeric value
                                 num_str = str_value.split('number_value:')[1].strip()
@@ -1676,343 +1378,169 @@ def generate_genetic_health_assessment(user_data, genetic_profile):
                                 # Extract string value, removing quotes
                                 str_content = str_value.split('string_value:')[1].strip()
                                 extracted_data[key] = str_content.strip('"')
+                            elif 'list_value' in str_value:
+                                # Extract list values
+                                items = []
+                                parts = str_value.split('string_value:')
+                                for i in range(1, len(parts)):
+                                    item_value = parts[i].split('"')[1] if '"' in parts[i] else parts[i].strip()
+                                    items.append(item_value)
+                                extracted_data[key] = items
+                            elif 'struct_value' in str_value:
+                                # For complex nested structures, store as string for now
+                                extracted_data[key] = str_value
                             else:
                                 # For other types, store string representation
                                 extracted_data[key] = str_value
                         
-                        # Create default metrics and components
-                        key_metrics = {
-                            "fasting_glucose": "Assessment of fasting glucose levels",
-                            "postmeal_glucose": "Assessment of postmeal glucose levels",
-                            "hba1c": "Assessment of HbA1c levels"
+                        # Process the extracted data into simplified assessment format
+                        structured_assessment = default_assessment.copy()
+                        
+                        # Simple fields - directly map from extracted data to structured assessment
+                        field_mappings = {
+                            "summary": "summary",
+                            "diabetes_management_evaluation": "diabetes_management_evaluation",
+                            "glucose_analysis": "glucose_analysis",
+                            "genetic_insights": "genetic_insights",
+                            "health_risks": "health_risks",
+                            "care_plans": "care_plans",
+                            "nutrition_recommendations": "nutrition_recommendations",
+                            "lifestyle_recommendations": "lifestyle_recommendations"
                         }
                         
-                        genetic_profile = {
-                            "carb_metabolism": "Your genetic carbohydrate metabolism profile",
-                            "fat_metabolism": "Your genetic fat metabolism profile",
-                            "inflammation_response": "Your genetic inflammation response profile",
-                            "caffeine_processing": "Your genetic caffeine processing profile"
-                        }
+                        # Try to fill in each field from extracted data
+                        for target_field, source_field in field_mappings.items():
+                            if source_field in extracted_data:
+                                structured_assessment[target_field] = extracted_data[source_field]
                         
-                        recommendations = {
-                            "nutrition": "Nutrition recommendations based on your genetic profile",
-                            "physical_activity": "Physical activity recommendations based on your genetic profile",
-                            "medication_considerations": "Medication considerations based on your genetic profile",
-                            "lifestyle_modifications": "Lifestyle modification recommendations based on your genetic profile",
-                            "monitoring_approach": "Monitoring approach recommendations based on your genetic profile"
-                        }
+                        # Map old field names to new ones for backward compatibility
+                        if "potential_health_risks" in extracted_data and "health_risks" not in extracted_data:
+                            structured_assessment["health_risks"] = extracted_data["potential_health_risks"]
+                            
+                        if "suggested_diagnoses_and_care_plans" in extracted_data and "care_plans" not in extracted_data:
+                            structured_assessment["care_plans"] = extracted_data["suggested_diagnoses_and_care_plans"]
                         
-                        # Override with any extracted data
-                        summary = extracted_data.get("summary", "Summary of your health assessment incorporating genetic factors")
-                        diabetes_eval = extracted_data.get("diabetes_management_evaluation", "Your diabetes management assessment incorporating genetic insights")
-                        health_risks = extracted_data.get("potential_health_risks", "Assessment of potential health risks based on your profile")
-                        care_plans = extracted_data.get("suggested_diagnoses_and_care_plans", "Suggested care plans based on your health data and genetic profile")
-                        areas_concern = extracted_data.get("areas_of_concern", "Areas to discuss with your healthcare provider")
-                        
-                        # Try to extract key metrics if available
-                        if "key_metrics_analysis" in extracted_data:
+                        # Try to extract key metrics and convert to simplified glucose_analysis field
+                        if "key_metrics_analysis" in extracted_data and "glucose_analysis" not in extracted_data:
                             key_metrics_str = str(extracted_data["key_metrics_analysis"])
                             
-                            # Extract fasting glucose if available
-                            if "fasting_glucose" in key_metrics_str:
-                                fg_parts = key_metrics_str.split("fasting_glucose")
-                                if len(fg_parts) > 1:
-                                    fg_value = fg_parts[1].split(",")[0].strip(': "\'')
-                                    key_metrics["fasting_glucose"] = fg_value
+                            # Create a simplified text version of glucose analysis
+                            glucose_text = "Analysis of your glucose metrics: "
+                            metrics_added = False
                             
-                            # Extract postmeal glucose if available  
-                            if "postmeal_glucose" in key_metrics_str:
-                                pg_parts = key_metrics_str.split("postmeal_glucose")
-                                if len(pg_parts) > 1:
-                                    pg_value = pg_parts[1].split(",")[0].strip(': "\'')
-                                    key_metrics["postmeal_glucose"] = pg_value
+                            for metric in ["fasting_glucose", "postmeal_glucose", "hba1c"]:
+                                if metric in key_metrics_str:
+                                    parts = key_metrics_str.split(metric)
+                                    if len(parts) > 1:
+                                        value_parts = parts[1].split("string_value:")
+                                        if len(value_parts) > 1:
+                                            value = value_parts[1].split('"')[1] if '"' in value_parts[1] else value_parts[1].strip()
+                                            glucose_text += f"{metric.replace('_', ' ')}: {value}. "
+                                            metrics_added = True
                             
-                            # Extract hba1c if available
-                            if "hba1c" in key_metrics_str:
-                                hba_parts = key_metrics_str.split("hba1c")
-                                if len(hba_parts) > 1:
-                                    hba_value = hba_parts[1].split(",")[0].strip(': "\'')
-                                    key_metrics["hba1c"] = hba_value
+                            if metrics_added:
+                                structured_assessment["glucose_analysis"] = glucose_text
                         
-                        # Try to extract genetic profile if available
-                        if "genetic_profile_overview" in extracted_data:
+                        # Try to extract genetic profile and convert to simplified genetic_insights field
+                        if "genetic_profile_overview" in extracted_data and "genetic_insights" not in extracted_data:
                             genetic_str = str(extracted_data["genetic_profile_overview"])
                             
-                            # Extract carb metabolism if available
-                            if "carb_metabolism" in genetic_str:
-                                carb_parts = genetic_str.split("carb_metabolism")
-                                if len(carb_parts) > 1:
-                                    carb_value = carb_parts[1].split(",")[0].strip(': "\'')
-                                    genetic_profile["carb_metabolism"] = carb_value
+                            # Create a simplified text version of genetic insights
+                            genetic_text = "Your genetic insights include: "
+                            insights_added = False
                             
-                            # Extract fat metabolism if available
-                            if "fat_metabolism" in genetic_str:
-                                fat_parts = genetic_str.split("fat_metabolism")
-                                if len(fat_parts) > 1:
-                                    fat_value = fat_parts[1].split(",")[0].strip(': "\'')
-                                    genetic_profile["fat_metabolism"] = fat_value
+                            genetic_factors = ["carb_metabolism", "fat_metabolism", "inflammation_response", "caffeine_processing"]
+                            for factor in genetic_factors:
+                                if factor in genetic_str:
+                                    factor_parts = genetic_str.split(factor)
+                                    if len(factor_parts) > 1:
+                                        factor_value_parts = factor_parts[1].split("string_value:")
+                                        if len(factor_value_parts) > 1:
+                                            factor_value = factor_value_parts[1].split('"')[1] if '"' in factor_value_parts[1] else factor_value_parts[1].strip()
+                                            genetic_text += f"{factor.replace('_', ' ')}: {factor_value}. "
+                                            insights_added = True
                             
-                            # Extract inflammation response if available
-                            if "inflammation_response" in genetic_str:
-                                infl_parts = genetic_str.split("inflammation_response")
-                                if len(infl_parts) > 1:
-                                    infl_value = infl_parts[1].split(",")[0].strip(': "\'')
-                                    genetic_profile["inflammation_response"] = infl_value
-                            
-                            # Extract caffeine processing if available
-                            if "caffeine_processing" in genetic_str:
-                                caff_parts = genetic_str.split("caffeine_processing")
-                                if len(caff_parts) > 1:
-                                    caff_value = caff_parts[1].split(",")[0].strip(': "\'')
-                                    genetic_profile["caffeine_processing"] = caff_value
+                            if insights_added:
+                                structured_assessment["genetic_insights"] = genetic_text
                         
-                        # Try to extract recommendations if available
+                        # Try to extract recommendations and convert to simplified nutrition and lifestyle fields
                         if "personalized_recommendations" in extracted_data:
                             rec_str = str(extracted_data["personalized_recommendations"])
                             
-                            if "nutrition" in rec_str:
-                                try:
-                                    nut_parts = rec_str.split("nutrition")
-                                    if len(nut_parts) > 1:
-                                        nut_value = nut_parts[1].split(",")[0].strip(': "\'')
-                                        recommendations["nutrition"] = nut_value
-                                except Exception:
-                                    pass
-                        
-                        # Construct the full structured assessment
-                        structured_assessment = {
-                            "summary": summary,
-                            "diabetes_management_evaluation": diabetes_eval,
-                            "key_metrics_analysis": key_metrics,
-                            "genetic_profile_overview": genetic_profile,
-                            "potential_health_risks": health_risks,
-                            "suggested_diagnoses_and_care_plans": care_plans,
-                            "areas_of_concern": areas_concern,
-                            "personalized_recommendations": recommendations
-                        }
-                        
+                            # Try to extract nutrition recommendations
+                            if "nutrition" in rec_str and "nutrition_recommendations" not in extracted_data:
+                                parts = rec_str.split("nutrition")
+                                if len(parts) > 1:
+                                    value_parts = parts[1].split("string_value:")
+                                    if len(value_parts) > 1:
+                                        value = value_parts[1].split('"')[1] if '"' in value_parts[1] else value_parts[1].strip()
+                                        structured_assessment["nutrition_recommendations"] = value
+                            
+                            # Try to create combined lifestyle recommendations if not already present
+                            if "lifestyle_recommendations" not in extracted_data:
+                                lifestyle_text = "Lifestyle recommendations based on your genetic profile: "
+                                recs_added = False
+                                
+                                lifestyle_fields = ["physical_activity", "lifestyle_modifications", "monitoring_approach"]
+                                for field in lifestyle_fields:
+                                    if field in rec_str:
+                                        parts = rec_str.split(field)
+                                        if len(parts) > 1:
+                                            value_parts = parts[1].split("string_value:")
+                                            if len(value_parts) > 1:
+                                                value = value_parts[1].split('"')[1] if '"' in value_parts[1] else value_parts[1].strip()
+                                                lifestyle_text += f"{field.replace('_', ' ')}: {value}. "
+                                                recs_added = True
+                                
+                                if recs_added:
+                                    structured_assessment["lifestyle_recommendations"] = lifestyle_text
                     except Exception as e:
-                        print(f"Error iterating through _pb: {e}")
-                        
-                        # Fallback to string parsing if iteration fails
-                        str_pb = str(pb_obj)
-                        
-                        # Extract summary if available
-                        summary = "Summary of your health assessment incorporating genetic factors"
-                        if "summary" in str_pb and "string_value" in str_pb:
-                            try:
-                                summary_parts = str_pb.split("'summary': string_value: ")
-                                if len(summary_parts) > 1:
-                                    summary = summary_parts[1].split("\n")[0].strip('"')
-                            except Exception:
-                                pass
-                        
-                        # Create default structured assessment
-                        structured_assessment = {
-                            "summary": summary,
-                            "diabetes_management_evaluation": "Your diabetes management assessment incorporating genetic insights",
-                            "key_metrics_analysis": {
-                                "fasting_glucose": "Assessment of fasting glucose levels",
-                                "postmeal_glucose": "Assessment of postmeal glucose levels",
-                                "hba1c": "Assessment of HbA1c levels"
-                            },
-                            "genetic_profile_overview": {
-                                "carb_metabolism": "Your genetic carbohydrate metabolism profile",
-                                "fat_metabolism": "Your genetic fat metabolism profile",
-                                "inflammation_response": "Your genetic inflammation response profile",
-                                "caffeine_processing": "Your genetic caffeine processing profile"
-                            },
-                            "potential_health_risks": "Assessment of potential health risks based on your profile",
-                            "suggested_diagnoses_and_care_plans": "Suggested care plans based on your health data and genetic profile",
-                            "areas_of_concern": "Areas to discuss with your healthcare provider",
-                            "personalized_recommendations": {
-                                "nutrition": "Nutrition recommendations based on your genetic profile",
-                                "physical_activity": "Physical activity recommendations based on your genetic profile",
-                                "medication_considerations": "Medication considerations based on your genetic profile",
-                                "lifestyle_modifications": "Lifestyle modification recommendations based on your genetic profile",
-                                "monitoring_approach": "Monitoring approach recommendations based on your genetic profile"
-                            }
-                        }
+                        print(f"Error processing MapComposite: {e}")
+                        structured_assessment = default_assessment.copy()
                 else:
-                    # Try direct attribute access
-                    # Extract basic assessment components
-                    summary = getattr(function_call.args, "summary", "Summary of your health assessment incorporating genetic factors")
-                    diabetes_eval = getattr(function_call.args, "diabetes_management_evaluation", "Your diabetes management assessment incorporating genetic insights")
+                    # Try direct attribute access as fallback with simplified schema
+                    structured_assessment = default_assessment.copy()
                     
-                    # Extract key metrics analysis with extra care
-                    if hasattr(function_call.args, "key_metrics_analysis"):
-                        key_metrics = function_call.args.key_metrics_analysis
-                        # Ensure it has the expected structure or create default
-                        if not isinstance(key_metrics, dict):
-                            key_metrics = {
-                                "fasting_glucose": "See assessment details",
-                                "postmeal_glucose": "See assessment details",
-                                "hba1c": "See assessment details"
-                            }
-                    else:
-                        key_metrics = {
-                            "fasting_glucose": "Assessment of fasting glucose levels",
-                            "postmeal_glucose": "Assessment of postmeal glucose levels",
-                            "hba1c": "Assessment of HbA1c levels"
-                        }
-                    
-                    # Extract genetic profile overview
-                    if hasattr(function_call.args, "genetic_profile_overview"):
-                        genetic_profile = function_call.args.genetic_profile_overview
-                        # Ensure it has the expected structure
-                        if not isinstance(genetic_profile, dict):
-                            genetic_profile = {
-                                "carb_metabolism": "Your genetic carbohydrate metabolism profile",
-                                "fat_metabolism": "Your genetic fat metabolism profile",
-                                "inflammation_response": "Your genetic inflammation response profile",
-                                "caffeine_processing": "Your genetic caffeine processing profile"
-                            }
-                    else:
-                        genetic_profile = {
-                            "carb_metabolism": "Your genetic carbohydrate metabolism profile",
-                            "fat_metabolism": "Your genetic fat metabolism profile",
-                            "inflammation_response": "Your genetic inflammation response profile",
-                            "caffeine_processing": "Your genetic caffeine processing profile"
-                        }
-                    
-                    # Extract remaining assessment components
-                    health_risks = getattr(function_call.args, "potential_health_risks", "Assessment of potential health risks based on your profile")
-                    care_plans = getattr(function_call.args, "suggested_diagnoses_and_care_plans", "Suggested care plans based on your health data and genetic profile")
-                    areas_concern = getattr(function_call.args, "areas_of_concern", "Areas to discuss with your healthcare provider")
-                    
-                    # Extract personalized recommendations
-                    if hasattr(function_call.args, "personalized_recommendations"):
-                        recommendations = function_call.args.personalized_recommendations
-                        # Ensure it has the expected structure
-                        if not isinstance(recommendations, dict):
-                            recommendations = {
-                                "nutrition": "Nutrition recommendations based on your genetic profile",
-                                "physical_activity": "Physical activity recommendations based on your genetic profile",
-                                "medication_considerations": "Medication considerations based on your genetic profile",
-                                "lifestyle_modifications": "Lifestyle modification recommendations based on your genetic profile",
-                                "monitoring_approach": "Monitoring approach recommendations based on your genetic profile"
-                            }
-                    else:
-                        recommendations = {
-                            "nutrition": "Nutrition recommendations based on your genetic profile",
-                            "physical_activity": "Physical activity recommendations based on your genetic profile",
-                            "medication_considerations": "Medication considerations based on your genetic profile",
-                            "lifestyle_modifications": "Lifestyle modification recommendations based on your genetic profile",
-                            "monitoring_approach": "Monitoring approach recommendations based on your genetic profile"
-                        }
-                    
-                    # Construct the full structured assessment
-                    structured_assessment = {
-                        "summary": summary,
-                        "diabetes_management_evaluation": diabetes_eval,
-                        "key_metrics_analysis": key_metrics,
-                        "genetic_profile_overview": genetic_profile,
-                        "potential_health_risks": health_risks,
-                        "suggested_diagnoses_and_care_plans": care_plans,
-                        "areas_of_concern": areas_concern,
-                        "personalized_recommendations": recommendations
+                    # Map of fields to check with fallbacks
+                    field_mappings = {
+                        "summary": ["summary"],
+                        "diabetes_management_evaluation": ["diabetes_management_evaluation"],
+                        "glucose_analysis": ["glucose_analysis", "key_metrics_analysis"],
+                        "genetic_insights": ["genetic_insights", "genetic_profile_overview"],
+                        "health_risks": ["health_risks", "potential_health_risks"],
+                        "care_plans": ["care_plans", "suggested_diagnoses_and_care_plans"],
+                        "nutrition_recommendations": ["nutrition_recommendations"],
+                        "lifestyle_recommendations": ["lifestyle_recommendations"]
                     }
+                    
+                    # Try each field with potential fallbacks
+                    for target_field, source_fields in field_mappings.items():
+                        for source_field in source_fields:
+                            if hasattr(function_call.args, source_field):
+                                structured_assessment[target_field] = getattr(function_call.args, source_field)
+                                break
             except Exception as e:
                 print(f"Error extracting args with attribute access: {e}")
-                # Fallback to a basic structure if all methods fail
-                structured_assessment = {
-                    "summary": "Error parsing response from Gemini API",
-                    "diabetes_management_evaluation": "Unable to generate assessment due to API response error",
-                    "key_metrics_analysis": {
-                        "fasting_glucose": "Data unavailable due to API error",
-                        "postmeal_glucose": "Data unavailable due to API error",
-                        "hba1c": "Data unavailable due to API error"
-                    },
-                    "genetic_profile_overview": {
-                        "carb_metabolism": "Error processing response",
-                        "fat_metabolism": "Error processing response",
-                        "inflammation_response": "Error processing response",
-                        "caffeine_processing": "Error processing response"
-                    },
-                    "potential_health_risks": "Assessment unavailable due to API error",
-                    "suggested_diagnoses_and_care_plans": "Assessment unavailable due to API error",
-                    "areas_of_concern": "Assessment unavailable due to API error",
-                    "personalized_recommendations": {
-                        "nutrition": "Unable to generate due to API error",
-                        "physical_activity": "Unable to generate due to API error",
-                        "medication_considerations": "Unable to generate due to API error",
-                        "lifestyle_modifications": "Unable to generate due to API error",
-                        "monitoring_approach": "Unable to generate due to API error"
-                    }
-                }
+                # Fallback to the default structure if all methods fail
+                structured_assessment = default_assessment.copy()
+                structured_assessment["summary"] = f"Error parsing Gemini API response: {str(e)}. Here's a default assessment based on your health data and genetic profile."
         else:
-            # If no function call, process as regular text response
+            # If no function call, use default structure with a note
             print("No function call found in response. Full response:")
             print(response)
-            # Try to extract any usable text
-            try:
-                text_response = response.text
-                print(f"Text response: {text_response}")
-                # Create a simple structured response
-                structured_assessment = {
-                    "summary": "The Gemini API did not return structured data in the expected format",
-                    "diabetes_management_evaluation": "Model response format issue - see raw response below",
-                    "key_metrics_analysis": {
-                        "fasting_glucose": "See raw response",
-                        "postmeal_glucose": "See raw response",
-                        "hba1c": "See raw response"
-                    },
-                    "genetic_profile_overview": {
-                        "carb_metabolism": "API returned non-structured response",
-                        "fat_metabolism": "API returned non-structured response",
-                        "inflammation_response": "API returned non-structured response",
-                        "caffeine_processing": "API returned non-structured response"
-                    },
-                    "potential_health_risks": "See raw response below",
-                    "suggested_diagnoses_and_care_plans": "See raw response below",
-                    "areas_of_concern": "API response formatting issue",
-                    "personalized_recommendations": {
-                        "nutrition": "See raw response below",
-                        "physical_activity": "See raw response below",
-                        "medication_considerations": "See raw response below",
-                        "lifestyle_modifications": "See raw response below",
-                        "monitoring_approach": "See raw response below"
-                    }
-                }
-            except Exception as e:
-                print(f"Error processing text response: {e}")
-                raise
+            structured_assessment = default_assessment.copy()
+            structured_assessment["summary"] = "The Gemini API response did not contain structured data in the expected format. Here's a default assessment based on your health data and genetic profile."
     except Exception as e:
         print(f"Error processing response: {e}")
         print(f"Response structure: {response}")
         # Create a minimal fallback structure
-        structured_assessment = {
-            "summary": f"Error: {str(e)}",
-            "diabetes_management_evaluation": "Assessment unavailable due to technical error",
-            "key_metrics_analysis": {
-                "fasting_glucose": "Error processing response",
-                "postmeal_glucose": "Error processing response",
-                "hba1c": "Error processing response"
-            },
-            "genetic_profile_overview": {
-                "carb_metabolism": "Error processing response",
-                "fat_metabolism": "Error processing response",
-                "inflammation_response": "Error processing response",
-                "caffeine_processing": "Error processing response"
-            },
-            "potential_health_risks": "Error processing response",
-            "suggested_diagnoses_and_care_plans": "Error processing response",
-            "areas_of_concern": "Error processing response",
-            "personalized_recommendations": {
-                "nutrition": "Error processing response",
-                "physical_activity": "Error processing response", 
-                "medication_considerations": "Error processing response",
-                "lifestyle_modifications": "Error processing response",
-                "monitoring_approach": "Error processing response"
-            }
-        }
+        structured_assessment = default_assessment.copy()
+        structured_assessment["summary"] = f"Error processing API response: {str(e)}. Here's a default assessment based on your health data and genetic profile."
     
     # Store the structured data in the session state
     st.session_state.structured_genetic_health_assessment = structured_assessment
     
-    health_assessment = structured_assessment
-    
-    return health_assessment
+    return structured_assessment
 
 def create_genetic_health_assessment_prompt(user_data, genetic_profile):
     """

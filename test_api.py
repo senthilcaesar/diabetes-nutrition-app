@@ -25,7 +25,7 @@ try:
     print("Configured API. Testing simple response...")
     
     # Create model and generate response
-    model = GenerativeModel('gemini-1.5-flash')
+    model = GenerativeModel('gemini-2.5-pro-exp-03-25')
     response = model.generate_content('Hello! Can you respond with a simple greeting?')
     
     # Print results

@@ -100,7 +100,14 @@ def display_health_assessment(structured_data):
 def display_genetic_health_assessment(structured_data):
     """
     Display genetic health assessment with consistent formatting across all sections.
+    This function works with the simplified schema for Gemini API.
     """
+    # Check for missing keys and provide defaults
+    for key in ["summary", "diabetes_management_evaluation", "glucose_analysis", "genetic_insights", 
+                "health_risks", "care_plans", "nutrition_recommendations", "lifestyle_recommendations"]:
+        if key not in structured_data:
+            structured_data[key] = f"No {key.replace('_', ' ')} data available"
+    
     # Summary section
     st.markdown("<h3 style='color:#2E7D32; margin-top:0; border-bottom:2px solid #C8E6C9; padding-bottom:10px;'>Summary</h3>", unsafe_allow_html=True)
     
@@ -117,113 +124,53 @@ def display_genetic_health_assessment(structured_data):
         unsafe_allow_html=True
     )
     
-    # Key Metrics Analysis
-    metrics = structured_data["key_metrics_analysis"]
-    
-    st.markdown("<h3 style='color:#4A148C; margin-top:0; border-bottom:2px solid #E1BEE7; padding-bottom:10px;'>Key Metrics Analysis</h3>", unsafe_allow_html=True)
+    # Glucose Analysis (simplified schema)
+    st.markdown("<h3 style='color:#4A148C; margin-top:0; border-bottom:2px solid #E1BEE7; padding-bottom:10px;'>Glucose Analysis</h3>", unsafe_allow_html=True)
     
     st.markdown(
-        f'<div style="background-color:#F3E5F5; padding:15px; border-radius:5px; border-left:5px solid #9C27B0; margin-bottom:10px;"><strong>Fasting Glucose:</strong> {metrics["fasting_glucose"]}</div>',
+        f'<div style="background-color:#F3E5F5; padding:15px; border-radius:5px; border-left:5px solid #9C27B0; margin-bottom:20px;">{structured_data["glucose_analysis"]}</div>',
         unsafe_allow_html=True
     )
     
+    # Genetic Insights (simplified schema)
+    st.markdown("<h3 style='color:#1A237E; margin-top:0; border-bottom:2px solid #C5CAE9; padding-bottom:10px;'>Genetic Insights</h3>", unsafe_allow_html=True)
+    
     st.markdown(
-        f'<div style="background-color:#F3E5F5; padding:15px; border-radius:5px; border-left:5px solid #9C27B0; margin-bottom:10px;"><strong>Post-meal Glucose:</strong> {metrics["postmeal_glucose"]}</div>',
+        f'<div style="background-color:#E8EAF6; padding:15px; border-radius:5px; border-left:5px solid #3F51B5; margin-bottom:20px;">{structured_data["genetic_insights"]}</div>',
         unsafe_allow_html=True
     )
     
+    # Health Risks (renamed from potential_health_risks)
+    st.markdown("<h3 style='color:#B71C1C; margin-top:0; border-bottom:2px solid #FFCDD2; padding-bottom:10px;'>Health Risks</h3>", unsafe_allow_html=True)
+    
     st.markdown(
-        f'<div style="background-color:#F3E5F5; padding:15px; border-radius:5px; border-left:5px solid #9C27B0; margin-bottom:10px;"><strong>HbA1c:</strong> {metrics["hba1c"]}</div>',
+        f'<div style="background-color:#FFEBEE; padding:15px; border-radius:5px; border-left:5px solid #F44336; margin-bottom:20px;">{structured_data["health_risks"]}</div>',
         unsafe_allow_html=True
     )
     
-    # Genetic Profile Overview
-    st.markdown("<h3 style='color:#1A237E; margin-top:0; border-bottom:2px solid #C5CAE9; padding-bottom:10px;'>Genetic Profile Overview</h3>", unsafe_allow_html=True)
-    
-    # Display genetic insights if they exist in the structured data
-    if "genetic_profile_overview" in structured_data:
-        genetic_profile = structured_data["genetic_profile_overview"]
-        
-        st.markdown(
-            f'<div style="background-color:#E8EAF6; padding:15px; border-radius:5px; border-left:5px solid #3F51B5; margin-bottom:10px;"><strong>Carbohydrate Metabolism:</strong> {genetic_profile["carb_metabolism"]}</div>',
-            unsafe_allow_html=True
-        )
-        
-        st.markdown(
-            f'<div style="background-color:#E8EAF6; padding:15px; border-radius:5px; border-left:5px solid #3F51B5; margin-bottom:10px;"><strong>Fat Metabolism:</strong> {genetic_profile["fat_metabolism"]}</div>',
-            unsafe_allow_html=True
-        )
-        
-        st.markdown(
-            f'<div style="background-color:#E8EAF6; padding:15px; border-radius:5px; border-left:5px solid #3F51B5; margin-bottom:10px;"><strong>Inflammation Response:</strong> {genetic_profile["inflammation_response"]}</div>',
-            unsafe_allow_html=True
-        )
-        
-        st.markdown(
-            f'<div style="background-color:#E8EAF6; padding:15px; border-radius:5px; border-left:5px solid #3F51B5; margin-bottom:20px;"><strong>Caffeine Processing:</strong> {genetic_profile["caffeine_processing"]}</div>',
-            unsafe_allow_html=True
-        )
-    
-    # Potential Health Risks
-    st.markdown("<h3 style='color:#B71C1C; margin-top:0; border-bottom:2px solid #FFCDD2; padding-bottom:10px;'>Potential Health Risks</h3>", unsafe_allow_html=True)
+    # Care Plans (renamed from suggested_diagnoses_and_care_plans)
+    st.markdown("<h3 style='color:#006064; margin-top:0; border-bottom:2px solid #B2EBF2; padding-bottom:10px;'>Care Plans</h3>", unsafe_allow_html=True)
     
     st.markdown(
-        f'<div style="background-color:#FFEBEE; padding:15px; border-radius:5px; border-left:5px solid #F44336; margin-bottom:20px;">{structured_data["potential_health_risks"]}</div>',
+        f'<div style="background-color:#E0F7FA; padding:15px; border-radius:5px; border-left:5px solid #00BCD4; margin-bottom:20px;">{structured_data["care_plans"]}</div>',
         unsafe_allow_html=True
     )
     
-    # Suggested Diagnoses and Care Plans
-    st.markdown("<h3 style='color:#006064; margin-top:0; border-bottom:2px solid #B2EBF2; padding-bottom:10px;'>Suggested Diagnoses and Care Plans</h3>", unsafe_allow_html=True)
+    # Nutrition Recommendations (simplified schema)
+    st.markdown("<h3 style='color:#33691E; margin-top:0; border-bottom:2px solid #DCEDC8; padding-bottom:10px;'>Nutrition Recommendations</h3>", unsafe_allow_html=True)
     
     st.markdown(
-        f'<div style="background-color:#E0F7FA; padding:15px; border-radius:5px; border-left:5px solid #00BCD4; margin-bottom:20px;">{structured_data["suggested_diagnoses_and_care_plans"]}</div>',
+        f'<div style="background-color:#F1F8E9; padding:15px; border-radius:5px; border-left:5px solid #8BC34A; margin-bottom:20px;">{structured_data["nutrition_recommendations"]}</div>',
         unsafe_allow_html=True
     )
     
-    # Areas of Concern
-    st.markdown("<h3 style='color:#E65100; margin-top:0; border-bottom:2px solid #FFE0B2; padding-bottom:10px;'>Areas of Concern for Discussion with a Healthcare Provider</h3>", unsafe_allow_html=True)
+    # Lifestyle Recommendations (simplified schema)
+    st.markdown("<h3 style='color:#E65100; margin-top:0; border-bottom:2px solid #FFE0B2; padding-bottom:10px;'>Lifestyle Recommendations</h3>", unsafe_allow_html=True)
     
     st.markdown(
-        f'<div style="background-color:#FFF3E0; padding:15px; border-radius:5px; border-left:5px solid #FF9800; margin-bottom:20px;">{structured_data["areas_of_concern"]}</div>',
+        f'<div style="background-color:#FFF3E0; padding:15px; border-radius:5px; border-left:5px solid #FF9800; margin-bottom:20px;">{structured_data["lifestyle_recommendations"]}</div>',
         unsafe_allow_html=True
     )
-    
-    # Personalized Recommendations
-    st.markdown("<h3 style='color:#33691E; margin-top:0; border-bottom:2px solid #DCEDC8; padding-bottom:10px;'>Personalized Recommendations</h3>", unsafe_allow_html=True)
-    
-    if "personalized_recommendations" in structured_data:
-        recommendations = structured_data["personalized_recommendations"]
-        
-        st.markdown(
-            f'<div style="background-color:#F1F8E9; padding:15px; border-radius:5px; border-left:5px solid #8BC34A; margin-bottom:10px;"><strong>Nutrition:</strong> {recommendations["nutrition"]}</div>',
-            unsafe_allow_html=True
-        )
-        
-        st.markdown(
-            f'<div style="background-color:#F1F8E9; padding:15px; border-radius:5px; border-left:5px solid #8BC34A; margin-bottom:10px;"><strong>Physical Activity:</strong> {recommendations["physical_activity"]}</div>',
-            unsafe_allow_html=True
-        )
-        
-        st.markdown(
-            f'<div style="background-color:#F1F8E9; padding:15px; border-radius:5px; border-left:5px solid #8BC34A; margin-bottom:10px;"><strong>Medication Considerations:</strong> {recommendations["medication_considerations"]}</div>',
-            unsafe_allow_html=True
-        )
-        
-        st.markdown(
-            f'<div style="background-color:#F1F8E9; padding:15px; border-radius:5px; border-left:5px solid #8BC34A; margin-bottom:10px;"><strong>Lifestyle Modifications:</strong> {recommendations["lifestyle_modifications"]}</div>',
-            unsafe_allow_html=True
-        )
-        
-        st.markdown(
-            f'<div style="background-color:#F1F8E9; padding:15px; border-radius:5px; border-left:5px solid #8BC34A; margin-bottom:20px;"><strong>Monitoring Approach:</strong> {recommendations["monitoring_approach"]}</div>',
-            unsafe_allow_html=True
-        )
-    else:
-        # If structured recommendations aren't available, use the standard recommendations field
-        st.markdown(
-            f'<div style="background-color:#F1F8E9; padding:15px; border-radius:5px; border-left:5px solid #8BC34A; margin-bottom:20px;">{structured_data["recommendations"]}</div>',
-            unsafe_allow_html=True
-        )
 
 def show_health_assessment():
     """Display the generated health assessment."""
@@ -353,16 +300,14 @@ def show_health_assessment():
                 if has_genetic_data:
                     generate_genetic_health_assessment(
                         st.session_state.health_data, 
-                        st.session_state.genetic_profile, 
-                        st.secrets["OPENAI_API_KEY"]
+                        st.session_state.genetic_profile
                     )
                     # Store copies of the data
                     st.session_state.last_assessed_data = st.session_state.health_data.copy()
                     st.session_state.last_assessed_genetic_data = st.session_state.genetic_profile.copy()
                 else:
                     generate_health_assessment(
-                        st.session_state.health_data, 
-                        st.secrets["OPENAI_API_KEY"]
+                        st.session_state.health_data
                     )
                     # Store a copy of the data
                     st.session_state.last_assessed_data = st.session_state.health_data.copy()

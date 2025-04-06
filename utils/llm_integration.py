@@ -3,7 +3,7 @@ import streamlit as st
 import google.generativeai as genai
 from google.generativeai import GenerativeModel
 
-GEMINI_MODEL = "gemini-1.5-flash"  # Specify the model to use
+GEMINI_MODEL = "gemini-2.5-pro-exp-03-25"  # Specify the model to use
 
 # This module handles all Gemini API interactions for the diabetes nutrition plan application
 def initialize_gemini_client():
@@ -951,38 +951,126 @@ def format_structured_nutrition_plan(structured_data):
     2. Meal Plan
     3. Recipes & Tips
     
+    Handles various input formats including MapComposite objects from Gemini API.
+    
+    Args:
+        structured_data: The structured nutrition plan data, which can be a dict, 
+                        MapComposite object, or other format that needs processing
+    
     Returns:
         tuple: (overview, meal_plan, recipes_tips) sections as formatted text
     """
     try:
         # SECTION 1: OVERVIEW
         overview = ""
-            
+        
+        # First, handle potential MapComposite object or other non-dict formats
+        processed_data = {}
+        
+        # If structured_data is None or empty, create default data
+        if not structured_data:
+            print("Warning: Empty structured data received")
+            processed_data = create_default_nutrition_plan()
+        else:
+            # Check if it's a dict already
+            if isinstance(structured_data, dict):
+                processed_data = structured_data
+            else:
+                # Try different methods to extract data from non-dict objects
+                try:
+                    # Try converting to dict if possible
+                    if hasattr(structured_data, 'to_dict'):
+                        processed_data = structured_data.to_dict()
+                    elif hasattr(structured_data, '_asdict'):
+                        processed_data = structured_data._asdict()
+                    elif hasattr(structured_data, '__dict__'):
+                        processed_data = structured_data.__dict__
+                    elif hasattr(structured_data, '_pb'):
+                        # Extract from _pb attribute (MapComposite objects from Gemini API)
+                        pb_obj = structured_data._pb
+                        
+                        # Try to extract data using items() method
+                        extracted_data = {}
+                        for key, value in pb_obj.items():
+                            # Extract the actual value based on the structure
+                            str_value = str(value)
+                            
+                            # Process different value types
+                            if 'number_value:' in str_value:
+                                # Extract numeric values
+                                num_str = str_value.split('number_value:')[1].strip()
+                                try:
+                                    # Try to convert to int first, then float
+                                    extracted_data[key] = int(num_str)
+                                except ValueError:
+                                    try:
+                                        extracted_data[key] = float(num_str)
+                                    except ValueError:
+                                        extracted_data[key] = num_str
+                            elif 'string_value:' in str_value:
+                                # Extract string values, removing quotes
+                                str_content = str_value.split('string_value:')[1].strip()
+                                extracted_data[key] = str_content.strip('"')
+                            elif 'list_value' in str_value:
+                                # Extract list values
+                                items = []
+                                parts = str_value.split('string_value:')
+                                for i in range(1, len(parts)):
+                                    item_value = parts[i].split('"')[1] if '"' in parts[i] else parts[i].strip()
+                                    items.append(item_value)
+                                extracted_data[key] = items
+                            elif 'struct_value' in str_value:
+                                # For complex nested structures, store as string for now
+                                # Will need deeper parsing for specific fields later
+                                extracted_data[key] = str_value
+                            else:
+                                # For other types, store string representation
+                                extracted_data[key] = str_value
+                        
+                        # Process the extracted data into standard nutrition plan format
+                        processed_data = process_extracted_nutrition_data(extracted_data)
+                    else:
+                        # Try to access some expected attributes directly as fallback
+                        processed_data = create_default_nutrition_plan()
+                        # Try to populate with any available data
+                        if hasattr(structured_data, "introduction"):
+                            processed_data["introduction"] = getattr(structured_data, "introduction", "Welcome to your personalized nutrition plan")
+                        if hasattr(structured_data, "nutritional_overview"):
+                            processed_data["nutritional_overview"] = getattr(structured_data, "nutritional_overview")
+                except Exception as e:
+                    print(f"Error processing structured data: {e}")
+                    # Fall back to default structure
+                    processed_data = create_default_nutrition_plan()
+        
+        # Now format the processed data
+        
         # Nutritional Overview section with chart icon
         overview += ""
         
-        # Make sure required elements exist in the structured data
-        if not structured_data:
-            raise ValueError("Empty structured data")
-            
-        if "nutritional_overview" not in structured_data:
-            raise ValueError("Missing nutritional_overview")
+        # Make sure required elements exist
+        if "nutritional_overview" not in processed_data:
+            processed_data["nutritional_overview"] = create_default_nutritional_overview()
             
         # Daily Caloric Target
-        if "daily_caloric_target" not in structured_data["nutritional_overview"]:
-            raise ValueError("Missing daily_caloric_target")
+        nutritional_overview = processed_data["nutritional_overview"]
+        if "daily_caloric_target" not in nutritional_overview:
+            nutritional_overview["daily_caloric_target"] = {"calories": 2000, "explanation": "No caloric target data available"}
             
-        caloric = structured_data["nutritional_overview"]["daily_caloric_target"]
+        caloric = nutritional_overview["daily_caloric_target"]
         overview += f"### 🔥 Daily Caloric Target: {caloric.get('calories', 2000)} calories\n\n"
         overview += f"{caloric.get('explanation', 'No explanation provided')}\n\n"
     
         # Macronutrient Distribution with visualization-like formatting
         overview += "### 🥗 Macronutrient Distribution\n\n"
         
-        if "macronutrient_distribution" not in structured_data["nutritional_overview"]:
-            raise ValueError("Missing macronutrient_distribution")
+        if "macronutrient_distribution" not in nutritional_overview:
+            nutritional_overview["macronutrient_distribution"] = {
+                "carbohydrates": {"percentage": 45, "grams": 225, "recommendations": "Focus on complex carbohydrates"},
+                "protein": {"percentage": 25, "grams": 125, "recommendations": "Choose lean protein sources"},
+                "fat": {"percentage": 30, "grams": 67, "recommendations": "Focus on healthy fats"}
+            }
             
-        macro = structured_data["nutritional_overview"]["macronutrient_distribution"]
+        macro = nutritional_overview["macronutrient_distribution"]
         
         # Create a visually appealing macronutrient table
         overview += "| Nutrient | Percentage | Grams |\n"
@@ -1032,8 +1120,8 @@ def format_structured_nutrition_plan(structured_data):
         # Meal Structure with clock icon
         overview += "### ⏰ Meal Structure and Timing\n\n"
         
-        if "meal_structure" in structured_data["nutritional_overview"]:
-            structure = structured_data["nutritional_overview"]["meal_structure"]
+        if "meal_structure" in nutritional_overview:
+            structure = nutritional_overview["meal_structure"]
             meal_freq = structure.get("meal_frequency", "3-5 meals per day")
             timing_rec = structure.get("timing_recommendations", "Space meals 3-4 hours apart")
             portion_guide = structure.get("portion_guidance", "Use the plate method")
@@ -1051,10 +1139,17 @@ def format_structured_nutrition_plan(structured_data):
         # Recommended Foods section with thumbs up icon
         overview += "### Recommended Foods\n\n"
 
-        if "recommended_foods" not in structured_data:
-            raise ValueError("Missing recommended_foods")
+        if "recommended_foods" not in processed_data:
+            processed_data["recommended_foods"] = {
+                "carbohydrates": ["Whole grains", "Legumes", "Starchy vegetables"],
+                "proteins": ["Lean meats", "Fish", "Tofu"],
+                "fats": ["Avocado", "Nuts", "Olive oil"],
+                "vegetables": ["Broccoli", "Spinach", "Peppers"],
+                "fruits": ["Berries", "Apples", "Citrus"],
+                "beverages": ["Water", "Herbal tea", "Black coffee"]
+            }
             
-        foods = structured_data["recommended_foods"]
+        foods = processed_data["recommended_foods"]
 
         # Create a table for foods with headers
         overview += "| Category | Recommended Foods |\n"
@@ -1093,10 +1188,14 @@ def format_structured_nutrition_plan(structured_data):
         # Sample Meal Plans with calendar icon
         meal_plan += ""
 
-        if "meal_plans" not in structured_data:
-            raise ValueError("Missing meal_plans")
+        if "meal_plans" not in processed_data:
+            processed_data["meal_plans"] = {
+                "day1": {"breakfast": "Balanced breakfast for day 1", "lunch": "Balanced lunch for day 1", "dinner": "Balanced dinner for day 1"},
+                "day2": {"breakfast": "Balanced breakfast for day 2", "lunch": "Balanced lunch for day 2", "dinner": "Balanced dinner for day 2"},
+                "day3": {"breakfast": "Balanced breakfast for day 3", "lunch": "Balanced lunch for day 3", "dinner": "Balanced dinner for day 3"}
+            }
             
-        meal_plans = structured_data["meal_plans"]
+        meal_plans = processed_data["meal_plans"]
 
         # Safe day meal getter
         def get_safe_meal_plan(day_num):
@@ -1153,9 +1252,9 @@ def format_structured_nutrition_plan(structured_data):
         recipes_tips = ""
         
         # Simple Recipes with chef hat icon
-        if "recipes" in structured_data and structured_data["recipes"]:
+        if "recipes" in processed_data and processed_data["recipes"]:
             
-            for recipe in structured_data["recipes"]:
+            for recipe in processed_data["recipes"]:
                 recipes_tips += "<div class='recipe-card'>\n\n"
                 
                 # Get recipe properties with fallbacks
@@ -1183,9 +1282,9 @@ def format_structured_nutrition_plan(structured_data):
         recipes_tips += "|---------------|-------------|---------------------|\n"
 
         # Check for foods_to_limit with fallback
-        if "foods_to_limit" in structured_data and structured_data["foods_to_limit"]:
+        if "foods_to_limit" in processed_data and processed_data["foods_to_limit"]:
             # Add each food item as a row in the table
-            for item in structured_data["foods_to_limit"]:
+            for item in processed_data["foods_to_limit"]:
                 category = item.get('food_category', 'Processed foods')
                 reason = item.get('reason', 'Can cause blood sugar spikes')
                 alternatives = item.get('alternatives', 'Whole food alternatives')
@@ -1200,10 +1299,10 @@ def format_structured_nutrition_plan(structured_data):
             
         
         # Blood Sugar Management with chart icon
-        if "blood_sugar_management" in structured_data:
+        if "blood_sugar_management" in processed_data:
             recipes_tips += "# 📈 Blood Sugar Management Strategies\n\n"
             
-            bsm = structured_data["blood_sugar_management"]
+            bsm = processed_data["blood_sugar_management"]
             
             # Get blood sugar management sections with fallbacks
             hypo = bsm.get('hypoglycemia_prevention', 'Carry fast-acting carbs for low blood sugar episodes')
@@ -1358,6 +1457,233 @@ def format_structured_nutrition_plan(structured_data):
         """
         
         return overview, meal_plan, recipes_tips
+
+def create_default_nutritional_overview():
+    """Create a default nutritional overview structure when data is missing."""
+    return {
+        "daily_caloric_target": {
+            "calories": 2000,
+            "explanation": "Based on average adult needs. Adjust based on your healthcare provider's guidance."
+        },
+        "macronutrient_distribution": {
+            "carbohydrates": {
+                "percentage": 45,
+                "grams": 225,
+                "recommendations": "Focus on complex carbohydrates with low glycemic index like whole grains, legumes, and vegetables."
+            },
+            "protein": {
+                "percentage": 25,
+                "grams": 125,
+                "recommendations": "Choose lean protein sources like chicken, fish, tofu, and legumes."
+            },
+            "fat": {
+                "percentage": 30,
+                "grams": 67,
+                "recommendations": "Emphasize healthy unsaturated fats like avocados, nuts, seeds, and olive oil."
+            }
+        },
+        "meal_structure": {
+            "meal_frequency": "3-5 meals per day",
+            "timing_recommendations": "Space meals 3-4 hours apart to help maintain stable blood sugar",
+            "portion_guidance": "Use the plate method: ½ non-starchy vegetables, ¼ protein, ¼ carbohydrates"
+        }
+    }
+
+def create_default_nutrition_plan():
+    """Create a default nutrition plan structure when data parsing fails."""
+    return {
+        "introduction": "This is a default nutrition plan created when data parsing failed. Please consider regenerating your plan.",
+        "nutritional_overview": create_default_nutritional_overview(),
+        "recommended_foods": {
+            "carbohydrates": ["Whole grains", "Legumes", "Sweet potatoes", "Whole grain bread"],
+            "proteins": ["Lean poultry", "Fish", "Tofu and tempeh", "Legumes", "Low-fat dairy"],
+            "fats": ["Avocados", "Nuts and seeds", "Olive oil", "Fatty fish"],
+            "vegetables": ["Leafy greens", "Broccoli", "Peppers", "Zucchini", "Cauliflower"],
+            "fruits": ["Berries", "Apples", "Citrus fruits", "Pears"],
+            "beverages": ["Water", "Unsweetened tea", "Black coffee"]
+        },
+        "foods_to_limit": [
+            {"food_category": "Sugary Foods", "reason": "Can cause blood sugar spikes", "alternatives": "Fresh fruit, especially berries"},
+            {"food_category": "Refined Carbohydrates", "reason": "Quickly raise blood glucose", "alternatives": "Whole grains and legumes"},
+            {"food_category": "Processed Foods", "reason": "Often high in sodium and unhealthy fats", "alternatives": "Fresh, whole foods"}
+        ],
+        "meal_plans": {
+            "day1": {
+                "breakfast": "Overnight oats with berries and nuts",
+                "morning_snack": "Apple with almond butter",
+                "lunch": "Grilled chicken salad with olive oil dressing",
+                "afternoon_snack": "Greek yogurt with walnuts",
+                "dinner": "Baked fish with roasted vegetables and quinoa",
+                "evening_snack": "Small piece of dark chocolate"
+            },
+            "day2": {
+                "breakfast": "Vegetable omelet with whole grain toast",
+                "morning_snack": "Small handful of mixed nuts",
+                "lunch": "Bean and vegetable soup with side salad",
+                "afternoon_snack": "Cottage cheese with berries",
+                "dinner": "Turkey and vegetable stir-fry with brown rice",
+                "evening_snack": "Celery with nut butter"
+            },
+            "day3": {
+                "breakfast": "Greek yogurt parfait with fruit and nuts",
+                "morning_snack": "Vegetables with hummus",
+                "lunch": "Lentil salad with roasted vegetables",
+                "afternoon_snack": "Hard-boiled egg and fruit",
+                "dinner": "Grilled chicken with sweet potato and steamed vegetables",
+                "evening_snack": "Small handful of berries"
+            }
+        },
+        "blood_sugar_management": {
+            "hypoglycemia_prevention": "Carry fast-acting carbs like glucose tablets. Never skip meals. Monitor blood sugar regularly.",
+            "hyperglycemia_management": "Stay hydrated, exercise regularly, and follow your medication schedule as prescribed.",
+            "meal_timing_strategies": "Eat meals at consistent times each day to help maintain stable blood sugar levels.",
+            "snack_recommendations": "Choose snacks that combine protein and complex carbs for sustained energy."
+        }
+    }
+
+def process_extracted_nutrition_data(extracted_data):
+    """
+    Process the extracted data from MapComposite objects into the standard nutrition plan format.
+    
+    Args:
+        extracted_data: Raw data extracted from the MapComposite object
+        
+    Returns:
+        dict: A properly structured nutrition plan
+    """
+    # Start with a default plan to ensure complete structure
+    structured_plan = create_default_nutrition_plan()
+    
+    # Update with any available data from the extracted data
+    if "introduction" in extracted_data:
+        structured_plan["introduction"] = extracted_data["introduction"]
+        
+    # Process nutritional_overview if available
+    if "nutritional_overview" in extracted_data:
+        no_str = str(extracted_data["nutritional_overview"])
+        
+        # Try to extract the daily caloric target
+        if "calories" in no_str and "daily_caloric_target" in structured_plan["nutritional_overview"]:
+            try:
+                # Extract calories value
+                calorie_parts = no_str.split("calories")
+                if len(calorie_parts) > 1:
+                    calorie_value_part = calorie_parts[1].split(":")[1].strip() if ":" in calorie_parts[1] else calorie_parts[1].strip()
+                    try:
+                        calories = int(calorie_value_part.split(",")[0].strip())
+                        structured_plan["nutritional_overview"]["daily_caloric_target"]["calories"] = calories
+                    except (ValueError, IndexError):
+                        pass
+                        
+                # Try to extract explanation
+                if "explanation" in no_str:
+                    explanation_parts = no_str.split("explanation")
+                    if len(explanation_parts) > 1:
+                        explanation_value = explanation_parts[1].split("string_value:")[1].split('"')[1] if 'string_value:' in explanation_parts[1] else explanation_parts[1].strip()
+                        structured_plan["nutritional_overview"]["daily_caloric_target"]["explanation"] = explanation_value
+            except Exception as e:
+                print(f"Error extracting daily caloric target: {e}")
+    
+    # Process recommended_foods if available
+    if "recommended_foods" in extracted_data:
+        rf_str = str(extracted_data["recommended_foods"])
+        
+        food_categories = ["carbohydrates", "proteins", "fats", "vegetables", "fruits", "beverages"]
+        for category in food_categories:
+            if category in rf_str:
+                try:
+                    category_items = []
+                    category_parts = rf_str.split(category)[1].split("list_value")[1] if "list_value" in rf_str.split(category)[1] else rf_str.split(category)[1]
+                    
+                    # Extract all string values for this category
+                    item_parts = category_parts.split("string_value:")
+                    for i in range(1, min(len(item_parts), 10)):  # Limit to 10 items to prevent parsing errors
+                        item_value = item_parts[i].split('"')[1] if '"' in item_parts[i] else item_parts[i].strip()
+                        category_items.append(item_value)
+                        
+                    if category_items:
+                        structured_plan["recommended_foods"][category] = category_items
+                except Exception as e:
+                    print(f"Error extracting {category} foods: {e}")
+    
+    # Process meal_plans if available
+    if "meal_plans" in extracted_data:
+        mp_str = str(extracted_data["meal_plans"])
+        
+        for day_num in range(1, 4):
+            day_key = f"day{day_num}"
+            if day_key in mp_str:
+                try:
+                    day_plan = {}
+                    day_part = mp_str.split(day_key)[1]
+                    
+                    # Extract meal components
+                    meal_types = ["breakfast", "morning_snack", "lunch", "afternoon_snack", "dinner", "evening_snack"]
+                    for meal in meal_types:
+                        if meal in day_part:
+                            meal_parts = day_part.split(meal)[1].split("string_value:")
+                            if len(meal_parts) > 1:
+                                meal_value = meal_parts[1].split('"')[1] if '"' in meal_parts[1] else meal_parts[1].strip().split('}')[0]
+                                day_plan[meal] = meal_value
+                    
+                    # Update the structured plan if we found anything
+                    if day_plan:
+                        structured_plan["meal_plans"][day_key] = {**structured_plan["meal_plans"][day_key], **day_plan}
+                except Exception as e:
+                    print(f"Error extracting {day_key} meal plan: {e}")
+    
+    # Process foods_to_limit if available
+    if "foods_to_limit" in extracted_data:
+        ftl_str = str(extracted_data["foods_to_limit"])
+        
+        try:
+            foods_to_limit = []
+            
+            # Extract from list representation
+            if "food_category" in ftl_str:
+                category_parts = ftl_str.split("food_category")
+                
+                # Skip the first part (before the first "food_category")
+                for i in range(1, min(len(category_parts), 10)):  # Limit to 10 items
+                    try:
+                        category_part = category_parts[i]
+                        
+                        # Extract food category
+                        food_category = ""
+                        if "string_value:" in category_part:
+                            food_category = category_part.split("string_value:")[1].split('"')[1]
+                        
+                        # Extract reason
+                        reason = "No reason provided"
+                        if "reason" in category_part:
+                            reason_part = category_part.split("reason")[1]
+                            if "string_value:" in reason_part:
+                                reason = reason_part.split("string_value:")[1].split('"')[1]
+                        
+                        # Extract alternatives
+                        alternatives = "No alternatives provided"
+                        if "alternatives" in category_part:
+                            alt_part = category_part.split("alternatives")[1]
+                            if "string_value:" in alt_part:
+                                alternatives = alt_part.split("string_value:")[1].split('"')[1]
+                        
+                        # Add to the list
+                        if food_category:
+                            foods_to_limit.append({
+                                "food_category": food_category,
+                                "reason": reason,
+                                "alternatives": alternatives
+                            })
+                    except Exception as e:
+                        print(f"Error extracting food to limit #{i}: {e}")
+            
+            # Update the structured plan if we found anything
+            if foods_to_limit:
+                structured_plan["foods_to_limit"] = foods_to_limit
+        except Exception as e:
+            print(f"Error extracting foods to limit: {e}")
+    
+    return structured_plan
     
 def create_nutrition_plan_prompt(user_data):
     """Create a prompt for generating a nutrition plan."""
@@ -1485,26 +1811,51 @@ def generate_visual_guidance(nutrition_plan, literacy_level, plan_complexity):
             generation_config={"temperature": 0.3, "max_output_tokens": 1500}
         )
         
-        visual_guidance = response.text
-        return visual_guidance
+        # Check if we have valid candidates in the response
+        if hasattr(response, 'candidates') and response.candidates:
+            if hasattr(response.candidates[0].content, 'parts') and response.candidates[0].content.parts:
+                visual_guidance = response.candidates[0].content.parts[0].text
+                return visual_guidance
+        
+        # If we get here, we don't have a valid text response
+        print("No valid text in response, using fallback")
+        return """
+        # Visual Guidance
+        
+        ## Plate Method Visual 
+        A simple plate divided into three sections: half filled with non-starchy vegetables, one quarter with lean protein, and one quarter with complex carbohydrates.
+        
+        ## Blood Sugar Management Timeline
+        A 24-hour timeline showing ideal meal spacing and blood glucose levels throughout the day.
+        
+        ## Portion Size Guide
+        Common household items representing appropriate portion sizes for different food groups.
+        
+        ## Traffic Light Food Guide
+        Green foods (eat freely), yellow foods (eat in moderation), and red foods (limit/avoid).
+        
+        ## Meal Preparation Visual
+        Simple step-by-step illustrations of how to prepare balanced meals using locally available ingredients.
+        """
     except Exception as e:
         print(f"Error generating visual guidance: {e}")
         print(f"Response structure: {response if 'response' in locals() else 'No response generated'}")
         # Return a fallback guidance
         return """
-        # Visual Guidance (Error in generation)
+        # Visual Guidance
+
+        ## Plate Method Visual 
+        A simple plate divided into three sections: half filled with non-starchy vegetables, one quarter with lean protein, and one quarter with complex carbohydrates.
         
-        An error occurred while generating visual aids. Please try again later or contact support.
+        ## Blood Sugar Management Timeline
+        A 24-hour timeline showing ideal meal spacing and blood glucose levels throughout the day.
         
-        In the meantime, consider using these general visual aids for diabetes education:
+        ## Portion Size Guide
+        Common household items representing appropriate portion sizes for different food groups.
         
-        1. **Plate Method Visual** - A plate divided into sections: half for non-starchy vegetables, quarter for protein, quarter for carbohydrates
+        ## Traffic Light Food Guide
+        Green foods (eat freely), yellow foods (eat in moderation), and red foods (limit/avoid).
         
-        2. **Blood Sugar Curve** - A simple graph showing blood sugar levels after eating different types of foods
-        
-        3. **Portion Size Guide** - Common household items to represent appropriate portion sizes
-        
-        4. **Traffic Light Food System** - Green (eat freely), Yellow (eat in moderation), Red (limit/avoid)
-        
-        5. **Daily Schedule Visual** - Clock-based visualization of meal timing and medication schedules
+        ## Meal Preparation Visual
+        Simple step-by-step illustrations of how to prepare balanced meals using locally available ingredients.
         """

@@ -187,14 +187,12 @@ def generate_nutrition_plan_workflow():
                 # Generate nutrition plan with genetic insights
                 nutrition_plan, overview, meal_plan, genetic_section, recipes_tips = generate_genetic_enhanced_nutrition_plan(
                     combined_data, 
-                    st.session_state.genetic_profile,
-                    st.secrets["OPENAI_API_KEY"]
+                    st.session_state.genetic_profile
                 )
             else:
                 # Generate standard nutrition plan
                 nutrition_plan, overview, meal_plan, recipes_tips = generate_nutrition_plan(
-                    combined_data, 
-                    st.secrets["OPENAI_API_KEY"]
+                    combined_data
                 )
 
             # Save all sections to session state
@@ -212,8 +210,7 @@ def generate_nutrition_plan_workflow():
             visual_guidance = generate_visual_guidance(
                 nutrition_plan, 
                 combined_data.get('literacy_level', 'moderate'),
-                combined_data.get('plan_complexity', 'moderate'),
-                st.secrets["OPENAI_API_KEY"]
+                combined_data.get('plan_complexity', 'moderate')
             )
             st.session_state.visual_guidance = visual_guidance
             

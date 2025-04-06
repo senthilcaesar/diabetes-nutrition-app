@@ -57,7 +57,7 @@ try:
     ]
     
     # Create model and generate response with function calling
-    model = GenerativeModel('gemini-1.5-flash')
+    model = GenerativeModel('gemini-2.5-pro-exp-03-25')
     
     response = model.generate_content(
         "Please provide information about a fictional person named John who is 35 years old and works as a software engineer.",
