@@ -13,13 +13,12 @@ def show_header():
     # Check if genetic data is available to customize the header
     has_genetic_data = 'genetic_profile' in st.session_state and st.session_state.genetic_profile is not None
     
-    
     if (has_genetic_data):
-        st.markdown('<h2 style="color:#379ced; font-size:35px;">Genetically Optimized Diabetes Nutrition Plan</h2>', unsafe_allow_html=True)
-        st.markdown('<p style="color:#757575;">Personalized nutrition recommendations based on your health metrics, socioeconomic context, and genetic profile</p>', unsafe_allow_html=True)
+        st.markdown('<h2 style="color:var(--primary-color); font-size:35px; font-weight:600;">Genetically Optimized Diabetes Nutrition Plan</h2>', unsafe_allow_html=True)
+        st.markdown('<p style="color:var(--text-muted); font-size:18px;">Personalized nutrition recommendations based on your health metrics, socioeconomic context, and genetic profile</p>', unsafe_allow_html=True)
     else:
-        st.markdown('<h2 style="color:#379ced; font-size:35px;">Personalized Diabetes Nutrition Plan</h2>', unsafe_allow_html=True)
-        st.markdown('<p style="color:#757575;">Personalized nutrition recommendations  based on your health metrics and socioeconomic context</p>', unsafe_allow_html=True)
+        st.markdown('<h2 style="color:var(--primary-color); font-size:35px; font-weight:600;">Personalized Diabetes Nutrition Plan</h2>', unsafe_allow_html=True)
+        st.markdown('<p style="color:var(--text-muted); font-size:18px;">Personalized nutrition recommendations based on your health metrics and socioeconomic context</p>', unsafe_allow_html=True)
 
 def apply_custom_css():
     """
@@ -27,377 +26,803 @@ def apply_custom_css():
     """
     st.markdown("""
     <style>
+        /* === GLOBAL STYLES === */
+        /* Font styles and base elements */
+        :root {
+            --primary-color: #5cacee;
+            --secondary-color: #1e90ff;
+            --accent-color: #f0f8ff;
+            --warning-color: #ffb300;
+            --success-color: #4CAF50;
+            --info-color: #5BC0DE;
+            --text-color: #333333;
+            --text-muted: #777777;
+            --light-bg: #f9f9f9;
+            --card-bg: #FFFFFF;
+            --border-radius: 10px;
+            --box-shadow: 0 2px 5px rgba(255, 255, 255, 0.3);
+            --transition: all 0.3s ease;
+        }
 
-        <style>
+        /* Typography */
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        /* === LAYOUT & STRUCTURE === */
         /* Hide default Streamlit elements */
         #MainMenu {visibility: hidden;}
         footer {visibility: hidden;}
         header {display: none !important;}
         
-        /* Force the entire app to start from the very top */
+        /* Force the entire app to take full height */
         .stApp {
             margin-top: -4rem !important;
         }
         
-        /* Make the app container take up full height with no padding */
+        /* App container settings */
         .appview-container {
             padding-top: 0 !important;
         }
         
-        /* Adjust sidebar to start from the top edge with no extra space */
+        /* Sidebar adjustments */
         section[data-testid="stSidebar"] {
             top: 0 !important;
-            padding-top: 4rem !important; /* Compensation for negative margin */
+            padding-top: 4rem !important;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--input-border);
         }
         
-        /* Remove padding and margin from sidebar content */
         [data-testid="stSidebarContent"] {
             padding-top: 0 !important;
             margin-top: 0 !important;
         }
         
-        /* Adjust the Navigation header in sidebar */
-        [data-testid="stSidebarContent"] h1:first-child,
-        [data-testid="stSidebarContent"] h2:first-child,
-        [data-testid="stSidebarContent"] h3:first-child {
-            margin-top: 0 !important;
-            padding-top: 0 !important;
-        }
-        
-        /* Remove padding from main content area */
+        /* Main content adjustments */
         .main .block-container {
-            padding-top: 4rem !important; /* Compensation for negative margin */
+            padding-top: 4rem !important;
+            max-width: 1200px;
+            margin: 0 auto;
         }
         
-        /* Ensure nothing gets hidden behind the negative margin */
+        /* Ensure proper overflow handling */
         body {
             overflow-x: hidden;
         }
-                      
-        /* Hide default Streamlit elements */
-        #MainMenu {visibility: hidden;}
-        footer {visibility: hidden;}
-        header {display: none !important;}
         
-        /* Force the entire app to start from the very top */
-        .stApp {
-            margin-top: -4rem !important;
+        /* === TABS & NAVIGATION === */
+        /* Tab styling */
+        .stTabs [data-baseweb="tab-list"] {
+            gap: 8px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 0;
         }
         
-        /* Make the app container take up full height with no padding */
-        .appview-container {
-            padding-top: 0 !important;
+        .stTabs [data-baseweb="tab"] {
+            padding: 16px 24px;
+            background-color: #f5f5f5;
+            color: #555555;
+            border-radius: 10px 10px 0px 0px;
+            border: none;
+            font-weight: 500;
+            transition: var(--transition);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+            margin-right: 6px;
+            font-size: 1.05rem;
         }
         
-        /* Adjust sidebar to start from the top edge */
-        section[data-testid="stSidebar"] {
-            top: 0 !important;
-            padding-top: 4rem !important; /* Add padding to account for negative margin */
+        .stTabs [data-baseweb="tab"]:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            background-color: #f9f9f9;
         }
         
-        /* Remove padding from main content area */
-        .main .block-container {
-            padding-top: 4rem !important; /* Add padding to account for negative margin */
+        .stTabs [aria-selected="true"] {
+            background-color: var(--primary-color) !important;
+            color: white !important;
+            font-weight: 600;
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
         }
         
-        /* Ensure nothing gets hidden behind the negative margin */
-        body {
-            overflow-x: hidden;
-        }
-                
-        /* Hide Streamlit menu and footer */
-        #MainMenu {visibility: hidden;}
-        footer {visibility: hidden;}
-
-        /* Fix the empty space below tabs */
+        /* Fix spacing around tab panels */
         .stTabs [data-baseweb="tab-panel"] {
-            padding-top: 0px !important;
+            padding-top: 20px !important;
         }
-
-        /* Remove padding around the container holding the tab panels */
+        
         .stTabs [data-baseweb="tab-content"] {
             padding: 0px !important;
         }
-
-        /* Make the card container start right at the top of the tab panel */
+        
+        /* === CARDS & CONTAINERS === */
+        /* Card styling */
         .card-container {
-            background-color: var(--background-color);
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            padding: 20px;
-            margin-top: 0px !important;
-            margin-bottom: 20px;
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 24px;
+            margin-bottom: 24px;
+            border-top: 4px solid var(--primary-color);
         }
-
-        /* Tab styles */
-        .stTabs [data-baseweb="tab-list"] {
-            gap: 8px;
-        }
-        .stTabs [data-baseweb="tab"] {
-            padding: 12px 18px;
-            background-color: var(--tab-background-color);
-            color: var(--tab-color);
-            border-radius: 6px 6px 0px 0px;
-            border-left: 1px solid #eee;
-            border-right: 1px solid #eee;
-            border-top: 1px solid #eee;
-            box-shadow: 0px -2px 5px rgba(0,0,0,0.05);
-        }
-        .stTabs [aria-selected="true"] {
-            background-color: var(--tab-selected-background-color) !important;
-            color: var(--tab-selected-color) !important;
-            font-weight: 600;
-            border: none;
-            transform: translateY(-3px);
-            transition: all 0.3s ease;
-        }
-
-        /* Button styles */
-        .nav-button {
-            font-weight: 500 !important;
-            border-radius: 6px !important;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
-            transition: all 0.2s ease !important;
-        }
-        .nav-button:hover {
-            transform: translateY(-2px) !important;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2) !important;
-        }
-
-        /* Message styles */
-        .success-message {
-            padding: 10px 15px;
-            border-radius: 6px;
-            animation: fadeIn 0.5s ease-in-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Section header styles */
-        .section-header {
-            margin-bottom: 1px;
-            color: var(--section-header-color);
-            font-size: 1.2rem;
-            border-bottom: 1px solid var(--section-header-border-color);
-            padding-bottom: 8px;
-            display: inline-block;
-        }
-
-        /* Plan styling */
+        
+        /* Plan header */
         .plan-header {
-            background-color: var(--plan-header-background-color);
-            padding: 20px;
-            border-radius: 10px;
-            color: var(--plan-header-color);
-            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 24px;
+            border-radius: var(--border-radius);
+            color: white;
+            margin-bottom: 24px;
             text-align: center;
+            box-shadow: var(--box-shadow);
         }
+        
+        /* Plan sections */
         .plan-section {
-            background-color: var(--plan-section-background-color);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            background-color: var(--card-bg);
+            padding: 24px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 24px;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .plan-section h3 {
+            color: var(--primary-color);
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
             margin-bottom: 20px;
         }
-        .plan-section h3 {
-            color: var(--plan-section-header-color);
-            border-bottom: 2px solid var(--plan-section-header-border-color);
-            padding-bottom: 8px;
-            margin-bottom: 15px;
-        }
+        
+        /* Meal cards */
         .meal-card {
-            border: 1px solid #e0e0e0;
+            border: 1px solid var(--input-border);
             border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-            background-color: var(--meal-card-background-color);
+            padding: 16px;
+            margin-bottom: 16px;
+            background-color: var(--accent-color);
+            transition: var(--transition);
         }
+        
+        .meal-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
         .meal-title {
-            font-weight: bold;
-            color: var(--meal-title-color);
-            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 8px;
         }
-                
-        /* Foods limit section styles */
+        
+        /* Foods limit section */
         .limit-section {
-            background-color: var(--limit-section-background-color); /* Light yellow background */
-            border-left: 4px solid var(--limit-section-border-color); /* Yellow border */
-            padding: 15px;
-            border-radius: 5px;
-            margin: 10px 0;
-        }
-        .limit-section h2 {
-            color: var(--limit-section-title-color); /* Orange-red color for title */
-            font-weight: bold;
-        }
-
-        /* Health Assessment specific styling */
-        .health-assessment-section {
-            margin-bottom: 25px;
-            padding: 20px;
-            background-color: #fff;
+            background-color: #FFF8E1;
+            border-left: 4px solid #FFC107;
+            padding: 16px;
             border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin: 16px 0;
         }
-
+        
+        .limit-section h2 {
+            color: #FF6F00;
+            font-weight: 600;
+        }
+        
+        /* === HEALTH ASSESSMENT STYLING === */
+        /* Assessment sections */
+        .health-assessment-section {
+            margin-bottom: 28px;
+            padding: 24px;
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
         .health-assessment-section h2 {
             font-size: 1.5rem;
-            color: #2E7D32;
+            color: var(--primary-color);
             margin-top: 0;
-            margin-bottom: 15px;
-            border-bottom: 2px solid #C8E6C9;
-            padding-bottom: 8px;
+            margin-bottom: 16px;
+            border-bottom: 2px solid #E8F5E9;
+            padding-bottom: 10px;
         }
-
+        
         .health-assessment-section h3 {
-            font-size: 1.2rem;
-            color: #1565C0;
-            margin-top: 15px;
-            margin-bottom: 10px;
+            font-size: 1.25rem;
+            color: var(--secondary-color);
+            margin-top: 16px;
+            margin-bottom: 12px;
         }
-
-        .health-assessment-section p {
-            margin: 10px 0;
-            line-height: 1.6;
-            font-size: 1rem;
-        }
-
+        
+        /* Color-coded assessment sections */
         .summary-section {
             background-color: #E8F5E9;
-            border-left: 5px solid #4CAF50;
+            border-left: 5px solid var(--primary-color);
         }
-
+        
         .diabetes-management-section {
             background-color: #E3F2FD;
-            border-left: 5px solid #2196F3;
+            border-left: 5px solid var(--secondary-color);
         }
-
-
+        
         .risks-section {
             background-color: #FFEBEE;
-            border-left: 5px solid #F44336;
+            border-left: 5px solid var(--warning-color);
         }
-
+        
         .care-plans-section {
             background-color: #E0F7FA;
             border-left: 5px solid #00BCD4;
         }
-
+        
         .concerns-section {
             background-color: #FFF3E0;
-            border-left: 5px solid #FF9800;
+            border-left: 5px solid #FFB74D;
         }
-
+        
         .recommendations-section {
             background-color: #F1F8E9;
             border-left: 5px solid #8BC34A;
         }
-
+        
         .genetic-section {
             background-color: #E8EAF6;
             border-left: 5px solid #3F51B5;
         }
-
-
-        /* Make paragraphs more readable */
-        p {
-            line-height: 1.6;
-            margin-bottom: 15px;
+        
+        /* === BUTTONS & INTERACTIVE ELEMENTS === */
+        /* Button styling */
+        .stButton button {
+            border-radius: 50px !important;
+            padding: 0.5rem 1.5rem !important;
+            font-weight: 500 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.5px !important;
+            transition: var(--transition) !important;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
         }
-
-        /* Improve list formatting */
-        ul, ol {
-            margin-left: 20px;
-            margin-bottom: 15px;
+        
+        .stButton button:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15) !important;
         }
-
-        li {
-            margin-bottom: 8px;
+        
+        /* Primary button */
+        .stButton button[kind="primary"] {
+            background-color: var(--primary-color) !important;
+            border: none !important;
+        }
+        
+        /* Secondary button */
+        .stButton button[kind="secondary"] {
+            border: 2px solid var(--primary-color) !important;
+            color: var(--primary-color) !important;
+            background-color: transparent !important;
+        }
+        
+        /* Success message */
+        .success-message {
+            padding: 16px;
+            border-radius: var(--border-radius);
+            animation: fadeIn 0.5s ease-in-out;
+            border-left: 4px solid var(--success-color);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* === DATA INPUT ELEMENTS === */
+        /* Input fields */
+        .stTextInput > div > div {
+            border-radius: 8px !important;
+        }
+        
+        .stTextInput > div > div:focus-within {
+            border-color: var(--primary-color) !important;
+            box-shadow: 0 0 0 2px rgba(94, 96, 206, 0.2) !important;
+        }
+        
+        /* Select boxes */
+        .stSelectbox > div > div > div {
+            border-radius: 8px !important;
+        }
+        
+        .stSelectbox > div > div > div:focus-within {
+            border-color: var(--primary-color) !important;
+            box-shadow: 0 0 0 2px rgba(94, 96, 206, 0.2) !important;
+        }
+        
+        /* Number inputs */
+        .stNumberInput > div > div {
+            border-radius: 8px !important;
+        }
+        
+        .stNumberInput > div > div:focus-within {
+            border-color: var(--primary-color) !important;
+            box-shadow: 0 0 0 2px rgba(94, 96, 206, 0.2) !important;
+        }
+        
+        /* Override Streamlit's default accent colors for form elements */
+        /* These override Streamlit's default blue focus colors */
+        [data-baseweb="select"] [data-baseweb="tag"] {
+            background-color: var(--primary-color) !important;
+        }
+        
+        [data-baseweb="base-input"] {
+            border-color: var(--primary-color) !important;
+        }
+        
+        /* Radio buttons */
+        [data-baseweb="radio"] [data-checked="true"] {
+            color: var(--primary-color) !important;
+        }
+        
+        /* Checkboxes */
+        [data-baseweb="checkbox"] [data-checked="true"] {
+            background-color: var(--primary-color) !important;
+        }
+        
+        /* Slider */
+        [data-testid="stSlider"] > div > div > div {
+            background-color: var(--primary-color) !important;
+        }
+        
+        /* === GENETIC DATA VISUALIZATION === */
+        /* Genetic badge */
+        .genetic-badge {
+            background-color: #FAFAFA;
+            padding: 10px 16px;
+            border-radius: 50px;
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            border: 1px solid #f0f0f0;
+        }
+        
+        .genetic-badge .icon {
+            font-size: 1.2rem;
+            margin-right: 8px;
+        }
+        
+        .genetic-badge .text {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        /* Marker cards */
+        .marker-card {
+            background-color: #FFFFFF;
+            border-radius: var(--border-radius);
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid #f0f0f0;
+        }
+        
+        .marker-card .title {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        /* === CUSTOM SIDEBAR NAVIGATION === */
+        
+        /* Main sidebar styling */
+        section[data-testid="stSidebar"] {
+            background: var(--sidebar-bg);
+            border-right: none;
+        }
+        
+        /* Navigation radio button styling */
+        .stRadio > div {
+            gap: 10px !important;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .stRadio > div > label {
+            padding: 16px !important;
+            margin: 5px 10px !important;
+            border-radius: 16px !important;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+            background-color: var(--sidebar-element-bg) !important;
+            color: var(--sidebar-element-color) !important;
+            border: 1px solid rgba(128, 128, 128, 0.2) !important;
+            font-weight: 500 !important;
+            box-shadow: var(--box-shadow) !important;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stRadio > div > label:hover {
+            transform: translateY(-3px) !important;
+            box-shadow: var(--box-shadow-hover) !important;
+        }
+        
+        .stRadio > div > label:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(94, 96, 206, 0), rgba(94, 96, 206, 0.1));
+            transform: translateX(-100%);
+            transition: transform 0.5s ease;
+        }
+        
+        .stRadio > div > label:hover:before {
+            transform: translateX(0);
+        }
+        
+        .stRadio > div [data-baseweb="radio"] [data-checked="true"] ~ label {
+            background: var(--sidebar-element-active-bg) !important;
+            color: var(--sidebar-element-active-color) !important;
+            font-weight: 600 !important;
+            box-shadow: var(--box-shadow-hover) !important;
+            border: none !important;
+        }
+        
+        .stRadio > div [data-baseweb="radio"] [data-checked="true"] ~ label:after {
+            content: "";
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: rgba(94, 96, 206, 0.7);
+            box-shadow: 0 0 5px 2px rgba(94, 96, 206, 0.3);
+        }
+        
+        /* Make radio buttons fit better in sidebar */
+        .stRadio [data-testid="stMarkdownContainer"] {
+            font-size: 16px !important;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Hide the actual radio button circle and only keep the label */
+        .stRadio [data-baseweb="radio"] [data-testid="stRadio"] {
+            display: none !important;
+        }
+        
+        /* Add a subtle pulsing glow effect to active menu item */
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 5px 15px rgba(46, 125, 50, 0.3); }
+            50% { box-shadow: 0 5px 20px rgba(46, 125, 50, 0.5); }
+            100% { box-shadow: 0 5px 15px rgba(46, 125, 50, 0.3); }
+        }
+        
+        .stRadio > div [data-baseweb="radio"] [data-checked="true"] ~ label {
+            animation: pulse-glow 2s infinite;
+        }
+        
+        /* Sidebar section header */
+        .sidebar-section {
+            margin-top: 25px;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .sidebar-section h3 {
+            font-size: 14px;
+            color: var(--sidebar-accent-color);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-left: 15px;
+        }
+        
+        /* Info card in sidebar */
+        .sidebar-info-card {
+            background-color: #FFFFFF;
+            border-radius: 12px;
+            padding: 18px;
+            margin: 15px 10px;
+            border: 1px solid #f0f0f0;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .sidebar-info-card h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--sidebar-accent-color);
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+        }
+        
+        .sidebar-info-card p {
+            font-size: 14px;
+            color: var(--sidebar-text-color);
+            margin-bottom: 10px;
             line-height: 1.5;
         }
-
-        /* Table styling */
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin: 15px 0;
+        
+        .sidebar-info-card ul {
+            margin: 0;
+            padding-left: 20px;
         }
-
-        th {
-            background-color: #E3F2FD;
-            padding: 10px;
-            border: 1px solid #BBDEFB;
-            font-weight: bold;
-            text-align: left;
+        
+        .sidebar-info-card li {
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: var(--sidebar-text-color);
         }
-
-        td {
-            padding: 8px 10px;
-            border: 1px solid #E3F2FD;
+        
+        /* Footer section */
+        .sidebar-footer {
+            margin-top: 30px;
+            padding: 12px 10px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--sidebar-text-color);
+            background-color: var(--sidebar-element-bg);
+            border-radius: 10px;
+            margin: 30px 10px 20px 10px;
+            border: 1px solid rgba(128, 128, 128, 0.2);
         }
-
-        /* Responsive adjustments */
+        
+        /* Genetics badge */
+        .genetics-active-badge {
+            background: #FAFAFA;
+            border-radius: 12px;
+            padding: 18px;
+            margin: 20px 10px;
+            color: var(--sidebar-element-color);
+            text-align: center;
+            border: 1px solid #f0f0f0;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .genetics-active-badge:before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 159, 28, 0.15) 0%, rgba(255, 159, 28, 0) 70%);
+            opacity: 0;
+            animation: ripple 3s infinite ease-out;
+        }
+        
+        @keyframes ripple {
+            0% { transform: scale(0.3); opacity: 0; }
+            40% { opacity: 0.5; }
+            100% { transform: scale(1); opacity: 0; }
+        }
+        
+        .genetics-active-badge .icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+            color: var(--primary-color);
+        }
+        
+        .genetics-active-badge .title {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+            color: var(--sidebar-element-color);
+        }
+        
+        .genetics-active-badge .subtitle {
+            font-size: 12px;
+            color: var(--sidebar-element-color);
+            background: #f5f5f5;
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-top: 5px;
+        }
+        
+        /* === RESPONSIVE LAYOUT === */
+        /* Media queries for different screen sizes */
         @media (max-width: 768px) {
             .health-assessment-section {
-                padding: 15px;
+                padding: 16px;
             }
             
             .health-assessment-section h2 {
                 font-size: 1.3rem;
             }
             
-            .metric-item {
-                padding: 10px;
+            .plan-section {
+                padding: 16px;
+            }
+            
+            .stButton button {
+                width: 100%;
             }
         }
-
-        /* Serene Blue Light Mode */
-        @media (prefers-color-scheme: light) {
-            :root {
-                --background-color: #f9f9f9;
-                --tab-background-color: #e8e8e8;
-                --tab-color: #555555;
-                --tab-selected-background-color: #5cacee;
-                --tab-selected-color: #ffffff;
-                --section-header-color: #333333;
-                --section-header-border-color: #5cacee;
-                --plan-header-background-color: #5cacee;
-                --plan-header-color: #ffffff;
-                --plan-section-background-color: #ffffff;
-                --plan-section-header-color: #333333;
-                --plan-section-header-border-color: #5cacee;
-                --meal-card-background-color: #f0f8ff;
-                --meal-title-color: #1e90ff;
-                --limit-section-background-color: #fff8e1;
-                --limit-section-border-color: #ffecb3;
-                --limit-section-title-color: #ffb300;
+        
+        @media (max-width: 576px) {
+            .meal-card {
+                padding: 12px;
+            }
+            
+            .stTabs [data-baseweb="tab"] {
+                padding: 8px 12px;
+                font-size: 0.9rem;
+            }
+            
+            .stTabs [data-baseweb="tab-panel"] {
+                padding-top: 12px !important;
             }
         }
-
-        /* Serene Blue Dark Mode (Revised Unselected Tabs - Light Background) */
+        
+        /* === MODE ADAPTIVE COLORS === */
+        /* Light mode (default) - set light theme variables */
+        :root {
+            /* Light theme variables */
+            /* Override the main root variables for light mode */
+            --primary-color: #5cacee;
+            --secondary-color: #1e90ff;
+            --accent-color: #f0f8ff;
+            --text-color: #333333;
+            --text-muted: #777777;
+            
+            /* Additional light theme variables */
+            --bg-primary: #f9f9f9;
+            --bg-secondary: #f0f8ff;
+            --card-bg: #ffffff;
+            --sidebar-bg: linear-gradient(180deg, #f0f8ff 0%, #e6f2ff 100%);
+            --sidebar-element-bg: #FFFFFF;
+            --sidebar-element-active-bg: linear-gradient(135deg, #5cacee, #1e90ff);
+            --sidebar-element-active-color: #ffffff;
+            --sidebar-element-color: #333333;
+            --sidebar-text-color: #333333;
+            --sidebar-accent-color: #1e90ff;
+            --sidebar-badge-bg: rgba(92, 172, 238, 0.1);
+            --heading-color: #1e90ff;
+            --input-bg: #ffffff;
+            --input-border: #e6f2ff;
+            --input-text: #333333;
+            --button-primary-bg: #5cacee;
+            --box-shadow: 0 2px 5px rgba(255, 255, 255, 0.3);
+            --box-shadow-hover: 0 4px 8px rgba(255, 255, 255, 0.5);
+        }
+        
+        /* Dark mode - override variables */
         @media (prefers-color-scheme: dark) {
             :root {
-                --background-color: #303030;
-                --tab-background-color: #4a5568;
-                --tab-color: #d1d5db;
-                --tab-selected-background-color: #61d46d;
-                --tab-selected-color: #212121;
-                --section-header-color: #f5f5f5;
-                --section-header-border-color: #64b5f6;
-                --plan-header-background-color: #64b5f6;
-                --plan-header-color: #212121;
-                --plan-section-background-color: #424242;
-                --plan-section-header-color: #f5f5f5;
-                --plan-section-header-border-color: #64b5f6;
-                --meal-card-background-color: #4a4a4a;
-                --meal-title-color: #90caf9;
-                --limit-section-background-color: #5e5e5e;
-                --limit-section-border-color: #757575;
-                --limit-section-title-color: #ffea00;
+                /* Dark theme variables */
+                /* Override the main root variables for dark mode */
+                --primary-color: #61d46d;
+                --secondary-color: #4caf50;
+                --accent-color: #1e3e20;
+                --text-color: #d1d5db;
+                --text-muted: #bdbdbd;
+                
+                /* Additional dark theme variables */
+                --bg-primary: #303030;
+                --bg-secondary: #4a5568;
+                --card-bg: #424242;
+                --sidebar-bg: linear-gradient(180deg, #2d3748 0%, #1a202c 100%);
+                --sidebar-element-bg: rgba(255, 255, 255, 0.1);
+                --sidebar-element-active-bg: linear-gradient(135deg, #61d46d, #4caf50);
+                --sidebar-element-active-color: #212121;
+                --sidebar-element-color: #ffffff;
+                --sidebar-text-color: rgba(255, 255, 255, 0.85);
+                --sidebar-accent-color: #61d46d;
+                --sidebar-badge-bg: rgba(97, 212, 109, 0.2);
+                --heading-color: #61d46d;
+                --input-bg: #4a5568;
+                --input-border: #2d3748;
+                --input-text: #e0e0e0;
+                --button-primary-bg: #4caf50;
+                --box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2);
+                --box-shadow-hover: 0 6px 12px rgba(255, 255, 255, 0.3);
             }
- 
+            
+            /* Apply dark mode styles to main elements */
+            body {
+                background-color: var(--bg-primary);
+                color: var(--text-color);
+            }
+            
+            .main .block-container {
+                background-color: var(--bg-primary);
+            }
+            
+            /* Tab styling in dark mode */
+            .stTabs [data-baseweb="tab"] {
+                background-color: var(--bg-secondary);
+                color: var(--text-muted);
+            }
+            
+            .stTabs [aria-selected="true"] {
+                background: var(--sidebar-element-active-bg) !important;
+                color: var(--sidebar-element-active-color) !important;
+            }
+            
+            /* Content containers in dark mode */
+            .meal-card {
+                background-color: var(--bg-secondary);
+                border-color: var(--input-border);
+            }
+            
+            .plan-section {
+                background-color: var(--bg-secondary);
+                border-left: 4px solid var(--sidebar-accent-color);
+            }
+            
+            .health-assessment-section {
+                background-color: var(--bg-secondary);
+            }
+            
+            .marker-card {
+                background-color: var(--bg-secondary);
+            }
+            
+            /* Input field styling in dark mode */
+            input, select, textarea {
+                background-color: var(--input-bg) !important;
+                color: var(--input-text) !important;
+                border-color: var(--input-border) !important;
+            }
+            
+            .stTextInput > div > div,
+            .stSelectbox > div > div > div,
+            .stNumberInput > div > div {
+                background-color: var(--input-bg) !important;
+                border-color: var(--input-border) !important;
+            }
+            
+            /* UI element colors in dark mode */
+            [data-testid="stMetricLabel"] {
+                color: var(--text-color) !important;
+            }
+            
+            [data-testid="stExpander"] {
+                background-color: var(--bg-secondary) !important;
+                border-color: var(--input-border) !important;
+            }
+            
+            /* Message styling in dark mode */
+            .stSuccess {
+                background-color: rgba(94, 96, 206, 0.1) !important;
+                color: #b0b1e8 !important;
+            }
+            
+            .stWarning {
+                background-color: rgba(255, 159, 28, 0.1) !important;
+                color: #ffcf8c !important;
+            }
+            
+            .stInfo {
+                background-color: rgba(100, 223, 223, 0.1) !important;
+                color: #a0e9e9 !important;
+            }
+            
+            /* Metric value styling */
+            [data-testid="stMetricValue"] {
+                color: var(--heading-color) !important;
+                font-weight: 600 !important;
+            }
         }
     </style>
     """, unsafe_allow_html=True)
@@ -406,7 +831,6 @@ def show_sidebar():
     """
     Configure and display the sidebar. Returns the current page selection.
     """
-
     # Initialize the page state if it doesn't exist
     if 'page' not in st.session_state:
         st.session_state.page = "Input Data"
@@ -417,16 +841,24 @@ def show_sidebar():
         # Clear the flag
         st.session_state.nav_to_input = False
     
-    # Add a header directly above the navigation
-    st.sidebar.header("Navigation")
+    # Navigation items with improved icons
+    nav_items = [
+        {"id": "Input Data", "icon": "📊", "text": "Input Data"},
+        {"id": "Nutrition Plan", "icon": "🍽️", "text": "Nutrition Plan"},
+        {"id": "Health Assessment", "icon": "💉", "text": "Health Assessment"},
+        {"id": "Educational Resources", "icon": "📚", "text": "Resources"}
+    ]
     
-    # Create radio button based on current page with a unique key and no label
+    # Add spacing for better layout
+    st.sidebar.markdown('<div style="margin-top: 15px;"></div>', unsafe_allow_html=True)
+    
+    # Instead of custom HTML navigation, use direct radio buttons with styling
     selected_page = st.sidebar.radio(
-        "Navigation Options", 
-        ["Input Data", "Nutrition Plan", "Health Assessment", "Educational Resources"],
-        index=["Input Data", "Nutrition Plan", "Health Assessment", "Educational Resources"].index(st.session_state.page),
+        "Navigation", 
+        [item["id"] for item in nav_items],
+        index=[item["id"] for item in nav_items].index(st.session_state.page),
         key="navigation_radio",
-        label_visibility="collapsed"  # Hide the empty label completely
+        format_func=lambda x: f"{nav_items[[item['id'] for item in nav_items].index(x)]['icon']} {x}"
     )
     
     # Only update if selected page is different from current
@@ -436,45 +868,31 @@ def show_sidebar():
     
     # Show genetic status if available
     if 'genetic_profile' in st.session_state and st.session_state.genetic_profile is not None:
-        st.sidebar.markdown("---")
-        st.sidebar.markdown(
-            """
-            <div style="
-                background-color: #E8EAF6; 
-                padding: 10px; 
-                border-radius: 5px;
-                margin-bottom: 10px;
-                text-align: center;
-            ">
-                <div style="font-size: 24px;">🧬</div>
-                <div style="font-weight: bold; color: #3F51B5;">Genetic Optimization Active</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-        
-    st.sidebar.markdown("---")
-    st.sidebar.markdown("### About")
-    st.sidebar.markdown("""
-    This application provides accessible, personalized nutrition guidance for individuals with diabetes, taking into account:
-    
-    - Health metrics and diabetes status
-    - Socioeconomic context and resources
-    - Cultural food preferences
-    - Genetic profile (if provided)
-    """)
-    
-    if 'genetic_profile' in st.session_state and st.session_state.genetic_profile is not None:
         st.sidebar.markdown("""
-        ### Genetic Insights
-        The nutrition plan and health assessment are enhanced with insights from your genetic profile, including:
+        <div class="genetics-active-badge">
+            <div class="icon">🧬</div>
+            <div class="title">Genetic Optimization Active</div>
+            <div class="subtitle">Your plan includes genetic insights</div>
+        </div>
+        """, unsafe_allow_html=True)
         
-        - Carbohydrate metabolism
-        - Fat sensitivity
-        - Nutrient processing
-        - Inflammation response
-        - Caffeine metabolism
-        """)
+        # Genetic insights info card
+        st.sidebar.markdown("""
+        <div class="sidebar-section">
+            <h3>Genetic Insights</h3>
+        </div>
+        <div class="sidebar-info-card">
+            <h4>Personalized Based On Your Genes</h4>
+            <p>Your nutrition plan is enhanced with insights from your genetic profile:</p>
+            <ul>
+                <li>Carbohydrate metabolism</li>
+                <li>Fat sensitivity</li>
+                <li>Nutrient processing</li>
+                <li>Inflammation response</li>
+                <li>Caffeine metabolism</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
         
         # Add option to clear genetic data
         if st.sidebar.button("🗑️ Clear Genetic Data", type="secondary", key="clear_genetic_data_button"):
@@ -499,31 +917,36 @@ def show_sidebar():
             st.rerun()
     else:
         st.sidebar.markdown("""
-        ### Enhance Your Assessment
-        Upload genetic data on the Input Data page to receive more personalized recommendations tailored to your unique genetic profile.
-        """)
+        <div class="sidebar-section">
+            <h3>About This App</h3>
+        </div>
+        <div class="sidebar-info-card">
+            <h4>Personalized Nutrition Guidance</h4>
+            <p>This application provides accessible, personalized nutrition guidance for individuals with diabetes, taking into account:</p>
+            <ul>
+                <li>Health metrics and diabetes status</li>
+                <li>Socioeconomic context and resources</li>
+                <li>Cultural food preferences</li>
+                <li>Genetic profile (if provided)</li>
+            </ul>
+        </div>
         
-    st.sidebar.markdown("---")
-    st.sidebar.markdown("### Developed by:")
-    st.sidebar.markdown("Senthil Palanivelu")
+        <div class="sidebar-info-card">
+            <h4>Enhance Your Assessment</h4>
+            <p>Upload genetic data on the Input Data page to receive more personalized recommendations tailored to your unique genetic profile.</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Footer
+    st.sidebar.markdown("""
+    <div class="sidebar-footer">
+        <p>Developed by: Senthil Palanivelu</p>
+        <p style="font-size: 12px; margin-top: 5px;">Version 1.0.0</p>
+    </div>
+    """, unsafe_allow_html=True)
     
     return st.session_state.page
 
-def input_health_data():
-    """
-    Collect health-related data from the user and save to session state.
-    
-    Returns:
-        dict: Dictionary containing user health information
-    """
-    # Initialize health_data in session state if it doesn't exist
-    previous_health_data = st.session_state.health_data.copy() if 'health_data' in st.session_state else {}
-
-    if 'health_data' not in st.session_state:
-        st.session_state.health_data = {}
-    
-    col1, col2 = st.columns(2)
-    
 def input_health_data():
     """
     Collect health-related data from the user and save to session state.

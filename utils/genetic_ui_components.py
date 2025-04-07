@@ -41,6 +41,47 @@ def input_genetic_data() -> Dict:
         if 'genetic_data_option' not in st.session_state:
             st.session_state.genetic_data_option = "None"
         
+        # Add custom CSS for radio buttons to match tab style
+        st.markdown("""
+        <style>
+        /* Custom button-like radio button styling */
+        .stRadio > div {
+            display: flex;
+            gap: 15px;
+            flex-direction: row;
+        }
+        
+        .stRadio > div > label {
+            background-color: #f5f5f5;
+            border-radius: 10px;
+            padding: 16px 24px;
+            text-align: center;
+            transition: all 0.3s ease;
+            flex-grow: 1;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+            margin: 5px 0;
+            border: none !important;
+            color: #555555;
+            font-weight: 500;
+            font-size: 1.05rem;
+        }
+        
+        .stRadio > div > label:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            background-color: #f9f9f9;
+        }
+        
+        .stRadio > div [data-baseweb="radio"] [data-checked="true"] ~ label {
+            background-color: var(--primary-color) !important;
+            color: white !important;
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+            border: none !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+        
        # Ask the user how they want to provide genetic data
         genetic_data_option = st.radio(
             "Would you like to incorporate genetic data for more personalized recommendations?",

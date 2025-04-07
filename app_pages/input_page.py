@@ -245,6 +245,47 @@ def generate_nutrition_plan_workflow():
 
 def show_input_data_page():
     """Show the input data page with tabs for health, socioeconomic, and genetic information."""
+    # Create custom style for tab titles to match button styling
+    st.markdown("""
+    <style>
+    /* Special styling for the custom tabs in input page */
+    .custom-tabs-container {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 1rem;
+        overflow-x: auto;
+    }
+    
+    .custom-tab {
+        background-color: #f5f5f5;
+        border-radius: 10px;
+        padding: 16px 24px;
+        text-align: center;
+        cursor: pointer;
+        flex-grow: 1;
+        font-weight: 500;
+        color: #555555;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+        font-size: 1.05rem;
+    }
+    
+    .custom-tab:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        background-color: #f9f9f9;
+    }
+    
+    .custom-tab.active {
+        background-color: var(--primary-color);
+        color: white;
+        font-weight: 600;
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
     # Create tabs
     tab_titles = ["🩺 Health Information", "🏘️ Socioeconomic Information", "🧬 Genetic Information", "🚀 Generate Plan"]
     tabs = st.tabs(tab_titles)
