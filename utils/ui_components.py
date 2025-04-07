@@ -1,64 +1,188 @@
 """
 UI Components module for the Diabetes Nutrition Plan application.
-Contains functions for creating and managing the user interface.
+Contains functions for creating and managing the user interface with a futuristic, sci-fi inspired design.
 """
 import streamlit as st
 
 def show_header():
     """
-    Display the application header.
-    """
-    import streamlit as st
-    
+    Display the application header with a futuristic, sci-fi inspired design.
+    """    
     # Check if genetic data is available to customize the header
     has_genetic_data = 'genetic_profile' in st.session_state and st.session_state.genetic_profile is not None
     
-    if (has_genetic_data):
-        st.markdown('<h2 style="color:var(--primary-color); font-size:35px; font-weight:600;">Genetically Optimized Diabetes Nutrition Plan</h2>', unsafe_allow_html=True)
-        st.markdown('<p style="color:var(--text-muted); font-size:18px;">Personalized nutrition recommendations based on your health metrics, socioeconomic context, and genetic profile</p>', unsafe_allow_html=True)
+    if has_genetic_data:
+        st.markdown('''
+        <div class="neo-header-content">
+            <div class="neo-header-icon">
+                <div class="neo-dna-animation">
+                    <div class="neo-dna-ring"></div>
+                    <div class="neo-dna-ring"></div>
+                    <div class="neo-dna-ring"></div>
+                </div>
+            </div>
+            <div class="neo-header-text">
+                <div class="neo-title-container">
+                    <h1 class="neo-title"><span class="neo-title-prefix">GENOME</span>OPTIMIZED</h1>
+                </div>
+                <p class="neo-subtitle">ADVANCED NUTRITIONAL PROTOCOL <span class="neo-highlight">v2.0</span></p>
+                <div class="neo-badge">
+                    <div class="neo-badge-glow"></div>
+                    <span class="neo-badge-icon">⚛</span>
+                    <span class="neo-badge-text">GENETIC ENHANCEMENT ACTIVE</span>
+                </div>
+            </div>
+        </div>
+        ''', unsafe_allow_html=True)
     else:
-        st.markdown('<h2 style="color:var(--primary-color); font-size:35px; font-weight:600;">Personalized Diabetes Nutrition Plan</h2>', unsafe_allow_html=True)
-        st.markdown('<p style="color:var(--text-muted); font-size:18px;">Personalized nutrition recommendations based on your health metrics and socioeconomic context</p>', unsafe_allow_html=True)
+        st.markdown('''
+        <div class="neo-header-content">
+            <div class="neo-header-icon">
+                <div class="neo-pulse-animation">
+                    <div class="neo-hexagon"></div>
+                    <div class="neo-hexagon"></div>
+                    <div class="neo-hexagon"></div>
+                </div>
+            </div>
+            <div class="neo-header-text">
+                <div class="neo-title-container">
+                    <h1 class="neo-title"><span class="neo-title-prefix">NEURO</span>NUTRITION</h1>
+                </div>
+                <p class="neo-subtitle">METABOLIC OPTIMIZATION SYSTEM <span class="neo-highlight">v1.0</span></p>
+            </div>
+        </div>
+        ''', unsafe_allow_html=True)
+    
+    # Add the particle animation background
+    st.markdown('''
+    <div class="neo-particles">
+        <div class="neo-particle"></div>
+        <div class="neo-particle"></div>
+        <div class="neo-particle"></div>
+        <div class="neo-particle"></div>
+        <div class="neo-particle"></div>
+        <div class="neo-particle"></div>
+        <div class="neo-particle"></div>
+        <div class="neo-particle"></div>
+        <div class="neo-particle"></div>
+        <div class="neo-particle"></div>
+        <div class="neo-particle"></div>
+        <div class="neo-particle"></div>
+    </div>
+    ''', unsafe_allow_html=True)
+    
+    st.markdown('</div>', unsafe_allow_html=True)
 
 def apply_custom_css():
     """
-    Apply custom CSS styling to the application.
+    Apply custom CSS styling to the application with a futuristic, sci-fi inspired design.
     """
     st.markdown("""
     <style>
         /* === GLOBAL STYLES === */
         /* Font styles and base elements */
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap');
+        
         :root {
-            --primary-color: #5cacee;
-            --secondary-color: #1e90ff;
-            --accent-color: #f0f8ff;
-            --warning-color: #ffb300;
-            --success-color: #4CAF50;
-            --info-color: #5BC0DE;
-            --text-color: #333333;
-            --text-muted: #777777;
-            --light-bg: #f9f9f9;
-            --card-bg: #FFFFFF;
-            --border-radius: 10px;
-            --box-shadow: 0 2px 5px rgba(255, 255, 255, 0.3);
-            --transition: all 0.3s ease;
+            /* Futuristic neon color palette */
+            --primary-color: #00003c;  /* Dark navy blue */
+            --primary-light: #0000a0;  /* Lighter navy blue */
+            --primary-dark: #000020;  /* Darker navy blue */
+            --secondary-color: #FF00E4;  /* Neon magenta */
+            --secondary-light: #FF8AFA;
+            --secondary-dark: #C800B2;
+            --accent-color: #7B42F6;  /* Neon purple */
+            --warning-color: #FFD600;  /* Neon yellow */
+            --success-color: #00FF94;  /* Neon green */
+            --info-color: #00003c;  /* Dark navy blue */
+            --error-color: #FF3D71;  /* Neon red */
+            
+            /* Text colors */
+            --text-color: #E0F7FA;
+            --text-muted: #90A4AE;
+            --text-light: #CFD8DC;
+            
+            /* Background colors */
+            --bg-primary: #FFFFFF;  /* White background */
+            --bg-secondary: #F0F0F0;  /* Light gray */
+            --card-bg: #162B3D;  /* Dark blue with slight transparency */
+            
+            /* UI elements */
+            --border-radius: 20px;  /* Rounded edges for oval look */
+            --border-radius-lg: 30px;
+            --border-radius-sm: 15px;
+            --border-angle: 10px;  /* For angled corners */
+            
+            /* Glows and shadows */
+            --neon-glow-cyan: 0 0 10px rgba(0, 0, 60, 0.7), 0 0 20px rgba(0, 0, 60, 0.5), 0 0 30px rgba(0, 0, 60, 0.3);
+            --neon-glow-magenta: 0 0 10px rgba(255, 0, 228, 0.7), 0 0 20px rgba(255, 0, 228, 0.5), 0 0 30px rgba(255, 0, 228, 0.3);
+            --neon-glow-purple: 0 0 10px rgba(123, 66, 246, 0.7), 0 0 20px rgba(123, 66, 246, 0.5), 0 0 30px rgba(123, 66, 246, 0.3);
+            --neon-glow-yellow: 0 0 10px rgba(255, 214, 0, 0.7), 0 0 20px rgba(255, 214, 0, 0.5), 0 0 30px rgba(255, 214, 0, 0.3);
+            --neon-glow-green: 0 0 10px rgba(0, 255, 148, 0.7), 0 0 20px rgba(0, 255, 148, 0.5), 0 0 30px rgba(0, 255, 148, 0.3);
+            
+            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            --box-shadow-md: 0 8px 30px rgba(0, 0, 0, 0.7);
+            --box-shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.9);
+            
+            /* Transitions */
+            --transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
-        /* Typography */
+        /* Typography - Futuristic sci-fi fonts */
         body {
-            font-family: 'Roboto', sans-serif;
+            font-family: 'Rajdhani', sans-serif;
             color: var(--text-color);
             line-height: 1.6;
+            letter-spacing: 0.03em;
+            background-color: var(--bg-primary);
         }
         
         h1, h2, h3, h4, h5, h6 {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            letter-spacing: 0.05em;
+            line-height: 1.2;
+            text-transform: uppercase;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            color: var(--text-color);
+            position: relative;
+        }
+        
+        h2 {
+            font-size: 2rem;
+            color: var(--text-color);
+            position: relative;
+        }
+        
+        h2::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: var(--primary-color);
+            box-shadow: var(--neon-glow-cyan);
+        }
+        
+        h3 {
+            font-size: 1.5rem;
+            color: var(--text-color);
         }
         
         p {
-            margin-bottom: 1rem;
-            line-height: 1.6;
+            margin-bottom: 1.25rem;
+            line-height: 1.7;
+        }
+        
+        /* Monospace for data displays */
+        .neo-data {
+            font-family: 'Share Tech Mono', monospace;
+            letter-spacing: 0.05em;
         }
 
         /* === LAYOUT & STRUCTURE === */
@@ -70,6 +194,7 @@ def apply_custom_css():
         /* Force the entire app to take full height */
         .stApp {
             margin-top: -4rem !important;
+            background-color: var(--bg-primary);
         }
         
         /* App container settings */
@@ -77,12 +202,13 @@ def apply_custom_css():
             padding-top: 0 !important;
         }
         
-        /* Sidebar adjustments */
+        /* Sidebar adjustments - futuristic dark panel */
         section[data-testid="stSidebar"] {
             top: 0 !important;
             padding-top: 4rem !important;
-            background: var(--sidebar-bg);
-            border-right: 1px solid var(--input-border);
+            background: var(--bg-secondary);
+            border-right: 1px solid rgba(0, 240, 255, 0.2);
+            box-shadow: 5px 0 20px rgba(0, 0, 0, 0.5);
         }
         
         [data-testid="stSidebarContent"] {
@@ -92,7 +218,7 @@ def apply_custom_css():
         
         /* Main content adjustments */
         .main .block-container {
-            padding-top: 4rem !important;
+            padding-top: 2rem !important;
             max-width: 1200px;
             margin: 0 auto;
         }
@@ -102,44 +228,377 @@ def apply_custom_css():
             overflow-x: hidden;
         }
         
+        /* Angled corner mixin (using pseudo-elements) */
+        .neo-angled-corners {
+            position: relative;
+            clip-path: polygon(
+                0 var(--border-angle), 
+                var(--border-angle) 0, 
+                100% 0, 
+                100% calc(100% - var(--border-angle)), 
+                calc(100% - var(--border-angle)) 100%, 
+                0 100%
+            );
+        }
+        
+        /* Futuristic header with space-inspired background */
+        .neo-header {
+            background-color: rgba(10, 25, 41, 0.8);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--box-shadow-lg);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-bottom: 3px solid var(--primary-color);
+            border-radius: var(--border-radius-lg);
+        }
+        
+        /* Particle animation background */
+        .neo-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+        
+        .neo-particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: float 15s infinite linear;
+        }
+        
+        .neo-particle:nth-child(1) { top: 10%; left: 20%; animation-duration: 20s; animation-delay: 0s; }
+        .neo-particle:nth-child(2) { top: 40%; left: 50%; animation-duration: 30s; animation-delay: 1s; }
+        .neo-particle:nth-child(3) { top: 70%; left: 30%; animation-duration: 25s; animation-delay: 2s; }
+        .neo-particle:nth-child(4) { top: 20%; left: 80%; animation-duration: 22s; animation-delay: 3s; }
+        .neo-particle:nth-child(5) { top: 60%; left: 10%; animation-duration: 18s; animation-delay: 4s; }
+        .neo-particle:nth-child(6) { top: 30%; left: 60%; animation-duration: 28s; animation-delay: 5s; }
+        .neo-particle:nth-child(7) { top: 80%; left: 70%; animation-duration: 24s; animation-delay: 6s; }
+        .neo-particle:nth-child(8) { top: 50%; left: 40%; animation-duration: 26s; animation-delay: 7s; }
+        .neo-particle:nth-child(9) { top: 15%; left: 90%; animation-duration: 21s; animation-delay: 8s; }
+        .neo-particle:nth-child(10) { top: 85%; left: 25%; animation-duration: 19s; animation-delay: 9s; }
+        .neo-particle:nth-child(11) { top: 45%; left: 75%; animation-duration: 23s; animation-delay: 10s; }
+        .neo-particle:nth-child(12) { top: 75%; left: 55%; animation-duration: 27s; animation-delay: 11s; }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) translateX(100px);
+                opacity: 0;
+            }
+        }
+        
+        .neo-header-content {
+            display: flex;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .neo-header-icon {
+            flex: 0 0 150px;
+            margin-right: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .neo-header-text {
+            flex: 1;
+        }
+        
+        .neo-title-container {
+            position: relative;
+            margin: 0 0 0.5rem 0;
+            padding: 0;
+        }
+        
+        .neo-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 0 0 0.25rem 0;
+            padding: 0;
+            letter-spacing: 0.1em;
+            color: var(--text-color);
+            text-shadow: 0 0 10px rgba(0, 0, 60, 0.5);
+            line-height: 1.1;
+        }
+        
+        .neo-title-prefix {
+            color: var(--primary-color);
+            font-weight: 400;
+            margin-right: 0.5rem;
+        }
+        
+        .neo-subtitle {
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--text-muted);
+            font-size: 1rem;
+            letter-spacing: 0.2em;
+            margin-bottom: 1.5rem;
+        }
+        
+        .neo-highlight {
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+        
+        /* Futuristic DNA Animation */
+        .neo-dna-animation {
+            width: 120px;
+            height: 120px;
+            position: relative;
+            perspective: 1000px;
+        }
+        
+        .neo-dna-ring {
+            position: absolute;
+            border: 2px solid transparent;
+            border-radius: 50%;
+            width: 100%;
+            height: 100%;
+            animation: neo-rotate3d 10s linear infinite;
+            box-shadow: var(--neon-glow-cyan);
+        }
+        
+        .neo-dna-ring:nth-child(1) {
+            border-top: 2px solid var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            animation-delay: 0s;
+        }
+        
+        .neo-dna-ring:nth-child(2) {
+            border-left: 2px solid var(--secondary-color);
+            border-right: 2px solid var(--secondary-color);
+            animation-delay: -3.33s;
+        }
+        
+        .neo-dna-ring:nth-child(3) {
+            border-top: 2px solid var(--accent-color);
+            border-bottom: 2px solid var(--accent-color);
+            width: 80%;
+            height: 80%;
+            top: 10%;
+        
+            left: 10%;
+            animation-delay: -6.66s;
+        }
+        
+        @keyframes neo-rotate3d {
+            from { transform: rotateX(0deg) rotateY(0deg); }
+            to { transform: rotateX(360deg) rotateY(360deg); }
+        }
+        
+        /* Futuristic Pulse Animation with hexagons */
+        .neo-pulse-animation {
+            width: 120px;
+            height: 120px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .neo-hexagon {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background-color: transparent;
+            opacity: 0;
+            animation: neo-pulse 4s ease-out infinite;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            border: 2px solid var(--primary-color);
+            box-shadow: var(--neon-glow-cyan);
+        }
+        
+        .neo-hexagon:nth-child(1) {
+            animation-delay: 0s;
+        }
+        
+        .neo-hexagon:nth-child(2) {
+            animation-delay: 1.33s;
+            border-color: var(--secondary-color);
+            box-shadow: var(--neon-glow-magenta);
+        }
+        
+        .neo-hexagon:nth-child(3) {
+            animation-delay: 2.66s;
+            border-color: var(--accent-color);
+            box-shadow: var(--neon-glow-purple);
+        }
+        
+        @keyframes neo-pulse {
+            0% { transform: scale(0.1) rotate(0deg); opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { transform: scale(1.5) rotate(30deg); opacity: 0; }
+        }
+        
+        /* Futuristic badges */
+        .neo-badge, .neo-upgrade-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+            border-radius: var(--border-radius-sm);
+        }
+        
+        .neo-badge {
+            background-color: rgba(0, 0, 60, 0.1);
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            box-shadow: var(--neon-glow-cyan);
+        }
+        
+        .neo-upgrade-badge {
+            background-color: rgba(255, 0, 228, 0.1);
+            color: var(--secondary-color);
+            border: 1px solid var(--secondary-color);
+            box-shadow: var(--neon-glow-magenta);
+        }
+        
+        .neo-badge-glow {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(
+                90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.2), 
+                transparent
+            );
+            animation: neo-badge-glow 3s infinite;
+        }
+        
+        @keyframes neo-badge-glow {
+            0% { left: -100%; }
+            100% { left: 200%; }
+        }
+        
+        .neo-badge-icon, .neo-badge-text {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .neo-badge-icon {
+            margin-right: 0.75rem;
+            font-size: 1rem;
+        }
+        
         /* === TABS & NAVIGATION === */
-        /* Tab styling */
+        /* Futuristic tab styling - similar to sidebar radio buttons */
         .stTabs [data-baseweb="tab-list"] {
-            gap: 8px;
-            border-bottom: 2px solid #f0f0f0;
+            gap: 10px;
+            border-bottom: none;
             padding-bottom: 0;
+            background: transparent;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
         }
         
         .stTabs [data-baseweb="tab"] {
-            padding: 16px 24px;
-            background-color: #f5f5f5;
-            color: #555555;
-            border-radius: 10px 10px 0px 0px;
-            border: none;
-            font-weight: 500;
-            transition: var(--transition);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
-            margin-right: 6px;
-            font-size: 1.05rem;
+            padding: 16px 30px 16px 16px !important; /* Consistent padding for all tabs */
+            margin: 5px 0 !important;
+            border-radius: var(--border-radius) !important;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+            background-color: white !important;
+            color: var(--text-muted) !important;
+            border: 1px solid rgba(0, 0, 60, 0.2) !important;
+            font-family: 'Share Tech Mono', monospace !important;
+            font-weight: 500 !important;
+            box-shadow: var(--box-shadow) !important;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase !important;
+            letter-spacing: 0.1em !important;
+            font-size: 0.9rem !important;
+            min-width: 200px;
+            text-align: center;
+            width: auto !important; /* Prevent width changes */
+            box-sizing: border-box !important; /* Include padding in width calculation */
+        }
+        
+        .stTabs [data-baseweb="tab"]::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 0, 60, 0.2), transparent);
+            animation: neo-badge-glow 3s infinite;
+            z-index: 0;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
         
         .stTabs [data-baseweb="tab"]:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-            background-color: #f9f9f9;
+            border-color: var(--primary-color) !important;
+            box-shadow: var(--neon-glow-cyan) !important;
+            color: var(--primary-color) !important;
+            transform: none !important; /* Remove transform to prevent layout shifts */
+        }
+        
+        .stTabs [data-baseweb="tab"]:hover::before {
+            opacity: 1;
         }
         
         .stTabs [aria-selected="true"] {
-            background-color: var(--primary-color) !important;
-            color: white !important;
-            font-weight: 600;
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+            background-color: white !important;
+            color: var(--primary-color) !important;
+            font-weight: 700 !important;
+            box-shadow: var(--neon-glow-cyan) !important;
+            border: 1px solid var(--primary-color) !important;
+            animation: neo-pulse-glow 2s infinite;
+        }
+        
+        .stTabs [aria-selected="true"]::after {
+            content: "▶";
+            position: absolute;
+            top: 50%;
+            right: 12px;
+            transform: translateY(-50%);
+            color: var(--primary-color);
+            font-size: 0.75rem;
+            text-shadow: var(--neon-glow-cyan);
         }
         
         /* Fix spacing around tab panels */
         .stTabs [data-baseweb="tab-panel"] {
-            padding-top: 20px !important;
+            padding-top: 1.5rem !important;
+            background: white;
+            border-radius: var(--border-radius-lg);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            padding: 1.5rem !important;
+            margin-top: 0.5rem;
+            box-shadow: var(--box-shadow);
         }
         
         .stTabs [data-baseweb="tab-content"] {
@@ -147,180 +606,430 @@ def apply_custom_css():
         }
         
         /* === CARDS & CONTAINERS === */
-        /* Card styling */
+        /* Futuristic card styling */
         .card-container {
-            background-color: var(--card-bg);
+            background-color: rgba(22, 43, 61, 0.7);
             border-radius: var(--border-radius);
             box-shadow: var(--box-shadow);
-            padding: 24px;
-            margin-bottom: 24px;
-            border-top: 4px solid var(--primary-color);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
         }
         
-        /* Plan header */
+        .card-container:hover {
+            box-shadow: var(--neon-glow-cyan);
+            border-color: var(--primary-color);
+        }
+        
+        .card-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--primary-color);
+            box-shadow: var(--neon-glow-cyan);
+        }
+        
+        /* Futuristic plan header */
         .plan-header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            padding: 24px;
-            border-radius: var(--border-radius);
-            color: white;
-            margin-bottom: 24px;
+            background-color: rgba(0, 0, 60, 0.1);
+            padding: 2.5rem;
+            border-radius: var(--border-radius-lg);
+            color: var(--text-color);
+            margin-bottom: 2rem;
             text-align: center;
             box-shadow: var(--box-shadow);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--primary-color);
+            box-shadow: var(--neon-glow-cyan);
         }
         
-        /* Plan sections */
+        .plan-header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: rotate 60s linear infinite;
+            z-index: 0;
+        }
+        
+        .plan-header h2 {
+            position: relative;
+            z-index: 1;
+            color: white;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+        
+        .plan-header p {
+            position: relative;
+            z-index: 1;
+            opacity: 0.9;
+            font-size: 1.125rem;
+        }
+        
+        /* Futuristic plan sections */
         .plan-section {
-            background-color: var(--card-bg);
-            padding: 24px;
+            background-color: rgba(22, 43, 61, 0.7);
+            padding: 2rem;
             border-radius: var(--border-radius);
             box-shadow: var(--box-shadow);
-            margin-bottom: 24px;
-            border-left: 4px solid var(--primary-color);
+            margin-bottom: 2rem;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .plan-section::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: var(--primary-color);
+            box-shadow: var(--neon-glow-cyan);
         }
         
         .plan-section h3 {
-            color: var(--primary-color);
-            border-bottom: 2px solid #e0e0e0;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
+            color: var(--primary-dark);
+            border-bottom: 2px solid rgba(226, 232, 240, 0.8);
+            padding-bottom: 0.75rem;
+            margin-bottom: 1.25rem;
+            font-weight: 600;
         }
         
         /* Meal cards */
         .meal-card {
-            border: 1px solid var(--input-border);
-            border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 16px;
-            background-color: var(--accent-color);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            border-radius: var(--border-radius);
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            background-color: rgba(255, 255, 255, 0.7);
             transition: var(--transition);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            position: relative;
+            overflow: hidden;
         }
         
         .meal-card:hover {
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transform: translateY(-2px);
+            box-shadow: var(--box-shadow-md);
+            transform: translateY(-3px);
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .meal-card::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-light), var(--secondary-light));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+        
+        .meal-card:hover::after {
+            transform: scaleX(1);
         }
         
         .meal-title {
             font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 0.75rem;
+            font-size: 1.125rem;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .meal-title::before {
+            content: "•";
             color: var(--primary-color);
-            margin-bottom: 12px;
-            font-size: 1.1rem;
-            border-bottom: 1px solid #e0e0e0;
-            padding-bottom: 8px;
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+            line-height: 0;
         }
         
         /* Foods limit section */
         .limit-section {
-            background-color: #FFF8E1;
-            border-left: 4px solid #FFC107;
-            padding: 16px;
-            border-radius: 8px;
-            margin: 16px 0;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(251, 191, 36, 0.1));
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            padding: 1.25rem;
+            border-radius: var(--border-radius);
+            margin: 1.25rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .limit-section::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 5px;
+            background: var(--warning-color);
+            border-radius: 5px;
         }
         
         .limit-section h2 {
-            color: #FF6F00;
+            color: var(--warning-color);
             font-weight: 600;
+            margin-bottom: 0.75rem;
+            font-size: 1.25rem;
         }
         
         /* === HEALTH ASSESSMENT STYLING === */
         /* Assessment sections */
         .health-assessment-section {
-            margin-bottom: 28px;
-            padding: 24px;
-            background-color: var(--card-bg);
-            border-radius: var(--border-radius);
+            margin-bottom: 1.75rem;
+            padding: 1.75rem;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: var(--border-radius-lg);
             box-shadow: var(--box-shadow);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .health-assessment-section:hover {
+            box-shadow: var(--box-shadow-md);
+            transform: translateY(-3px);
         }
         
         .health-assessment-section h2 {
             font-size: 1.5rem;
-            color: var(--primary-color);
+            color: var(--primary-dark);
             margin-top: 0;
-            margin-bottom: 16px;
-            border-bottom: 2px solid #E8F5E9;
-            padding-bottom: 10px;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid rgba(226, 232, 240, 0.8);
+            padding-bottom: 0.75rem;
+            font-weight: 600;
         }
         
         .health-assessment-section h3 {
             font-size: 1.25rem;
-            color: var(--secondary-color);
-            margin-top: 16px;
-            margin-bottom: 12px;
+            color: var(--primary-color);
+            margin-top: 1rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
         }
         
-        /* Color-coded assessment sections */
+        /* Color-coded assessment sections with modern gradients */
         .summary-section {
-            background-color: #E8F5E9;
-            border-left: 5px solid var(--primary-color);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(79, 70, 229, 0.1) 100%);
+            position: relative;
+        }
+        
+        .summary-section::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 5px;
+            background: linear-gradient(to bottom, var(--primary-color), var(--primary-dark));
+            border-radius: 5px;
         }
         
         .diabetes-management-section {
-            background-color: #E3F2FD;
-            border-left: 5px solid var(--secondary-color);
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(37, 99, 235, 0.1) 100%);
+            position: relative;
+        }
+        
+        .diabetes-management-section::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 5px;
+            background: linear-gradient(to bottom, var(--info-color), #2563eb);
+            border-radius: 5px;
         }
         
         .risks-section {
-            background-color: #FFEBEE;
-            border-left: 5px solid var(--warning-color);
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(220, 38, 38, 0.1) 100%);
+            position: relative;
+        }
+        
+        .risks-section::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 5px;
+            background: linear-gradient(to bottom, var(--error-color), #dc2626);
+            border-radius: 5px;
         }
         
         .care-plans-section {
-            background-color: #E0F7FA;
-            border-left: 5px solid #00BCD4;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.1) 100%);
+            position: relative;
+        }
+        
+        .care-plans-section::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 5px;
+            background: linear-gradient(to bottom, var(--secondary-color), var(--secondary-dark));
+            border-radius: 5px;
         }
         
         .concerns-section {
-            background-color: #FFF3E0;
-            border-left: 5px solid #FFB74D;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, rgba(217, 119, 6, 0.1) 100%);
+            position: relative;
+        }
+        
+        .concerns-section::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 5px;
+            background: linear-gradient(to bottom, var(--warning-color), #d97706);
+            border-radius: 5px;
         }
         
         .recommendations-section {
-            background-color: #F1F8E9;
-            border-left: 5px solid #8BC34A;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.1) 100%);
+            position: relative;
+        }
+        
+        .recommendations-section::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 5px;
+            background: linear-gradient(to bottom, var(--secondary-color), var(--secondary-dark));
+            border-radius: 5px;
         }
         
         .genetic-section {
-            background-color: #E8EAF6;
-            border-left: 5px solid #3F51B5;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.05) 0%, rgba(109, 40, 217, 0.1) 100%);
+            position: relative;
+        }
+        
+        .genetic-section::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 5px;
+            background: linear-gradient(to bottom, #7c3aed, #6d28d9);
+            border-radius: 5px;
         }
         
         /* === BUTTONS & INTERACTIVE ELEMENTS === */
-        /* Button styling */
+        /* Futuristic button styling */
         .stButton button {
-            border-radius: 50px !important;
-            padding: 0.5rem 1.5rem !important;
+            border-radius: var(--border-radius) !important;
+            padding: 0.75rem 2rem !important;
+            font-family: 'Share Tech Mono', monospace !important;
             font-weight: 500 !important;
+            letter-spacing: 0.1em !important;
             text-transform: uppercase !important;
-            letter-spacing: 0.5px !important;
             transition: var(--transition) !important;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
+            box-shadow: var(--box-shadow) !important;
+            position: relative !important;
+            overflow: hidden !important;
+            font-size: 0.85rem !important;
+        }
+        
+        .stButton button::before {
+            content: "" !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: -100% !important;
+            width: 50% !important;
+            height: 100% !important;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent) !important;
+            animation: neo-button-glow 3s infinite !important;
+        }
+        
+        @keyframes neo-button-glow {
+            0% { left: -100%; }
+            100% { left: 200%; }
         }
         
         .stButton button:hover {
-            transform: translateY(-2px) !important;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15) !important;
+            box-shadow: var(--neon-glow-cyan) !important;
         }
         
-        /* Primary button */
+        /* Primary button - neon cyan */
         .stButton button[kind="primary"] {
-            background-color: var(--primary-color) !important;
-            border: none !important;
-        }
-        
-        /* Secondary button */
-        .stButton button[kind="secondary"] {
-            border: 2px solid var(--primary-color) !important;
+            background-color: white !important;
+            border: 1px solid var(--primary-color) !important;
             color: var(--primary-color) !important;
-            background-color: transparent !important;
         }
         
-        /* Success message */
+        .stButton button[kind="primary"]:hover {
+            background-color: white !important;
+            box-shadow: var(--neon-glow-cyan) !important;
+        }
+        
+        /* Secondary button - neon magenta */
+        .stButton button[kind="secondary"] {
+            background-color: white !important;
+            border: 1px solid var(--secondary-color) !important;
+            color: var(--secondary-color) !important;
+        }
+        
+        .stButton button[kind="secondary"]:hover {
+            background-color: white !important;
+            box-shadow: var(--neon-glow-magenta) !important;
+        }
+        
+        /* Success message - lighter, airier */
         .success-message {
-            padding: 16px;
-            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            border-radius: var(--border-radius-lg);
             animation: fadeIn 0.5s ease-in-out;
-            border-left: 4px solid var(--success-color);
+            background: linear-gradient(135deg, rgba(165, 214, 167, 0.1), rgba(129, 199, 132, 0.15));
+            border: 1px solid rgba(165, 214, 167, 0.25);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .success-message::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: linear-gradient(to bottom, var(--secondary-light), var(--secondary-color));
+            opacity: 0.8;
         }
         
         @keyframes fadeIn {
@@ -328,176 +1037,359 @@ def apply_custom_css():
             to { opacity: 1; transform: translateY(0); }
         }
         
+        /* Error message - lighter, airier */
+        .error-message {
+            padding: 1.5rem;
+            border-radius: var(--border-radius-lg);
+            animation: fadeIn 0.5s ease-in-out;
+            background: linear-gradient(135deg, rgba(229, 115, 115, 0.1), rgba(239, 154, 154, 0.15));
+            border: 1px solid rgba(229, 115, 115, 0.25);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .error-message::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: linear-gradient(to bottom, var(--error-color), #EF5350);
+            opacity: 0.8;
+        }
+        
         /* === DATA INPUT ELEMENTS === */
-        /* Input fields */
+        /* Futuristic input fields */
         .stTextInput > div > div {
-            border-radius: 8px !important;
+            border-radius: var(--border-radius) !important;
+            border: 1px solid rgba(0, 240, 255, 0.3) !important;
+            background-color: white !important;
+            transition: var(--transition) !important;
+            font-family: 'Share Tech Mono', monospace !important;
         }
         
         .stTextInput > div > div:focus-within {
             border-color: var(--primary-color) !important;
-            box-shadow: 0 0 0 2px rgba(94, 96, 206, 0.2) !important;
+            box-shadow: var(--neon-glow-cyan) !important;
         }
         
-        /* Select boxes */
+        /* Futuristic select boxes */
         .stSelectbox > div > div > div {
-            border-radius: 8px !important;
+            border-radius: var(--border-radius) !important;
+            border: 1px solid rgba(0, 240, 255, 0.3) !important;
+            background-color: white !important;
+            transition: var(--transition) !important;
+            font-family: 'Share Tech Mono', monospace !important;
         }
         
         .stSelectbox > div > div > div:focus-within {
             border-color: var(--primary-color) !important;
-            box-shadow: 0 0 0 2px rgba(94, 96, 206, 0.2) !important;
+            box-shadow: var(--neon-glow-cyan) !important;
         }
         
-        /* Number inputs */
+        /* Futuristic number inputs */
         .stNumberInput > div > div {
-            border-radius: 8px !important;
+            border-radius: var(--border-radius) !important;
+            border: 1px solid rgba(0, 240, 255, 0.3) !important;
+            background-color: white !important;
+            transition: var(--transition) !important;
+            font-family: 'Share Tech Mono', monospace !important;
         }
         
         .stNumberInput > div > div:focus-within {
             border-color: var(--primary-color) !important;
-            box-shadow: 0 0 0 2px rgba(94, 96, 206, 0.2) !important;
+            box-shadow: var(--neon-glow-cyan) !important;
         }
         
-        /* Override Streamlit's default accent colors for form elements */
-        /* These override Streamlit's default blue focus colors */
+        /* Futuristic text areas */
+        .stTextArea > div > div {
+            border-radius: var(--border-radius) !important;
+            border: 1px solid rgba(0, 240, 255, 0.3) !important;
+            background-color: white !important;
+            transition: var(--transition) !important;
+            font-family: 'Share Tech Mono', monospace !important;
+        }
+        
+        .stTextArea > div > div:focus-within {
+            border-color: var(--primary-color) !important;
+            box-shadow: var(--neon-glow-cyan) !important;
+        }
+        
+        /* Futuristic multiselect */
+        .stMultiSelect > div > div > div {
+            border-radius: var(--border-radius) !important;
+            border: 1px solid rgba(0, 240, 255, 0.3) !important;
+            background-color: white !important;
+            transition: var(--transition) !important;
+            font-family: 'Share Tech Mono', monospace !important;
+        }
+        
+        .stMultiSelect > div > div > div:focus-within {
+            border-color: var(--primary-color) !important;
+            box-shadow: var(--neon-glow-cyan) !important;
+        }
+        
+        /* Override Streamlit's default accent colors for futuristic form elements */
         [data-baseweb="select"] [data-baseweb="tag"] {
-            background-color: var(--primary-color) !important;
+            background-color: rgba(0, 240, 255, 0.2) !important;
+            border: 1px solid var(--primary-color) !important;
+            border-radius: var(--border-radius-sm) !important;
+            color: var(--primary-color) !important;
+            font-family: 'Share Tech Mono', monospace !important;
         }
         
         [data-baseweb="base-input"] {
             border-color: var(--primary-color) !important;
+            font-family: 'Share Tech Mono', monospace !important;
         }
         
-        /* Radio buttons */
+        /* Futuristic radio buttons */
         [data-baseweb="radio"] [data-checked="true"] {
             color: var(--primary-color) !important;
         }
         
-        /* Checkboxes */
+        /* Futuristic checkboxes */
         [data-baseweb="checkbox"] [data-checked="true"] {
             background-color: var(--primary-color) !important;
+            box-shadow: var(--neon-glow-cyan) !important;
         }
         
-        /* Slider */
+        /* Futuristic slider */
         [data-testid="stSlider"] > div > div > div {
             background-color: var(--primary-color) !important;
+            box-shadow: var(--neon-glow-cyan) !important;
+        }
+        
+        /* Futuristic slider thumb */
+        [data-testid="stSlider"] > div > div > div > div {
+            background-color: var(--bg-primary) !important;
+            border: 2px solid var(--primary-color) !important;
+            box-shadow: var(--neon-glow-cyan) !important;
+            transition: var(--transition) !important;
+        }
+        
+        [data-testid="stSlider"] > div > div > div > div:hover {
+            transform: scale(1.2) !important;
+            box-shadow: var(--neon-glow-cyan) !important;
+        }
+        
+        /* Futuristic metrics */
+        [data-testid="stMetric"] {
+            background-color: white !important;
+            border: 1px solid rgba(0, 240, 255, 0.3) !important;
+            border-radius: var(--border-radius) !important;
+            padding: 1rem !important;
+            box-shadow: var(--box-shadow) !important;
+        }
+        
+        [data-testid="stMetric"]:hover {
+            border-color: var(--primary-color) !important;
+            box-shadow: var(--neon-glow-cyan) !important;
+        }
+        
+        [data-testid="stMetricLabel"] {
+            font-family: 'Share Tech Mono', monospace !important;
+            color: var(--text-muted) !important;
+            font-size: 0.85rem !important;
+            letter-spacing: 0.05em !important;
+            text-transform: uppercase !important;
+        }
+        
+        [data-testid="stMetricValue"] {
+            font-family: 'Orbitron', sans-serif !important;
+            color: var(--primary-color) !important;
+            font-weight: 700 !important;
+            font-size: 1.75rem !important;
+            text-shadow: var(--neon-glow-cyan) !important;
         }
         
         /* === GENETIC DATA VISUALIZATION === */
-        /* Genetic badge */
+        /* Futuristic genetic badge */
         .genetic-badge {
-            background-color: #FAFAFA;
-            padding: 10px 16px;
-            border-radius: 50px;
+            background-color: rgba(0, 0, 60, 0.1);
+            padding: 0.75rem 1.25rem;
+            border-radius: var(--border-radius-sm);
             display: inline-flex;
             align-items: center;
             margin-bottom: 1rem;
-            border: 1px solid #f0f0f0;
+            border: 1px solid var(--primary-color);
+            box-shadow: var(--neon-glow-cyan);
+            transition: var(--transition);
+            font-family: 'Share Tech Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .genetic-badge::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: neo-badge-glow 3s infinite;
+        }
+        
+        .genetic-badge:hover {
+            box-shadow: var(--neon-glow-cyan);
         }
         
         .genetic-badge .icon {
-            font-size: 1.2rem;
-            margin-right: 8px;
+            font-size: 1.25rem;
+            margin-right: 0.75rem;
+            color: var(--primary-color);
         }
         
         .genetic-badge .text {
             font-weight: 600;
             color: var(--primary-color);
+            letter-spacing: 0.1em;
+            font-size: 0.85rem;
         }
         
-        /* Marker cards */
+        /* Futuristic marker cards */
         .marker-card {
-            background-color: #FFFFFF;
+            background-color: rgba(22, 43, 61, 0.7);
             border-radius: var(--border-radius);
-            padding: 16px;
-            margin-bottom: 16px;
-            border: 1px solid #f0f0f0;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .marker-card:hover {
+            border-color: var(--primary-color);
+            box-shadow: var(--neon-glow-cyan);
+        }
+        
+        .marker-card::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--primary-color);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+            box-shadow: var(--neon-glow-cyan);
+        }
+        
+        .marker-card:hover::after {
+            transform: scaleX(1);
         }
         
         .marker-card .title {
+            font-family: 'Orbitron', sans-serif;
             font-weight: 600;
             color: var(--primary-color);
-            margin-bottom: 10px;
+            margin-bottom: 0.75rem;
+            font-size: 1.125rem;
+            display: flex;
+            align-items: center;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .marker-card .title::before {
+            content: "⚛";
+            margin-right: 0.75rem;
+            font-size: 1.25rem;
+            color: var(--primary-color);
         }
         
         /* === CUSTOM SIDEBAR NAVIGATION === */
-        
-        /* Main sidebar styling */
+        /* Futuristic sidebar styling */
         section[data-testid="stSidebar"] {
-            background: var(--sidebar-bg);
-            border-right: none;
+            background: var(--bg-secondary);
+            border-right: 1px solid rgba(0, 240, 255, 0.2);
+            box-shadow: 5px 0 20px rgba(0, 0, 0, 0.5);
         }
         
-        /* Navigation radio button styling */
+        /* Futuristic navigation radio button styling */
         .stRadio > div {
-            gap: 10px !important;
+            gap: 6px !important;
             display: flex;
             flex-direction: column;
         }
         
         .stRadio > div > label {
-            padding: 16px !important;
-            margin: 5px 10px !important;
-            border-radius: 16px !important;
+            padding: 10px 30px 10px 12px !important; /* Consistent padding for all sidebar tabs */
+            margin: 3px 8px !important;
+            border-radius: var(--border-radius) !important;
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
-            background-color: var(--sidebar-element-bg) !important;
-            color: var(--sidebar-element-color) !important;
-            border: 1px solid rgba(128, 128, 128, 0.2) !important;
+            background-color: white !important;
+            color: var(--text-color) !important;
+            border: 1px solid rgba(0, 240, 255, 0.2) !important;
+            font-family: 'Share Tech Mono', monospace !important;
             font-weight: 500 !important;
             box-shadow: var(--box-shadow) !important;
             position: relative;
             overflow: hidden;
+            text-transform: uppercase !important;
+            letter-spacing: 0.08em !important;
+            font-size: 0.8rem !important;
+            width: auto !important; /* Prevent width changes */
+            box-sizing: border-box !important; /* Include padding in width calculation */
         }
         
         .stRadio > div > label:hover {
-            transform: translateY(-3px) !important;
-            box-shadow: var(--box-shadow-hover) !important;
+            border-color: var(--primary-color) !important;
+            box-shadow: var(--neon-glow-cyan) !important;
+            color: #00003c !important;
+            transform: none !important; /* Remove transform to prevent layout shifts */
         }
         
         .stRadio > div > label:before {
             content: "";
             position: absolute;
             top: 0;
-            left: 0;
-            width: 100%;
+            left: -100%;
+            width: 50%;
             height: 100%;
-            background: linear-gradient(90deg, rgba(94, 96, 206, 0), rgba(94, 96, 206, 0.1));
-            transform: translateX(-100%);
-            transition: transform 0.5s ease;
-        }
-        
-        .stRadio > div > label:hover:before {
-            transform: translateX(0);
+            background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.2), transparent);
+            animation: neo-badge-glow 3s infinite;
         }
         
         .stRadio > div [data-baseweb="radio"] [data-checked="true"] ~ label {
-            background: var(--sidebar-element-active-bg) !important;
-            color: var(--sidebar-element-active-color) !important;
+            background-color: white !important;
+            color: var(--primary-color) !important;
             font-weight: 600 !important;
-            box-shadow: var(--box-shadow-hover) !important;
-            border: none !important;
+            box-shadow: var(--neon-glow-cyan) !important;
+            border: 1px solid var(--primary-color) !important;
         }
         
         .stRadio > div [data-baseweb="radio"] [data-checked="true"] ~ label:after {
-            content: "";
+            content: "▶";
             position: absolute;
-            top: 12px;
+            top: 50%;
             right: 12px;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: rgba(94, 96, 206, 0.7);
-            box-shadow: 0 0 5px 2px rgba(94, 96, 206, 0.3);
+            transform: translateY(-50%);
+            color: var(--primary-color);
+            font-size: 0.75rem;
+            text-shadow: var(--neon-glow-cyan);
         }
         
-        /* Make radio buttons fit better in sidebar */
+        /* Make radio buttons fit better in futuristic sidebar */
         .stRadio [data-testid="stMarkdownContainer"] {
-            font-size: 16px !important;
-            letter-spacing: 0.5px;
+            font-size: 0.85rem !important;
+            letter-spacing: 0.1em !important;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
+            font-family: 'Share Tech Mono', monospace !important;
+            text-transform: uppercase !important;
         }
         
         /* Hide the actual radio button circle and only keep the label */
@@ -506,15 +1398,65 @@ def apply_custom_css():
         }
         
         /* Add a subtle pulsing glow effect to active menu item */
-        @keyframes pulse-glow {
-            0% { box-shadow: 0 5px 15px rgba(46, 125, 50, 0.3); }
-            50% { box-shadow: 0 5px 20px rgba(46, 125, 50, 0.5); }
-            100% { box-shadow: 0 5px 15px rgba(46, 125, 50, 0.3); }
+        @keyframes neo-pulse-glow {
+            0% { box-shadow: 0 0 5px rgba(0, 240, 255, 0.5); }
+            50% { box-shadow: 0 0 15px rgba(0, 240, 255, 0.8), 0 0 20px rgba(0, 240, 255, 0.3); }
+            100% { box-shadow: 0 0 5px rgba(0, 240, 255, 0.5); }
         }
         
         .stRadio > div [data-baseweb="radio"] [data-checked="true"] ~ label {
-            animation: pulse-glow 2s infinite;
+            animation: neo-pulse-glow 2s infinite;
         }
+        
+        /* Futuristic sidebar section header */
+        .sidebar-section {
+            margin-top: 25px;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+        }
+        
+        .sidebar-section h3 {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            margin-left: 15px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .sidebar-section h3::after {
+            content: "";
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: var(--primary-color);
+            box-shadow: var(--neon-glow-cyan);
+        }
+        
+        /* Futuristic info card in sidebar */
+        .sidebar-info-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 18px;
+            margin: 15px 10px;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .sidebar-info-card:hover {
+            border-color: var(--primary-color);
+            box-shadow: var(--neon-glow-cyan);
+        }
+        
+        .sidebar-info-card h4 {
+            font-family: 'Orbitron', sans-serif;
+            font-size:
         
         /* Sidebar section header */
         .sidebar-section {
@@ -677,65 +1619,110 @@ def apply_custom_css():
         /* === MODE ADAPTIVE COLORS === */
         /* Light mode (default) - set light theme variables */
         :root {
-            /* Light theme variables */
-            /* Override the main root variables for light mode */
-            --primary-color: #5cacee;
-            --secondary-color: #1e90ff;
-            --accent-color: #f0f8ff;
-            --text-color: #333333;
-            --text-muted: #777777;
+            /* Fresh, light color palette */
+            --primary-color: #eeeee4;  /* Soft sky blue */
+            --primary-light: #eeeee4;
+            --primary-dark: #eeeee4;
+            --secondary-color: #eeeee4;  /* Soft mint green */
+            --secondary-light: #eeeee4;
+            --secondary-dark: #eeeee4;
+            --accent-color: #eeeee4;  /* Soft pink */
+            --warning-color: #eeeee4;  /* Soft amber */
+            --success-color: #eeeee4;  /* Soft green */
+            --info-color: #eeeee4;  /* Soft blue */
+            --error-color: #eeeee4;  /* Soft red */
             
-            /* Additional light theme variables */
-            --bg-primary: #f9f9f9;
-            --bg-secondary: #f0f8ff;
-            --card-bg: #ffffff;
-            --sidebar-bg: linear-gradient(180deg, #f0f8ff 0%, #e6f2ff 100%);
+            /* Text colors - lighter and softer */
+            --text-color: #eeeee4;  /* Softer blue-grey */
+            --text-muted: #eeeee4;  /* Light blue-grey */
+            --text-light: #eeeee4;  /* Very light blue-grey */
+            
+            /* Background colors - even lighter */
+            --bg-primary: #eeeee4;  /* Almost white with slight blue tint */
+            --bg-secondary: #eeeee4;  /* Very light blue tint */
+            --card-bg: #eeeee4;  /* Pure white */
+            
+            /* UI elements - more rounded */
+            --border-radius: 16px;
+            --border-radius-lg: 24px;
+            --border-radius-sm: 12px;
+            --border-radius-full: 9999px;
+            
+            /* Shadows and effects - softer, more subtle */
+            --box-shadow: 0 2px 10px -2px rgba(0, 0, 0, 0.05);
+            --box-shadow-md: 0 4px 15px -3px rgba(0, 0, 0, 0.07);
+            --box-shadow-lg: 0 8px 25px -5px rgba(0, 0, 0, 0.08);
+            --box-shadow-hover: 0 6px 20px -3px rgba(100, 181, 246, 0.15);
+            
+            /* Sidebar specific - lighter, airier */
+            --sidebar-bg: #F0F0F0;
             --sidebar-element-bg: #FFFFFF;
-            --sidebar-element-active-bg: linear-gradient(135deg, #5cacee, #1e90ff);
-            --sidebar-element-active-color: #ffffff;
-            --sidebar-element-color: #333333;
-            --sidebar-text-color: #333333;
-            --sidebar-accent-color: #1e90ff;
-            --sidebar-badge-bg: rgba(92, 172, 238, 0.1);
-            --heading-color: #1e90ff;
-            --input-bg: #ffffff;
-            --input-border: #e6f2ff;
-            --input-text: #333333;
-            --button-primary-bg: #5cacee;
-            --box-shadow: 0 2px 5px rgba(255, 255, 255, 0.3);
-            --box-shadow-hover: 0 4px 8px rgba(255, 255, 255, 0.5);
+            --sidebar-element-active-bg: linear-gradient(135deg, #64B5F6, #42A5F5);
+            --sidebar-element-active-color: #FFFFFF;
+            --sidebar-element-color: #455A64;
+            --sidebar-text-color: #546E7A;
+            --sidebar-accent-color: #64B5F6;
+            --sidebar-badge-bg: rgba(100, 181, 246, 0.1);
+            
+            /* Form elements - cleaner, lighter */
+            --input-bg: #e7e8e9;
+            --input-border: #e7e8e9;
+            --input-text: #e7e8e9;
+            --input-focus-border: #64B5F6;
+            --input-focus-shadow: rgba(100, 181, 246, 0.2);
+            
+            /* Transitions - smoother */
+            --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        /* Dark mode - override variables */
+        /* Dark mode - override variables with a softer dark theme */
         @media (prefers-color-scheme: dark) {
             :root {
-                /* Dark theme variables */
-                /* Override the main root variables for dark mode */
-                --primary-color: #61d46d;
-                --secondary-color: #4caf50;
-                --accent-color: #1e3e20;
-                --text-color: #d1d5db;
-                --text-muted: #bdbdbd;
+                /* Softer dark theme color palette */
+                --primary-color: #eeeee4;  /* Lighter blue */
+                --primary-light: #eeeee4;
+                --primary-dark: #eeeee4;
+                --secondary-color: #eeeee4;  /* Lighter green */
+                --secondary-light: #eeeee4;
+                --secondary-dark: #eeeee4;
+                --accent-color: #eeeee4;  /* Lighter pink */
+                --warning-color: #eeeee4;  /* Lighter amber */
+                --success-color: #eeeee4;  /* Lighter green */
+                --info-color: #eeeee4;  /* Lighter blue */
+                --error-color: #eeeee4;  /* Lighter red */
                 
-                /* Additional dark theme variables */
-                --bg-primary: #303030;
-                --bg-secondary: #4a5568;
-                --card-bg: #424242;
-                --sidebar-bg: linear-gradient(180deg, #2d3748 0%, #1a202c 100%);
-                --sidebar-element-bg: rgba(255, 255, 255, 0.1);
-                --sidebar-element-active-bg: linear-gradient(135deg, #61d46d, #4caf50);
-                --sidebar-element-active-color: #212121;
-                --sidebar-element-color: #ffffff;
-                --sidebar-text-color: rgba(255, 255, 255, 0.85);
-                --sidebar-accent-color: #61d46d;
-                --sidebar-badge-bg: rgba(97, 212, 109, 0.2);
-                --heading-color: #61d46d;
-                --input-bg: #4a5568;
-                --input-border: #2d3748;
-                --input-text: #e0e0e0;
-                --button-primary-bg: #4caf50;
-                --box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2);
-                --box-shadow-hover: 0 6px 12px rgba(255, 255, 255, 0.3);
+                /* Text colors - softer for dark mode */
+                --text-color: #eeeee4;
+                --text-muted: #eeeee4;
+                --text-light: #eeeee4;
+                
+                /* Background colors - softer dark */
+                --bg-primary: #eeeee4;  /* Softer blue-grey */
+                --bg-secondary: #eeeee4;  /* Medium blue-grey */
+                --card-bg: #eeeee4;
+                
+                /* Sidebar specific - softer dark */
+                --sidebar-bg: linear-gradient(180deg, #263238 0%, #1C2A33 100%);
+                --sidebar-element-bg: rgba(255, 255, 255, 0.08);
+                --sidebar-element-active-bg: linear-gradient(135deg, #90CAF9, #64B5F6);
+                --sidebar-element-active-color: #FFFFFF;
+                --sidebar-element-color: #ECEFF1;
+                --sidebar-text-color: #CFD8DC;
+                --sidebar-accent-color: #90CAF9;
+                --sidebar-badge-bg: rgba(144, 202, 249, 0.15);
+                
+                /* Form elements - softer dark */
+                --input-bg: #455A64;
+                --input-border: #546E7A;
+                --input-text: #ECEFF1;
+                --input-focus-border: #90CAF9;
+                --input-focus-shadow: rgba(144, 202, 249, 0.25);
+                
+                /* Shadows and effects - softer for dark mode */
+                --box-shadow: 0 4px 10px -1px rgba(0, 0, 0, 0.2);
+                --box-shadow-md: 0 8px 15px -3px rgba(0, 0, 0, 0.25);
+                --box-shadow-lg: 0 12px 25px -5px rgba(0, 0, 0, 0.3);
+                --box-shadow-hover: 0 8px 20px -3px rgba(0, 0, 0, 0.3);
             }
             
             /* Apply dark mode styles to main elements */
@@ -748,34 +1735,43 @@ def apply_custom_css():
                 background-color: var(--bg-primary);
             }
             
+            /* Header container in dark mode */
+            .header-container {
+                background: linear-gradient(135deg, rgba(129, 140, 248, 0.1) 0%, rgba(52, 211, 153, 0.1) 100%);
+                border: 1px solid rgba(75, 85, 99, 0.4);
+            }
+            
             /* Tab styling in dark mode */
             .stTabs [data-baseweb="tab"] {
-                background-color: var(--bg-secondary);
+                background-color: white;
                 color: var(--text-muted);
+                border: 1px solid rgba(75, 85, 99, 0.4);
+            }
+            
+            .stTabs [data-baseweb="tab"]:hover {
+                background-color: white;
+                border-color: var(--primary-color);
+                box-shadow: 0 0 10px rgba(200, 200, 200, 0.7);
+                color: var(--primary-color);
             }
             
             .stTabs [aria-selected="true"] {
-                background: var(--sidebar-element-active-bg) !important;
-                color: var(--sidebar-element-active-color) !important;
+                background-color: white !important;
+                color: #00003c !important;
+                font-weight: 600;
+                border: 1px solid var(--primary-color) !important;
+                box-shadow: 0 0 10px rgba(200, 200, 200, 0.7) !important;
+            }
+            
+            .stTabs [data-baseweb="tab-panel"] {
+                background: white;
+                border: 1px solid rgba(75, 85, 99, 0.4);
             }
             
             /* Content containers in dark mode */
-            .meal-card {
-                background-color: var(--bg-secondary);
-                border-color: var(--input-border);
-            }
-            
-            .plan-section {
-                background-color: var(--bg-secondary);
-                border-left: 4px solid var(--sidebar-accent-color);
-            }
-            
-            .health-assessment-section {
-                background-color: var(--bg-secondary);
-            }
-            
-            .marker-card {
-                background-color: var(--bg-secondary);
+            .card-container, .plan-section, .health-assessment-section, .meal-card, .marker-card {
+                background-color: rgba(31, 41, 55, 0.7);
+                border-color: rgba(75, 85, 99, 0.4);
             }
             
             /* Input field styling in dark mode */
@@ -787,7 +1783,9 @@ def apply_custom_css():
             
             .stTextInput > div > div,
             .stSelectbox > div > div > div,
-            .stNumberInput > div > div {
+            .stNumberInput > div > div,
+            .stTextArea > div > div,
+            .stMultiSelect > div > div > div {
                 background-color: var(--input-bg) !important;
                 border-color: var(--input-border) !important;
             }
@@ -797,6 +1795,11 @@ def apply_custom_css():
                 color: var(--text-color) !important;
             }
             
+            [data-testid="stMetricValue"] {
+                color: var(--primary-light) !important;
+                font-weight: 600 !important;
+            }
+            
             [data-testid="stExpander"] {
                 background-color: var(--bg-secondary) !important;
                 border-color: var(--input-border) !important;
@@ -804,24 +1807,42 @@ def apply_custom_css():
             
             /* Message styling in dark mode */
             .stSuccess {
-                background-color: rgba(94, 96, 206, 0.1) !important;
-                color: #b0b1e8 !important;
+                background: linear-gradient(135deg, rgba(52, 211, 153, 0.1), rgba(16, 185, 129, 0.2)) !important;
+                color: var(--secondary-light) !important;
+                border: 1px solid rgba(52, 211, 153, 0.3) !important;
             }
             
             .stWarning {
-                background-color: rgba(255, 159, 28, 0.1) !important;
-                color: #ffcf8c !important;
+                background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.2)) !important;
+                color: var(--warning-color) !important;
+                border: 1px solid rgba(251, 191, 36, 0.3) !important;
             }
             
             .stInfo {
-                background-color: rgba(100, 223, 223, 0.1) !important;
-                color: #a0e9e9 !important;
+                background: linear-gradient(135deg, rgba(96, 165, 250, 0.1), rgba(59, 130, 246, 0.2)) !important;
+                color: var(--info-color) !important;
+                border: 1px solid rgba(96, 165, 250, 0.3) !important;
             }
             
-            /* Metric value styling */
-            [data-testid="stMetricValue"] {
-                color: var(--heading-color) !important;
-                font-weight: 600 !important;
+            .stError {
+                background: linear-gradient(135deg, rgba(248, 113, 113, 0.1), rgba(239, 68, 68, 0.2)) !important;
+                color: var(--error-color) !important;
+                border: 1px solid rgba(248, 113, 113, 0.3) !important;
+            }
+            
+            /* Sidebar elements in dark mode */
+            .sidebar-info-card {
+                background-color: white;
+                border: 1px solid rgba(75, 85, 99, 0.4);
+            }
+            
+            .genetics-active-badge {
+                background: rgba(31, 41, 55, 0.7);
+                border: 1px solid rgba(75, 85, 99, 0.4);
+            }
+            
+            .genetics-active-badge .subtitle {
+                background: rgba(55, 65, 81, 0.7);
             }
         }
     </style>
@@ -831,6 +1852,11 @@ def show_sidebar():
     """
     Configure and display the sidebar. Returns the current page selection.
     """
+    # Add app title at the very top of the sidebar
+    st.sidebar.markdown('<h1 style="font-family: \'Orbitron\', sans-serif; color: #00003c; font-size: 24px; text-align: center; margin-top: 0px; margin-bottom: 0px; text-transform: uppercase; letter-spacing: 0.1em; text-shadow: 0 0 0px rgba(0, 240, 255, 0.5);">Neuro Nutrition</h1>', unsafe_allow_html=True)
+    
+
+
     # Initialize the page state if it doesn't exist
     if 'page' not in st.session_state:
         st.session_state.page = "Input Data"
@@ -849,12 +1875,9 @@ def show_sidebar():
         {"id": "Educational Resources", "icon": "📚", "text": "Resources"}
     ]
     
-    # Add spacing for better layout
-    st.sidebar.markdown('<div style="margin-top: 15px;"></div>', unsafe_allow_html=True)
-    
     # Instead of custom HTML navigation, use direct radio buttons with styling
     selected_page = st.sidebar.radio(
-        "Navigation", 
+        "", 
         [item["id"] for item in nav_items],
         index=[item["id"] for item in nav_items].index(st.session_state.page),
         key="navigation_radio",
@@ -918,7 +1941,7 @@ def show_sidebar():
     else:
         st.sidebar.markdown("""
         <div class="sidebar-section">
-            <h3>About This App</h3>
+            <h3 style="color: #00003c;">About This App</h3>
         </div>
         <div class="sidebar-info-card">
             <h4>Personalized Nutrition Guidance</h4>
@@ -1021,10 +2044,10 @@ def input_health_data():
         if 'activity_level' not in st.session_state:
             st.session_state.activity_level = "Moderately Active"  # Default value
             
-        activity_level = st.select_slider(
+        activity_level = st.selectbox(
             "Activity Level",
             options=["Sedentary", "Lightly Active", "Moderately Active", "Very Active", "Extra Active"],
-            value=st.session_state.activity_level,
+            index=["Sedentary", "Lightly Active", "Moderately Active", "Very Active", "Extra Active"].index(st.session_state.activity_level),
             key="activity_level_input"
         )
         st.session_state.activity_level = activity_level

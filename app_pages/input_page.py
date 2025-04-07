@@ -144,6 +144,24 @@ def display_user_data_review():
 
 def generate_nutrition_plan_workflow():
     """Handle the workflow for generating the nutrition plan."""
+    # Add custom CSS for the view plan button
+    st.markdown("""
+    <style>
+    /* Custom styling for the View My Nutrition Plan button */
+    [data-testid="baseButton-secondary"] {
+        background-color: #87CEEB !important; /* Sky blue */
+        border-color: #5F9EA0 !important;
+        color: #00003c !important; /* Dark navy text for contrast */
+    }
+    
+    [data-testid="baseButton-secondary"]:hover {
+        background-color: #ADD8E6 !important; /* Lighter blue on hover */
+        border-color: #4682B4 !important;
+        box-shadow: 0 0 10px rgba(135, 206, 235, 0.7) !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
     # Create a placeholder for the header text
     header_placeholder = st.empty()
     header_placeholder.markdown("""
@@ -231,7 +249,7 @@ def generate_nutrition_plan_workflow():
             st.balloons()
             
             # Add button to navigate to View Plan page
-            if st.button("View My Nutrition Plan →", type="primary", key="view_plan_button", 
+            if st.button("View My Nutrition Plan →", type="secondary", key="view_plan_button", 
                         use_container_width=True, on_click=navigate_to_view_plan):
                 pass  # The on_click function handles the navigation
                 
@@ -359,7 +377,7 @@ def show_input_data_page():
             
             col1, col2 = st.columns(2)
             with col1:
-                show_button = st.button("📋 Review Your Data", use_container_width=True, 
+                show_button = st.button("📋 Review Your Data", use_container_width=True, type="primary",
                                       help="View the information you've provided")
             with col2:
                 # Customize the button text based on genetic data availability
