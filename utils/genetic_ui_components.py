@@ -41,14 +41,68 @@ def input_genetic_data() -> Dict:
         if 'genetic_data_option' not in st.session_state:
             st.session_state.genetic_data_option = "None"
         
-       # Ask the user how they want to provide genetic data
-        genetic_data_option = st.radio(
-            "Would you like to incorporate genetic data for more personalized recommendations?",
-            options=["None", "Upload genetic data file", "Use sample data for demonstration"],
-            index=["None", "Upload genetic data file", "Use sample data for demonstration"].index(
-                st.session_state.genetic_data_option),
-            key="genetic_data_option_radio"  # Added unique key here
-        )
+        # Create a custom layout with three columns for the genetic data options
+        st.write("Would you like to incorporate genetic data for more personalized recommendations?")
+        
+        # Add a unique div with ID for targeting
+        st.markdown('<div id="genetic-options-container">', unsafe_allow_html=True)
+        
+        # Create three columns for the three options
+        col1, col2, col3 = st.columns(3)
+        
+        # Add CSS to disable hover effects globally
+        st.markdown("""
+        <style>
+        /* Style for the selected button - light shade of orange like main tab panel */
+        button[data-testid="baseButton-primary"] {
+            background-color: #FFDAB9 !important; /* Light shade of orange (Peach Puff) */
+            color: #E65100 !important; /* Dark orange text for contrast */
+            border: 1px solid #FF9800 !important; /* Orange border */
+            font-weight: 700 !important;
+            box-shadow: 0 0 10px rgba(255, 152, 0, 0.4) !important;
+        }
+        
+        /* Style for secondary buttons */
+        button[data-testid="baseButton-secondary"] {
+            background-color: #FFFFFF !important; /* White background */
+            color: #000000 !important; /* Black text */
+            border: 1px solid rgba(0, 0, 60, 0.2) !important;
+        }
+        
+        /* Hover effect for secondary buttons - light shade of orange */
+        button[data-testid="baseButton-secondary"]:hover {
+            border-color: #FF9800 !important;
+            box-shadow: 0 0 10px rgba(255, 152, 0, 0.2) !important;
+            background-color: #FFF3E0 !important; /* Very light shade of orange on hover */
+            color: #E65100 !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+        
+        # Function to create a clickable option
+        def create_option(label, value, column):
+            is_selected = st.session_state.genetic_data_option == value
+            
+            with column:
+                if st.button(
+                    label, 
+                    key=f"genetic_option_{value}",
+                    use_container_width=True,
+                    type="primary" if is_selected else "secondary"
+                ):
+                    st.session_state.genetic_data_option = value
+                    st.rerun()
+        
+        # Create the three options
+        create_option("None", "None", col1)
+        create_option("Upload genetic data file", "Upload genetic data file", col2)
+        create_option("Use sample data for demonstration", "Use sample data for demonstration", col3)
+        
+        # Close the genetic-options-container div
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+        # Get the current selection
+        genetic_data_option = st.session_state.genetic_data_option
         st.session_state.genetic_data_option = genetic_data_option
         
         genetic_data = {}

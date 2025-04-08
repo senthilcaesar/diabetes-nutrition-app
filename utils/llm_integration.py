@@ -575,7 +575,7 @@ def format_structured_nutrition_plan(structured_data):
         recipes_tips += "---\n\n"
 
     # Foods to Limit section with stop sign icon
-    recipes_tips += "# 🛑 Foods to Limit or Avoid\n\n"
+    recipes_tips += "## Foods to Limit or Avoid\n\n"
 
     # Create table header
     recipes_tips += "| Food Category | Why to Limit | Better Alternatives |\n"
@@ -590,7 +590,7 @@ def format_structured_nutrition_plan(structured_data):
     
     # Blood Sugar Management with chart icon
     if "blood_sugar_management" in structured_data:
-        recipes_tips += "# 📈 Blood Sugar Management Strategies\n\n"
+        recipes_tips += "## Blood Sugar Management Strategies\n\n"
         
         bsm = structured_data["blood_sugar_management"]
         

@@ -23,7 +23,7 @@ st.set_page_config(
 def main():
     """Main function to run the Streamlit app."""
     # Display header
-    show_header()
+    # show_header()
     
     # Apply custom CSS
     apply_custom_css()

@@ -269,7 +269,7 @@ def show_health_assessment():
     
     # Health Metrics tab content remains the same
     with metrics_tab:
-        st.header("Key Health Indicators")
+        st.markdown("<h3 style='font-size: 22px;'>Key Health Indicators</h3>", unsafe_allow_html=True)
         st.write("These visualizations show where your metrics stand compared to standard health ranges.")
         
         # Create visualizations
@@ -277,21 +277,24 @@ def show_health_assessment():
         
         # Display glucose visualization
         #st.markdown("---")
-        st.subheader("Blood Glucose Levels")
+        st.markdown("<h4 style='font-size: 18px;'>Blood Glucose Levels</h4>", unsafe_allow_html=True)
+
         st.pyplot(glucose_fig)
         
         # Add a visual divider
         #st.markdown("---")
         
         # Display HbA1c visualization
-        st.subheader("HbA1c Levels")
+        st.markdown("<h4 style='font-size: 18px;'>HbA1c Levels</h4>", unsafe_allow_html=True)
+
         st.pyplot(hba1c_fig)
         
         # Add a visual divider
         #st.markdown("---")
         
         # Display BMI visualization
-        st.subheader("Body Mass Index (BMI)")
+        st.markdown("<h4 style='font-size: 18px;'>Body Mass Index (BMI)</h4>", unsafe_allow_html=True)
+
         st.pyplot(bmi_fig)
         
         # Add a visual divider
@@ -329,8 +332,8 @@ def show_health_assessment():
 
     
     with assessment_tab:
-        st.header("Your Health Assessment")
-        
+        st.markdown("<h3 style='font-size: 22px;'>Your Health Assessment</h3>", unsafe_allow_html=True)
+
         # Display a warning if data has changed
         if data_changed:
             st.warning("⚠️ Your health data has changed since the last assessment. Please run the health assessment again for updated results.")

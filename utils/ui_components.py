@@ -1,403 +1,2173 @@
 """
 UI Components module for the Diabetes Nutrition Plan application.
-Contains functions for creating and managing the user interface.
+Contains functions for creating and managing the user interface with a futuristic, sci-fi inspired design.
 """
 import streamlit as st
 
 def show_header():
     """
-    Display the application header.
-    """
-    import streamlit as st
-    
+    Display the application header with a futuristic, sci-fi inspired design.
+    """    
     # Check if genetic data is available to customize the header
     has_genetic_data = 'genetic_profile' in st.session_state and st.session_state.genetic_profile is not None
     
     
-    if (has_genetic_data):
-        st.markdown('<h2 style="color:#379ced; font-size:35px;">Genetically Optimized Diabetes Nutrition Plan</h2>', unsafe_allow_html=True)
-        st.markdown('<p style="color:#757575;">Personalized nutrition recommendations based on your health metrics, socioeconomic context, and genetic profile</p>', unsafe_allow_html=True)
-    else:
-        st.markdown('<h2 style="color:#379ced; font-size:35px;">Personalized Diabetes Nutrition Plan</h2>', unsafe_allow_html=True)
-        st.markdown('<p style="color:#757575;">Personalized nutrition recommendations  based on your health metrics and socioeconomic context</p>', unsafe_allow_html=True)
+    # Add the particle animation background
+    st.markdown('''
+    <div class="neo-particles">
+        <div class="neo-particle"></div>
+        <div class="neo-particle"></div>
+        <div class="neo-particle"></div>
+        <div class="neo-particle"></div>
+        <div class="neo-particle"></div>
+        <div class="neo-particle"></div>
+        <div class="neo-particle"></div>
+        <div class="neo-particle"></div>
+        <div class="neo-particle"></div>
+        <div class="neo-particle"></div>
+        <div class="neo-particle"></div>
+        <div class="neo-particle"></div>
+    </div>
+    ''', unsafe_allow_html=True)
+    
+    st.markdown('</div>', unsafe_allow_html=True)
 
 def apply_custom_css():
     """
-    Apply custom CSS styling to the application.
+    Apply custom CSS styling to the application with a futuristic, sci-fi inspired design.
     """
     st.markdown("""
     <style>
+        /* === GLOBAL STYLES === */
+        /* Font styles and base elements */
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap');
+        
+        :root {
+            /* Futuristic neon color palette */
+            --primary-color: #00003c;  /* Dark navy blue */
+            --primary-light: #0000a0;  /* Lighter navy blue */
+            --primary-dark: #000020;  /* Darker navy blue */
+            --secondary-color: #87CEEB;  /* Neon magenta */
+            --secondary-light: #87CEEB;
+            --secondary-dark: #87CEEB;
+            --accent-color: #7B42F6;  /* Neon purple */
+            --warning-color: #FFD600;  /* Neon yellow */
+            --success-color: #00FF94;  /* Neon green */
+            --info-color: #00003c;  /* Dark navy blue */
+            --error-color: #FF3D71;  /* Neon red */
+            
+            /* Text colors */
+            --text-color: #E0F7FA;
+            --text-muted: #90A4AE;
+            --text-light: #CFD8DC;
+            
+            /* Background colors */
+            --bg-primary: #FFFFFF;  /* White background */
+            --bg-secondary: #F0F0F0;  /* Light gray */
+            --card-bg: #162B3D;  /* Dark blue with slight transparency */
+            
+            /* UI elements */
+            --border-radius: 20px;  /* Rounded edges for oval look */
+            --border-radius-lg: 30px;
+            --border-radius-sm: 15px;
+            --border-angle: 10px;  /* For angled corners */
+            
+            /* Glows and shadows */
+            --neon-glow-cyan: 0 0 10px rgba(0, 0, 60, 0.7), 0 0 20px rgba(0, 0, 60, 0.5), 0 0 30px rgba(0, 0, 60, 0.3);
+            --neon-glow-magenta: 0 0 10px rgba(255, 0, 228, 0.7), 0 0 20px rgba(255, 0, 228, 0.5), 0 0 30px rgba(255, 0, 228, 0.3);
+            --neon-glow-purple: 0 0 10px rgba(123, 66, 246, 0.7), 0 0 20px rgba(123, 66, 246, 0.5), 0 0 30px rgba(123, 66, 246, 0.3);
+            --neon-glow-yellow: 0 0 10px rgba(255, 214, 0, 0.7), 0 0 20px rgba(255, 214, 0, 0.5), 0 0 30px rgba(255, 214, 0, 0.3);
+            --neon-glow-green: 0 0 10px rgba(0, 255, 148, 0.7), 0 0 20px rgba(0, 255, 148, 0.5), 0 0 30px rgba(0, 255, 148, 0.3);
+            
+            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            --box-shadow-md: 0 8px 30px rgba(0, 0, 0, 0.7);
+            --box-shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.9);
+            
+            /* Transitions */
+            --transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
 
-        <style>
+        /* Typography - Futuristic sci-fi fonts */
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            color: var(--text-color);
+            line-height: 1.6;
+            letter-spacing: 0.03em;
+            background-color: var(--bg-primary);
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            letter-spacing: 0.05em;
+            line-height: 1.2;
+            text-transform: uppercase;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            color: var(--text-color);
+            position: relative;
+        }
+        
+        h2 {
+            font-size: 2rem;
+            color: var(--text-color);
+            position: relative;
+        }
+        
+        /* Remove the line below headers by default */
+        h2::after {
+            content: none !important;
+            display: none !important;
+        }
+        
+        /* Only show the line for specific headers where needed */
+        .with-underline::after {
+            content: "" !important;
+            display: block !important;
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: var(--primary-color);
+            box-shadow: var(--neon-glow-cyan);
+        }
+        
+        h3 {
+            font-size: 1.5rem;
+            color: var(--text-color);
+        }
+        
+        p {
+            margin-bottom: 1.25rem;
+            line-height: 1.7;
+        }
+        
+        /* Monospace for data displays */
+        .neo-data {
+            font-family: 'Share Tech Mono', monospace;
+            letter-spacing: 0.05em;
+        }
+
+        /* === LAYOUT & STRUCTURE === */
         /* Hide default Streamlit elements */
         #MainMenu {visibility: hidden;}
         footer {visibility: hidden;}
         header {display: none !important;}
         
-        /* Force the entire app to start from the very top */
+        /* Force the entire app to take full height */
         .stApp {
             margin-top: -4rem !important;
+            background-color: var(--bg-primary);
         }
         
-        /* Make the app container take up full height with no padding */
+        /* App container settings */
         .appview-container {
             padding-top: 0 !important;
         }
         
-        /* Adjust sidebar to start from the top edge with no extra space */
+        /* Sidebar adjustments - futuristic dark panel */
         section[data-testid="stSidebar"] {
             top: 0 !important;
-            padding-top: 4rem !important; /* Compensation for negative margin */
+            padding-top: 1rem !important; /* Reduced padding to move content up */
+            background: var(--bg-secondary);
+            border-right: 1px solid #e0e0e0; /* Light shade of gray border */
+            box-shadow: 5px 0 20px rgba(0, 0, 0, 0.5);
         }
         
-        /* Remove padding and margin from sidebar content */
         [data-testid="stSidebarContent"] {
             padding-top: 0 !important;
             margin-top: 0 !important;
         }
         
-        /* Adjust the Navigation header in sidebar */
-        [data-testid="stSidebarContent"] h1:first-child,
-        [data-testid="stSidebarContent"] h2:first-child,
-        [data-testid="stSidebarContent"] h3:first-child {
-            margin-top: 0 !important;
-            padding-top: 0 !important;
-        }
-        
-        /* Remove padding from main content area */
+        /* Main content adjustments */
         .main .block-container {
-            padding-top: 4rem !important; /* Compensation for negative margin */
+            padding-top: 2rem !important;
+            max-width: 1200px;
+            margin: 0 auto;
         }
         
-        /* Ensure nothing gets hidden behind the negative margin */
+        /* Ensure proper overflow handling */
         body {
             overflow-x: hidden;
         }
-                      
-        /* Hide default Streamlit elements */
-        #MainMenu {visibility: hidden;}
-        footer {visibility: hidden;}
-        header {display: none !important;}
         
-        /* Force the entire app to start from the very top */
-        .stApp {
-            margin-top: -4rem !important;
+        /* Angled corner mixin (using pseudo-elements) */
+        .neo-angled-corners {
+            position: relative;
+            clip-path: polygon(
+                0 var(--border-angle), 
+                var(--border-angle) 0, 
+                100% 0, 
+                100% calc(100% - var(--border-angle)), 
+                calc(100% - var(--border-angle)) 100%, 
+                0 100%
+            );
         }
         
-        /* Make the app container take up full height with no padding */
-        .appview-container {
-            padding-top: 0 !important;
+        /* Futuristic header with space-inspired background */
+        .neo-header {
+            background-color: rgba(10, 25, 41, 0.8);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--box-shadow-lg);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-bottom: 3px solid var(--primary-color);
+            border-radius: var(--border-radius-lg);
         }
         
-        /* Adjust sidebar to start from the top edge */
-        section[data-testid="stSidebar"] {
-            top: 0 !important;
-            padding-top: 4rem !important; /* Add padding to account for negative margin */
+        /* Particle animation background */
+        .neo-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
         }
         
-        /* Remove padding from main content area */
-        .main .block-container {
-            padding-top: 4rem !important; /* Add padding to account for negative margin */
+        .neo-particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
         }
         
-        /* Ensure nothing gets hidden behind the negative margin */
-        body {
-            overflow-x: hidden;
+        .neo-particle:nth-child(1) { top: 10%; left: 20%; }
+        .neo-particle:nth-child(2) { top: 40%; left: 50%; }
+        .neo-particle:nth-child(3) { top: 70%; left: 30%; }
+        .neo-particle:nth-child(4) { top: 20%; left: 80%; }
+        .neo-particle:nth-child(5) { top: 60%; left: 10%; }
+        .neo-particle:nth-child(6) { top: 30%; left: 60%; }
+        .neo-particle:nth-child(7) { top: 80%; left: 70%; }
+        .neo-particle:nth-child(8) { top: 50%; left: 40%; }
+        .neo-particle:nth-child(9) { top: 15%; left: 90%; }
+        .neo-particle:nth-child(10) { top: 85%; left: 25%; }
+        .neo-particle:nth-child(11) { top: 45%; left: 75%; }
+        .neo-particle:nth-child(12) { top: 75%; left: 55%; }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) translateX(100px);
+                opacity: 0;
+            }
         }
-                
-        /* Hide Streamlit menu and footer */
-        #MainMenu {visibility: hidden;}
-        footer {visibility: hidden;}
-
-        /* Fix the empty space below tabs */
+        
+        .neo-header-content {
+            display: flex;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .neo-header-icon {
+            flex: 0 0 150px;
+            margin-right: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .neo-header-text {
+            flex: 1;
+        }
+        
+        .neo-title-container {
+            position: relative;
+            margin: 0 0 0.5rem 0;
+            padding: 0;
+        }
+        
+        .neo-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 0 0 0.25rem 0;
+            padding: 0;
+            letter-spacing: 0.1em;
+            color: var(--text-color);
+            text-shadow: 0 0 10px rgba(0, 0, 60, 0.5);
+            line-height: 1.1;
+        }
+        
+        .neo-title-prefix {
+            color: var(--primary-color);
+            font-weight: 400;
+            margin-right: 0.5rem;
+        }
+        
+        .neo-subtitle {
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--text-muted);
+            font-size: 1rem;
+            letter-spacing: 0.2em;
+            margin-bottom: 1.5rem;
+        }
+        
+        .neo-highlight {
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+        
+        /* Futuristic DNA Animation */
+        .neo-dna-animation {
+            width: 120px;
+            height: 120px;
+            position: relative;
+            perspective: 1000px;
+        }
+        
+        .neo-dna-ring {
+            position: absolute;
+            border: 2px solid transparent;
+            border-radius: 50%;
+            width: 100%;
+            height: 100%;
+            box-shadow: var(--neon-glow-cyan);
+        }
+        
+        .neo-dna-ring:nth-child(1) {
+            border-top: 2px solid var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        .neo-dna-ring:nth-child(2) {
+            border-left: 2px solid var(--secondary-color);
+            border-right: 2px solid var(--secondary-color);
+        }
+        
+        .neo-dna-ring:nth-child(3) {
+            border-top: 2px solid var(--accent-color);
+            border-bottom: 2px solid var(--accent-color);
+            width: 80%;
+            height: 80%;
+            top: 10%;
+            left: 10%;
+        }
+        
+        /* Futuristic Pulse Animation with hexagons */
+        .neo-pulse-animation {
+            width: 120px;
+            height: 120px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .neo-hexagon {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background-color: transparent;
+            opacity: 1;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            border: 2px solid var(--primary-color);
+            box-shadow: var(--neon-glow-cyan);
+        }
+        
+        .neo-hexagon:nth-child(1) {
+            /* No animation delay */
+        }
+        
+        .neo-hexagon:nth-child(2) {
+            border-color: var(--secondary-color);
+            box-shadow: var(--neon-glow-magenta);
+        }
+        
+        .neo-hexagon:nth-child(3) {
+            border-color: var(--accent-color);
+            box-shadow: var(--neon-glow-purple);
+        }
+        
+        
+        /* Futuristic badges */
+        .neo-badge, .neo-upgrade-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+            border-radius: var(--border-radius-sm);
+        }
+        
+        .neo-badge {
+            background-color: rgba(0, 0, 60, 0.1);
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            box-shadow: var(--neon-glow-cyan);
+        }
+        
+        .neo-upgrade-badge {
+            background-color: rgba(255, 0, 228, 0.1);
+            color: var(--secondary-color);
+            border: 1px solid var(--secondary-color);
+            box-shadow: var(--neon-glow-magenta);
+        }
+        
+        .neo-badge-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: none;
+        }
+        
+        @keyframes neo-badge-glow {
+            0% { left: -100%; }
+            100% { left: 200%; }
+        }
+        
+        .neo-badge-icon, .neo-badge-text {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .neo-badge-icon {
+            margin-right: 0.75rem;
+            font-size: 1rem;
+        }
+        
+        /* === TABS & NAVIGATION === */
+        /* Futuristic tab styling - similar to sidebar radio buttons */
+        .stTabs [data-baseweb="tab-list"] {
+            gap: 10px;
+            border-bottom: none;
+            padding-bottom: 0;
+            background: transparent;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+        }
+        
+        /* Override any default button styling */
+        button[kind="primary"] {
+            background-color: white !important;
+            color: #00003c !important;
+            border-color: #5F9EA0 !important;
+        }
+        
+        .stTabs [data-baseweb="tab"] {
+            padding: 16px 30px 16px 16px !important; /* Consistent padding for all tabs */
+            margin: 5px 0 !important;
+            border-radius: var(--border-radius) !important;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+            background-color: #FFFFFF !important; /* White background */
+            color: #000000 !important; /* Dark black text for better visibility */
+            border: 1px solid rgba(0, 0, 60, 0.2) !important;
+            font-family: 'Share Tech Mono', monospace !important;
+            font-weight: 700 !important; /* Bolder text for better visibility */
+            box-shadow: var(--box-shadow) !important;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase !important;
+            letter-spacing: 0.1em !important;
+            font-size: 0.9rem !important;
+            min-width: 200px;
+            text-align: center;
+            width: auto !important; /* Prevent width changes */
+            box-sizing: border-box !important; /* Include padding in width calculation */
+        }
+        
+        .stTabs [data-baseweb="tab"]::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: none;
+            z-index: 0;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .stTabs [data-baseweb="tab"]:not([aria-selected="true"]):hover {
+            border-color: var(--primary-color) !important;
+            box-shadow: var(--neon-glow-cyan) !important;
+            background-color: #F0F8FF !important; /* Light shade of blue (Alice Blue) on hover */
+            color: var(--primary-color) !important;
+            transform: none !important; /* Remove transform to prevent layout shifts */
+        }
+        
+        .stTabs [data-baseweb="tab"]:hover::before {
+            opacity: 1;
+        }
+        
+        .stTabs [aria-selected="true"] {
+            background-color: #87CEEB !important; /* Sky blue for selected tab */
+            color: var(--primary-color) !important;
+            font-weight: 700 !important;
+            box-shadow: var(--neon-glow-cyan) !important;
+            border: 1px solid var(--primary-color) !important;
+        }
+        
+        /* Completely remove any red line or indicator from selected tabs */
+        .stTabs [data-baseweb="tab"][aria-selected="true"]::after,
+        .stTabs [data-baseweb="tab"][aria-selected="true"]::before,
+        .stTabs [data-baseweb="tab-list"] [data-baseweb="tab"][aria-selected="true"]::after,
+        .stTabs [data-baseweb="tab-list"] [data-baseweb="tab"][aria-selected="true"]::before {
+            display: none !important;
+            content: none !important;
+            border: none !important;
+            background: none !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+        }
+        
+        /* Override any default styling for selected tabs */
+        .stTabs [data-baseweb="tab-list"] [data-baseweb="tab"][aria-selected="true"],
+        .stTabs [data-baseweb="tab-list"] [data-baseweb="tab"][aria-selected="true"]:hover,
+        .stTabs [data-baseweb="tab-list"] [data-baseweb="tab"][aria-selected="true"]:focus {
+            border-bottom: none !important;
+            border-bottom-color: transparent !important;
+            border-top: 1px solid var(--primary-color) !important;
+            border-left: 1px solid var(--primary-color) !important;
+            border-right: 1px solid var(--primary-color) !important;
+            box-shadow: var(--neon-glow-cyan) !important;
+        }
+        
+        /* Remove any hover effects that might show red lines */
+        .stTabs [data-baseweb="tab-list"] [data-baseweb="tab"][aria-selected="true"]:hover::after,
+        .stTabs [data-baseweb="tab-list"] [data-baseweb="tab"][aria-selected="true"]:hover::before {
+            display: none !important;
+            content: none !important;
+            border: none !important;
+            background: none !important;
+        }
+        
+        /* Remove any indicator or highlight elements */
+        .stTabs [data-baseweb="tab-highlight"],
+        .stTabs [data-baseweb="tab-border"],
+        .stTabs [role="tablist"] [data-baseweb="tab-highlight"],
+        .stTabs [role="tablist"] [data-baseweb="tab-border"] {
+            display: none !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+            height: 0 !important;
+            width: 0 !important;
+            border: none !important;
+            background: none !important;
+        }
+        
+        .stTabs [aria-selected="true"]::after {
+            content: "▶";
+            position: absolute;
+            top: 50%;
+            right: 12px;
+            transform: translateY(-50%);
+            color: var(--primary-color);
+            font-size: 0.75rem;
+            text-shadow: var(--neon-glow-cyan);
+        }
+        
+        /* Fix spacing around tab panels */
         .stTabs [data-baseweb="tab-panel"] {
-            padding-top: 0px !important;
+            padding-top: 1.5rem !important;
+            background: #f5f5f5; /* Light shade of gray */
+            border-radius: var(--border-radius-lg);
+            border: 1px solid #e0e0e0; /* Light shade of gray border */
+            padding: 1.5rem !important;
+            margin-top: 0.8rem; /* Increased space between tabs and panel */
+            box-shadow: var(--box-shadow);
         }
-
-        /* Remove padding around the container holding the tab panels */
+        
         .stTabs [data-baseweb="tab-content"] {
             padding: 0px !important;
         }
-
-        /* Make the card container start right at the top of the tab panel */
+        
+        /* === CARDS & CONTAINERS === */
+        /* Futuristic card styling */
         .card-container {
-            background-color: var(--background-color);
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            padding: 20px;
-            margin-top: 0px !important;
-            margin-bottom: 20px;
+            background-color: rgba(22, 43, 61, 0.7);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
         }
-
-        /* Tab styles */
-        .stTabs [data-baseweb="tab-list"] {
-            gap: 8px;
+        
+        .card-container:hover {
+            box-shadow: var(--neon-glow-cyan);
+            border-color: var(--primary-color);
         }
-        .stTabs [data-baseweb="tab"] {
-            padding: 12px 18px;
-            background-color: var(--tab-background-color);
-            color: var(--tab-color);
-            border-radius: 6px 6px 0px 0px;
-            border-left: 1px solid #eee;
-            border-right: 1px solid #eee;
-            border-top: 1px solid #eee;
-            box-shadow: 0px -2px 5px rgba(0,0,0,0.05);
+        
+        .card-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--primary-color);
+            box-shadow: var(--neon-glow-cyan);
         }
-        .stTabs [aria-selected="true"] {
-            background-color: var(--tab-selected-background-color) !important;
-            color: var(--tab-selected-color) !important;
+        
+        /* Futuristic plan header */
+        .plan-header {
+            background-color: rgba(0, 0, 60, 0.1);
+            padding: 2.5rem;
+            border-radius: var(--border-radius-lg);
+            color: var(--text-color);
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: var(--box-shadow);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--primary-color);
+            box-shadow: var(--neon-glow-cyan);
+        }
+        
+        .plan-header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            background: none;
+            z-index: 0;
+        }
+        
+        .plan-header h2 {
+            position: relative;
+            z-index: 1;
+            color: white;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+        
+        .plan-header p {
+            position: relative;
+            z-index: 1;
+            opacity: 0.9;
+            font-size: 1.125rem;
+        }
+        
+        /* Futuristic plan sections */
+        .plan-section {
+            background-color: rgba(22, 43, 61, 0.7);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 2rem;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .plan-section::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: var(--primary-color);
+            box-shadow: var(--neon-glow-cyan);
+        }
+        
+        .plan-section h3 {
+            color: var(--primary-dark);
+            border-bottom: 2px solid rgba(226, 232, 240, 0.8);
+            padding-bottom: 0.75rem;
+            margin-bottom: 1.25rem;
             font-weight: 600;
-            border: none;
+        }
+        
+        /* Meal cards */
+        .meal-card {
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            border-radius: var(--border-radius);
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            background-color: rgba(255, 255, 255, 0.7);
+            transition: var(--transition);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .meal-card:hover {
+            box-shadow: var(--box-shadow-md);
             transform: translateY(-3px);
-            transition: all 0.3s ease;
+            background-color: rgba(255, 255, 255, 0.9);
         }
-
-        /* Button styles */
-        .nav-button {
+        
+        .meal-card::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-light), var(--secondary-light));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+        
+        .meal-card:hover::after {
+            transform: scaleX(1);
+        }
+        
+        .meal-title {
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 0.75rem;
+            font-size: 1.125rem;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .meal-title::before {
+            content: "•";
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+            line-height: 0;
+        }
+        
+        /* Foods limit section */
+        .limit-section {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(251, 191, 36, 0.1));
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            padding: 1.25rem;
+            border-radius: var(--border-radius);
+            margin: 1.25rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .limit-section::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 5px;
+            background: var(--warning-color);
+            border-radius: 5px;
+        }
+        
+        .limit-section h2 {
+            color: var(--warning-color);
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            font-size: 1.25rem;
+        }
+        
+        /* === HEALTH ASSESSMENT STYLING === */
+        /* Assessment sections */
+        .health-assessment-section {
+            margin-bottom: 1.75rem;
+            padding: 1.75rem;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--box-shadow);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .health-assessment-section:hover {
+            box-shadow: var(--box-shadow-md);
+            transform: translateY(-3px);
+        }
+        
+        .health-assessment-section h2 {
+            font-size: 1.5rem;
+            color: var(--primary-dark);
+            margin-top: 0;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid rgba(226, 232, 240, 0.8);
+            padding-bottom: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .health-assessment-section h3 {
+            font-size: 1.25rem;
+            color: var(--primary-color);
+            margin-top: 1rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+        
+        /* Color-coded assessment sections with modern gradients */
+        .summary-section {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(79, 70, 229, 0.1) 100%);
+            position: relative;
+        }
+        
+        .summary-section::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 5px;
+            background: linear-gradient(to bottom, var(--primary-color), var(--primary-dark));
+            border-radius: 5px;
+        }
+        
+        .diabetes-management-section {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(37, 99, 235, 0.1) 100%);
+            position: relative;
+        }
+        
+        .diabetes-management-section::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 5px;
+            background: linear-gradient(to bottom, var(--info-color), #2563eb);
+            border-radius: 5px;
+        }
+        
+        .risks-section {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(220, 38, 38, 0.1) 100%);
+            position: relative;
+        }
+        
+        .risks-section::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 5px;
+            background: linear-gradient(to bottom, var(--error-color), #dc2626);
+            border-radius: 5px;
+        }
+        
+        .care-plans-section {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.1) 100%);
+            position: relative;
+        }
+        
+        .care-plans-section::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 5px;
+            background: linear-gradient(to bottom, var(--secondary-color), var(--secondary-dark));
+            border-radius: 5px;
+        }
+        
+        .concerns-section {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, rgba(217, 119, 6, 0.1) 100%);
+            position: relative;
+        }
+        
+        .concerns-section::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 5px;
+            background: linear-gradient(to bottom, var(--warning-color), #d97706);
+            border-radius: 5px;
+        }
+        
+        .recommendations-section {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.1) 100%);
+            position: relative;
+        }
+        
+        .recommendations-section::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 5px;
+            background: linear-gradient(to bottom, var(--secondary-color), var(--secondary-dark));
+            border-radius: 5px;
+        }
+        
+        .genetic-section {
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.05) 0%, rgba(109, 40, 217, 0.1) 100%);
+            position: relative;
+        }
+        
+        .genetic-section::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 5px;
+            background: linear-gradient(to bottom, #7c3aed, #6d28d9);
+            border-radius: 5px;
+        }
+        
+        /* === BUTTONS & INTERACTIVE ELEMENTS === */
+        /* Futuristic button styling */
+        .stButton button {
+            border-radius: var(--border-radius) !important;
+            padding: 0.75rem 2rem !important;
+            font-family: 'Share Tech Mono', monospace !important;
             font-weight: 500 !important;
-            border-radius: 6px !important;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
-            transition: all 0.2s ease !important;
+            letter-spacing: 0.1em !important;
+            text-transform: uppercase !important;
+            transition: var(--transition) !important;
+            box-shadow: var(--box-shadow) !important;
+            position: relative !important;
+            overflow: hidden !important;
+            font-size: 0.85rem !important;
         }
-        .nav-button:hover {
-            transform: translateY(-2px) !important;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2) !important;
+        
+        .stButton button::before {
+            content: "" !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 0 !important;
+            height: 100% !important;
+            background: none !important;
         }
+        
+        @keyframes neo-button-glow {
+            0% { left: -100%; }
+            100% { left: 200%; }
+        }
+        
+        
+        /* Primary button - neon cyan */
+        .stButton button[kind="primary"] {
+            background-color: white !important; /* White background by default */
+            border: 1px solid var(--primary-color) !important;
+            color: var(--primary-color) !important;
+        }
+        
+        .stButton button[kind="primary"]:hover {
+            background-color: #FFDAB9 !important; /* Light shade of orange (Peach Puff) on hover */
+            box-shadow: var(--neon-glow-cyan) !important;
+        }
+        
+        .stButton button[kind="primary"].selected {
+            background-color: #87CEEB !important; /* Sky blue when selected */
+            color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+        }
+        
+/* Secondary button - neon magenta */
+.stButton button[kind="secondary"] {
+    background-color: white !important;
+    border: 1px solid #000000 !important; /* Changed border color to black */
+    color: #000000 !important; /* Changed text color to black */
+}
 
-        /* Message styles */
+.stButton button[kind="secondary"]:hover {
+    background-color: #FFDAB9 !important; /* Light shade of green on hover */
+    /* Removed hover animation (box-shadow) */
+}
+        
+        /* Success message - lighter, airier */
         .success-message {
-            padding: 10px 15px;
-            border-radius: 6px;
+            padding: 1.5rem;
+            border-radius: var(--border-radius-lg);
             animation: fadeIn 0.5s ease-in-out;
+            background: linear-gradient(135deg, rgba(165, 214, 167, 0.1), rgba(129, 199, 132, 0.15));
+            border: 1px solid rgba(165, 214, 167, 0.25);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
         }
+        
+        .success-message::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: linear-gradient(to bottom, var(--secondary-light), var(--secondary-color));
+            opacity: 0.8;
+        }
+        
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
-        /* Section header styles */
-        .section-header {
-            margin-bottom: 1px;
-            color: var(--section-header-color);
-            font-size: 1.2rem;
-            border-bottom: 1px solid var(--section-header-border-color);
+        
+        /* Error message - lighter, airier */
+        .error-message {
+            padding: 1.5rem;
+            border-radius: var(--border-radius-lg);
+            animation: fadeIn 0.5s ease-in-out;
+            background: linear-gradient(135deg, rgba(229, 115, 115, 0.1), rgba(239, 154, 154, 0.15));
+            border: 1px solid rgba(229, 115, 115, 0.25);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .error-message::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: linear-gradient(to bottom, var(--error-color), #EF5350);
+            opacity: 0.8;
+        }
+        
+        /* === DATA INPUT ELEMENTS === */
+        /* Make all input field labels bold with stronger selectors */
+        div[data-testid="stForm"] label,
+        div.stNumberInput label,
+        div.stTextInput label,
+        div.stSelectbox label,
+        div.stMultiSelect label,
+        div.stTextArea label,
+        div.stDateInput label,
+        div.stTimeInput label,
+        div.stSlider label,
+        div.stFileUploader label,
+        div[data-baseweb="form-control"] label,
+        div[data-testid="stVerticalBlock"] label {
+            font-weight: 900 !important;
+            font-family: 'Orbitron', sans-serif !important;
+            color: #000000 !important;
+            font-size: 1rem !important;
+            letter-spacing: 0.05em !important;
+        }
+        
+        /* Futuristic input fields with stronger selectors */
+        .stTextInput > div > div,
+        div[data-baseweb="input"] > div,
+        div[data-baseweb="base-input"] {
+            border-radius: var(--border-radius) !important;
+            border: none !important;
+            border-color: transparent !important;
+            background-color: white !important;
+            transition: var(--transition) !important;
+            font-family: 'Share Tech Mono', monospace !important;
+            box-shadow: none !important;
+        }
+        
+        .stTextInput > div > div:focus-within,
+        div[data-baseweb="input"] > div:focus-within,
+        div[data-baseweb="base-input"]:focus-within {
+            border: none !important;
+            border-color: transparent !important;
+            box-shadow: var(--neon-glow-cyan) !important;
+        }
+        
+        /* Futuristic select boxes with stronger selectors */
+        .stSelectbox > div > div > div,
+        div[data-baseweb="select"] > div,
+        div[role="combobox"] {
+            border-radius: var(--border-radius) !important;
+            border: none !important;
+            border-color: transparent !important;
+            background-color: white !important;
+            transition: var(--transition) !important;
+            font-family: 'Share Tech Mono', monospace !important;
+            box-shadow: none !important;
+        }
+        
+        .stSelectbox > div > div > div:focus-within,
+        div[data-baseweb="select"] > div:focus-within,
+        div[role="combobox"]:focus-within {
+            border: none !important;
+            border-color: transparent !important;
+            box-shadow: var(--neon-glow-cyan) !important;
+        }
+        
+        /* Futuristic number inputs with stronger selectors */
+        .stNumberInput > div > div,
+        input[type="number"] {
+            border-radius: var(--border-radius) !important;
+            border: none !important;
+            border-color: transparent !important;
+            background-color: white !important;
+            transition: var(--transition) !important;
+            font-family: 'Share Tech Mono', monospace !important;
+            box-shadow: none !important;
+        }
+        
+        .stNumberInput > div > div:focus-within,
+        input[type="number"]:focus-within {
+            border: none !important;
+            border-color: transparent !important;
+            box-shadow: var(--neon-glow-cyan) !important;
+        }
+        
+        /* Futuristic text areas with stronger selectors */
+        .stTextArea > div > div,
+        textarea {
+            border-radius: var(--border-radius) !important;
+            border: none !important;
+            border-color: transparent !important;
+            background-color: white !important;
+            transition: var(--transition) !important;
+            font-family: 'Share Tech Mono', monospace !important;
+            box-shadow: none !important;
+        }
+        
+        .stTextArea > div > div:focus-within,
+        textarea:focus-within {
+            border: none !important;
+            border-color: transparent !important;
+            box-shadow: var(--neon-glow-cyan) !important;
+        }
+        
+        /* Futuristic multiselect with stronger selectors */
+        .stMultiSelect > div > div > div,
+        div[role="listbox"] {
+            border-radius: var(--border-radius) !important;
+            border: none !important;
+            border-color: transparent !important;
+            background-color: white !important;
+            transition: var(--transition) !important;
+            font-family: 'Share Tech Mono', monospace !important;
+            box-shadow: none !important;
+        }
+        
+        .stMultiSelect > div > div > div:focus-within,
+        div[role="listbox"]:focus-within {
+            border: none !important;
+            border-color: transparent !important;
+            box-shadow: var(--neon-glow-cyan) !important;
+        }
+        
+        /* Force remove all borders from input elements */
+        input, select, textarea, button {
+            border: none !important;
+            border-color: transparent !important;
+            box-shadow: none !important;
+        }
+        
+        /* Extremely aggressive approach to remove all borders */
+        /* Target all possible input elements and their containers */
+        input, 
+        select, 
+        textarea, 
+        button,
+        [data-baseweb*="input"],
+        [data-baseweb*="select"],
+        [data-baseweb*="textarea"],
+        [data-baseweb*="phone-input"],
+        [data-baseweb*="input-container"],
+        [data-baseweb*="form-control"],
+        [data-baseweb*="popover"],
+        [data-baseweb*="menu"],
+        [data-baseweb*="list"],
+        [data-baseweb*="select-dropdown"],
+        [data-testid*="stForm"],
+        .stNumberInput,
+        .stTextInput,
+        .stSelectbox,
+        .stTextArea,
+        .stMultiSelect,
+        .stDateInput,
+        .stTimeInput,
+        .stFileUploader,
+        div[role="combobox"],
+        div[role="listbox"],
+        div[role="textbox"],
+        div[role="spinbutton"],
+        div[class*="input"],
+        div[class*="select"],
+        div[class*="text"],
+        div[class*="field"],
+        div[class*="control"],
+        div[class*="form"],
+        div[class*="Input"],
+        div[class*="Select"],
+        div[class*="Text"],
+        div[class*="Field"],
+        div[class*="Control"],
+        div[class*="Form"],
+        /* Target all children of these elements */
+        [data-baseweb*="input"] *,
+        [data-baseweb*="select"] *,
+        [data-baseweb*="textarea"] *,
+        [data-baseweb*="phone-input"] *,
+        [data-baseweb*="input-container"] *,
+        [data-baseweb*="form-control"] *,
+        [data-baseweb*="popover"] *,
+        [data-baseweb*="menu"] *,
+        [data-baseweb*="list"] *,
+        [data-baseweb*="select-dropdown"] *,
+        [data-testid*="stForm"] *,
+        .stNumberInput *,
+        .stTextInput *,
+        .stSelectbox *,
+        .stTextArea *,
+        .stMultiSelect *,
+        .stDateInput *,
+        .stTimeInput *,
+        .stFileUploader *,
+        div[role="combobox"] *,
+        div[role="listbox"] *,
+        div[role="textbox"] *,
+        div[role="spinbutton"] *,
+        div[class*="input"] *,
+        div[class*="select"] *,
+        div[class*="text"] *,
+        div[class*="field"] *,
+        div[class*="control"] *,
+        div[class*="form"] *,
+        div[class*="Input"] *,
+        div[class*="Select"] *,
+        div[class*="Text"] *,
+        div[class*="Field"] *,
+        div[class*="Control"] *,
+        div[class*="Form"] * {
+            border: none !important;
+            border-color: transparent !important;
+            outline: none !important;
+            box-shadow: none !important;
+        }
+        
+        /* Target all states: focus, hover, active, focus-within, etc. */
+        input:focus, 
+        select:focus, 
+        textarea:focus, 
+        button:focus,
+        input:hover, 
+        select:hover, 
+        textarea:hover, 
+        button:hover,
+        input:active, 
+        select:active, 
+        textarea:active, 
+        button:active,
+        [data-baseweb*="input"]:focus,
+        [data-baseweb*="select"]:focus,
+        [data-baseweb*="textarea"]:focus,
+        [data-baseweb*="phone-input"]:focus,
+        [data-baseweb*="input-container"]:focus,
+        [data-baseweb*="form-control"]:focus,
+        [data-baseweb*="popover"]:focus,
+        [data-baseweb*="menu"]:focus,
+        [data-baseweb*="list"]:focus,
+        [data-baseweb*="select-dropdown"]:focus,
+        [data-baseweb*="input"]:hover,
+        [data-baseweb*="select"]:hover,
+        [data-baseweb*="textarea"]:hover,
+        [data-baseweb*="phone-input"]:hover,
+        [data-baseweb*="input-container"]:hover,
+        [data-baseweb*="form-control"]:hover,
+        [data-baseweb*="popover"]:hover,
+        [data-baseweb*="menu"]:hover,
+        [data-baseweb*="list"]:hover,
+        [data-baseweb*="select-dropdown"]:hover,
+        [data-baseweb*="input"]:active,
+        [data-baseweb*="select"]:active,
+        [data-baseweb*="textarea"]:active,
+        [data-baseweb*="phone-input"]:active,
+        [data-baseweb*="input-container"]:active,
+        [data-baseweb*="form-control"]:active,
+        [data-baseweb*="popover"]:active,
+        [data-baseweb*="menu"]:active,
+        [data-baseweb*="list"]:active,
+        [data-baseweb*="select-dropdown"]:active,
+        [data-baseweb*="input"]:focus-within,
+        [data-baseweb*="select"]:focus-within,
+        [data-baseweb*="textarea"]:focus-within,
+        [data-baseweb*="phone-input"]:focus-within,
+        [data-baseweb*="input-container"]:focus-within,
+        [data-baseweb*="form-control"]:focus-within,
+        [data-baseweb*="popover"]:focus-within,
+        [data-baseweb*="menu"]:focus-within,
+        [data-baseweb*="list"]:focus-within,
+        [data-baseweb*="select-dropdown"]:focus-within,
+        [data-testid*="stForm"]:focus,
+        [data-testid*="stForm"]:hover,
+        [data-testid*="stForm"]:active,
+        [data-testid*="stForm"]:focus-within,
+        .stNumberInput:focus,
+        .stTextInput:focus,
+        .stSelectbox:focus,
+        .stTextArea:focus,
+        .stMultiSelect:focus,
+        .stDateInput:focus,
+        .stTimeInput:focus,
+        .stFileUploader:focus,
+        .stNumberInput:hover,
+        .stTextInput:hover,
+        .stSelectbox:hover,
+        .stTextArea:hover,
+        .stMultiSelect:hover,
+        .stDateInput:hover,
+        .stTimeInput:hover,
+        .stFileUploader:hover,
+        .stNumberInput:active,
+        .stTextInput:active,
+        .stSelectbox:active,
+        .stTextArea:active,
+        .stMultiSelect:active,
+        .stDateInput:active,
+        .stTimeInput:active,
+        .stFileUploader:active,
+        .stNumberInput:focus-within,
+        .stTextInput:focus-within,
+        .stSelectbox:focus-within,
+        .stTextArea:focus-within,
+        .stMultiSelect:focus-within,
+        .stDateInput:focus-within,
+        .stTimeInput:focus-within,
+        .stFileUploader:focus-within,
+        div[role="combobox"]:focus,
+        div[role="listbox"]:focus,
+        div[role="textbox"]:focus,
+        div[role="spinbutton"]:focus,
+        div[role="combobox"]:hover,
+        div[role="listbox"]:hover,
+        div[role="textbox"]:hover,
+        div[role="spinbutton"]:hover,
+        div[role="combobox"]:active,
+        div[role="listbox"]:active,
+        div[role="textbox"]:active,
+        div[role="spinbutton"]:active,
+        div[role="combobox"]:focus-within,
+        div[role="listbox"]:focus-within,
+        div[role="textbox"]:focus-within,
+        div[role="spinbutton"]:focus-within,
+        div[class*="input"]:focus,
+        div[class*="select"]:focus,
+        div[class*="text"]:focus,
+        div[class*="field"]:focus,
+        div[class*="control"]:focus,
+        div[class*="form"]:focus,
+        div[class*="Input"]:focus,
+        div[class*="Select"]:focus,
+        div[class*="Text"]:focus,
+        div[class*="Field"]:focus,
+        div[class*="Control"]:focus,
+        div[class*="Form"]:focus,
+        div[class*="input"]:hover,
+        div[class*="select"]:hover,
+        div[class*="text"]:hover,
+        div[class*="field"]:hover,
+        div[class*="control"]:hover,
+        div[class*="form"]:hover,
+        div[class*="Input"]:hover,
+        div[class*="Select"]:hover,
+        div[class*="Text"]:hover,
+        div[class*="Field"]:hover,
+        div[class*="Control"]:hover,
+        div[class*="Form"]:hover,
+        div[class*="input"]:active,
+        div[class*="select"]:active,
+        div[class*="text"]:active,
+        div[class*="field"]:active,
+        div[class*="control"]:active,
+        div[class*="form"]:active,
+        div[class*="Input"]:active,
+        div[class*="Select"]:active,
+        div[class*="Text"]:active,
+        div[class*="Field"]:active,
+        div[class*="Control"]:active,
+        div[class*="Form"]:active,
+        div[class*="input"]:focus-within,
+        div[class*="select"]:focus-within,
+        div[class*="text"]:focus-within,
+        div[class*="field"]:focus-within,
+        div[class*="control"]:focus-within,
+        div[class*="form"]:focus-within,
+        div[class*="Input"]:focus-within,
+        div[class*="Select"]:focus-within,
+        div[class*="Text"]:focus-within,
+        div[class*="Field"]:focus-within,
+        div[class*="Control"]:focus-within,
+        div[class*="Form"]:focus-within {
+            border: none !important;
+            border-color: transparent !important;
+            outline: none !important;
+            box-shadow: none !important;
+        }
+        
+        /* Target all validation states */
+        [aria-invalid="true"],
+        [aria-invalid="true"] *,
+        [data-invalid="true"],
+        [data-invalid="true"] *,
+        .invalid,
+        .invalid *,
+        .error,
+        .error *,
+        .has-error,
+        .has-error * {
+            border: none !important;
+            border-color: transparent !important;
+            outline: none !important;
+            box-shadow: none !important;
+        }
+        
+        /* Override Streamlit's default accent colors for futuristic form elements */
+        [data-baseweb="select"] [data-baseweb="tag"] {
+            background-color: rgba(0, 240, 255, 0.2) !important;
+            border: 1px solid var(--primary-color) !important;
+            border-radius: var(--border-radius-sm) !important;
+            color: var(--primary-color) !important;
+            font-family: 'Share Tech Mono', monospace !important;
+        }
+        
+        [data-baseweb="base-input"] {
+            border-color: var(--primary-color) !important;
+            font-family: 'Share Tech Mono', monospace !important;
+        }
+        
+        /* Futuristic radio buttons */
+        [data-baseweb="radio"] [data-checked="true"] {
+            color: var(--primary-color) !important;
+        }
+        
+        /* Futuristic checkboxes */
+        [data-baseweb="checkbox"] [data-checked="true"] {
+            background-color: var(--primary-color) !important;
+            box-shadow: var(--neon-glow-cyan) !important;
+        }
+        
+        /* Futuristic slider */
+        [data-testid="stSlider"] > div > div > div {
+            background-color: var(--primary-color) !important;
+            box-shadow: var(--neon-glow-cyan) !important;
+        }
+        
+        /* Futuristic slider thumb */
+        [data-testid="stSlider"] > div > div > div > div {
+            background-color: var(--bg-primary) !important;
+            border: 2px solid var(--primary-color) !important;
+            box-shadow: var(--neon-glow-cyan) !important;
+            transition: var(--transition) !important;
+        }
+        
+        [data-testid="stSlider"] > div > div > div > div:hover {
+            transform: scale(1.2) !important;
+            box-shadow: var(--neon-glow-cyan) !important;
+        }
+        
+        /* Metrics styling */
+        [data-testid="stMetric"] {
+            background-color: white !important;
+            border: 1px solid #e0e0e0 !important; /* Light shade of gray border */
+            border-radius: 4px !important;
+            padding: 1rem !important;
+            box-shadow: none !important;
+            transition: none !important;
+        }
+        
+        [data-testid="stMetric"]:hover {
+            border-color: #e0e0e0 !important;
+            box-shadow: none !important;
+        }
+        
+        [data-testid="stMetricLabel"] {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important;
+            color: #333333 !important;
+            font-size: 0.85rem !important;
+            letter-spacing: normal !important;
+            text-transform: none !important;
+        }
+        
+        [data-testid="stMetricValue"] {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important;
+            color: #333333 !important;
+            font-weight: 600 !important;
+            font-size: 1.5rem !important;
+            text-shadow: none !important;
+        }
+        
+        /* === GENETIC DATA VISUALIZATION === */
+        /* Futuristic genetic badge */
+        .genetic-badge {
+            background-color: rgba(0, 0, 60, 0.1);
+            padding: 0.75rem 1.25rem;
+            border-radius: var(--border-radius-sm);
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            border: 1px solid var(--primary-color);
+            box-shadow: var(--neon-glow-cyan);
+            transition: var(--transition);
+            font-family: 'Share Tech Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .genetic-badge::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: none;
+        }
+        
+        .genetic-badge:hover {
+            box-shadow: var(--neon-glow-cyan);
+        }
+        
+        .genetic-badge .icon {
+            font-size: 1.25rem;
+            margin-right: 0.75rem;
+            color: var(--primary-color);
+        }
+        
+        .genetic-badge .text {
+            font-weight: 600;
+            color: var(--primary-color);
+            letter-spacing: 0.1em;
+            font-size: 0.85rem;
+        }
+        
+        /* Futuristic marker cards */
+        .marker-card {
+            background-color: rgba(22, 43, 61, 0.7);
+            border-radius: var(--border-radius);
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .marker-card:hover {
+            border-color: var(--primary-color);
+            box-shadow: var(--neon-glow-cyan);
+        }
+        
+        .marker-card::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--primary-color);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+            box-shadow: var(--neon-glow-cyan);
+        }
+        
+        .marker-card:hover::after {
+            transform: scaleX(1);
+        }
+        
+        .marker-card .title {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.75rem;
+            font-size: 1.125rem;
+            display: flex;
+            align-items: center;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .marker-card .title::before {
+            content: "⚛";
+            margin-right: 0.75rem;
+            font-size: 1.25rem;
+            color: var(--primary-color);
+        }
+        
+        /* === CUSTOM SIDEBAR NAVIGATION === */
+        /* Futuristic sidebar styling */
+        section[data-testid="stSidebar"] {
+            background: var(--bg-secondary);
+            border-right: 1px solid #e0e0e0; /* Light shade of gray border */
+            box-shadow: 5px 0 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* Futuristic navigation radio button styling */
+        .stRadio > div {
+            gap: 6px !important;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Sidebar tabs styling - pill-shaped design */
+        .stRadio > div {
+            gap: 12px !important; /* Increased spacing between tabs */
+        }
+        
+        .stRadio > div > label {
+            padding: 12px 16px !important; /* Adjusted padding for pill shape */
+            margin: 0 !important;
+            border-radius: 50px !important; /* Pill shape */
+            transition: all 0.2s ease !important;
+            background-color: #FFFFFF !important; /* White background */
+            color: #333333 !important; /* Dark gray text */
+            border: none !important;
+            font-family: 'Share Tech Mono', monospace !important;
+            font-weight: 600 !important;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important; /* Subtle shadow */
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase !important;
+            letter-spacing: 0.05em !important;
+            font-size: 0.85rem !important;
+            width: 100% !important; /* Full width */
+            box-sizing: border-box !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+        
+        .stRadio > div > label:not(.stRadio > div [data-baseweb="radio"] [data-checked="true"] ~ label):hover {
+            background-color: #F8F8F8 !important; /* Very light gray on hover */
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15) !important; /* Slightly stronger shadow on hover */
+            transform: translateY(-1px) !important; /* Slight lift effect */
+        }
+        
+        /* Override hover styles for selected sidebar navigation items */
+        .stRadio > div [data-baseweb="radio"] [data-checked="true"] ~ label:hover {
+            background-color: #FFFFFF !important; /* Keep white background for selected */
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15) !important;
+        }
+        
+        /* Selected tab styling */
+        .stRadio > div [data-baseweb="radio"] [data-checked="true"] ~ label {
+            background-color: #FFFFFF !important; /* White background */
+            color: #333333 !important; /* Dark gray text */
+            font-weight: 700 !important;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15) !important; /* Slightly stronger shadow */
+        }
+        
+        /* Red dot indicator for selected tab */
+        .stRadio > div [data-baseweb="radio"] [data-checked="true"] ~ label:before {
+            content: "";
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            background-color: #FF4B4B; /* Red dot */
+            border-radius: 50%;
+        }
+        
+        /* Add left padding for the icon space in all tabs */
+        .stRadio > div > label {
+            padding-left: 32px !important; /* Space for icon/indicator */
+        }
+        
+        /* Style for the radio button text and icons */
+        .stRadio [data-testid="stMarkdownContainer"] {
+            font-size: 0.85rem !important;
+            letter-spacing: 0.05em !important;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            font-family: 'Share Tech Mono', monospace !important;
+            text-transform: uppercase !important;
+            width: 100% !important;
+        }
+        
+        /* Style for the icons in the radio buttons */
+        .stRadio [data-testid="stMarkdownContainer"] code {
+            font-family: inherit !important;
+            background: none !important;
+            padding: 0 !important;
+            margin-right: 8px !important;
+            color: inherit !important;
+            border: none !important;
+        }
+        
+        /* Hide the actual radio button circle and only keep the label */
+        .stRadio [data-baseweb="radio"] [data-testid="stRadio"] {
+            display: none !important;
+        }
+        
+        /* Add a subtle pulsing glow effect to active menu item */
+        @keyframes neo-pulse-glow {
+            0% { box-shadow: 0 0 5px rgba(0, 240, 255, 0.5); }
+            50% { box-shadow: 0 0 15px rgba(0, 240, 255, 0.8), 0 0 20px rgba(0, 240, 255, 0.3); }
+            100% { box-shadow: 0 0 5px rgba(0, 240, 255, 0.5); }
+        }
+        
+        /* Removed animation from sidebar tabs */
+        
+        /* Futuristic sidebar section header */
+        .sidebar-section {
+            margin-top: 25px;
+            margin-bottom: 15px;
             padding-bottom: 8px;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+        }
+        
+        .sidebar-section h3 {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            margin-left: 15px;
+            position: relative;
             display: inline-block;
         }
-
-        /* Plan styling */
-        .plan-header {
-            background-color: var(--plan-header-background-color);
-            padding: 20px;
-            border-radius: 10px;
-            color: var(--plan-header-color);
-            margin-bottom: 20px;
-            text-align: center;
+        
+        .sidebar-section h3::after {
+            content: "";
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: var(--primary-color);
+            box-shadow: var(--neon-glow-cyan);
         }
-        .plan-section {
-            background-color: var(--plan-section-background-color);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
+        
+        /* Futuristic info card in sidebar */
+        .sidebar-info-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 18px;
+            margin: 15px 10px;
+            border: 1px solid #e0e0e0; /* Light shade of gray border */
+            box-shadow: var(--box-shadow);
         }
-        .plan-section h3 {
-            color: var(--plan-section-header-color);
-            border-bottom: 2px solid var(--plan-section-header-border-color);
+        
+/* Removed hover animation */
+.sidebar-info-card:hover {
+    /* No hover effects */
+}
+        
+        .sidebar-info-card h4 {
+            font-family: 'Orbitron', sans-serif;
+            font-size:
+        
+        /* Sidebar section header */
+        .sidebar-section {
+            margin-top: 25px;
+            margin-bottom: 15px;
             padding-bottom: 8px;
-            margin-bottom: 15px;
+            border-bottom: 1px solid #f0f0f0;
         }
-        .meal-card {
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-            background-color: var(--meal-card-background-color);
+        
+        .sidebar-section h3 {
+            font-size: 14px;
+            color: var(--sidebar-accent-color);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-left: 15px;
         }
-        .meal-title {
-            font-weight: bold;
-            color: var(--meal-title-color);
+        
+        /* Info card in sidebar */
+        .sidebar-info-card {
+            background-color: #FFFFFF;
+            border-radius: 12px;
+            padding: 18px;
+            margin: 15px 10px;
+            border: 1px solid #e0e0e0; /* Light shade of gray border */
+            box-shadow: var(--box-shadow);
+        }
+        
+        .sidebar-info-card h4 {
+            font-size: 16px;
+            font-weight: 600;
             margin-bottom: 10px;
-        }
-                
-        /* Foods limit section styles */
-        .limit-section {
-            background-color: var(--limit-section-background-color); /* Light yellow background */
-            border-left: 4px solid var(--limit-section-border-color); /* Yellow border */
-            padding: 15px;
-            border-radius: 5px;
-            margin: 10px 0;
-        }
-        .limit-section h2 {
-            color: var(--limit-section-title-color); /* Orange-red color for title */
-            font-weight: bold;
-        }
-
-        /* Health Assessment specific styling */
-        .health-assessment-section {
-            margin-bottom: 25px;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .health-assessment-section h2 {
-            font-size: 1.5rem;
-            color: #2E7D32;
-            margin-top: 0;
-            margin-bottom: 15px;
-            border-bottom: 2px solid #C8E6C9;
+            color: var(--sidebar-accent-color);
             padding-bottom: 8px;
+            border-bottom: 1px solid rgba(128, 128, 128, 0.2);
         }
-
-        .health-assessment-section h3 {
-            font-size: 1.2rem;
-            color: #1565C0;
-            margin-top: 15px;
+        
+        .sidebar-info-card p {
+            font-size: 14px;
+            color: var(--sidebar-text-color);
             margin-bottom: 10px;
-        }
-
-        .health-assessment-section p {
-            margin: 10px 0;
-            line-height: 1.6;
-            font-size: 1rem;
-        }
-
-        .summary-section {
-            background-color: #E8F5E9;
-            border-left: 5px solid #4CAF50;
-        }
-
-        .diabetes-management-section {
-            background-color: #E3F2FD;
-            border-left: 5px solid #2196F3;
-        }
-
-
-        .risks-section {
-            background-color: #FFEBEE;
-            border-left: 5px solid #F44336;
-        }
-
-        .care-plans-section {
-            background-color: #E0F7FA;
-            border-left: 5px solid #00BCD4;
-        }
-
-        .concerns-section {
-            background-color: #FFF3E0;
-            border-left: 5px solid #FF9800;
-        }
-
-        .recommendations-section {
-            background-color: #F1F8E9;
-            border-left: 5px solid #8BC34A;
-        }
-
-        .genetic-section {
-            background-color: #E8EAF6;
-            border-left: 5px solid #3F51B5;
-        }
-
-
-        /* Make paragraphs more readable */
-        p {
-            line-height: 1.6;
-            margin-bottom: 15px;
-        }
-
-        /* Improve list formatting */
-        ul, ol {
-            margin-left: 20px;
-            margin-bottom: 15px;
-        }
-
-        li {
-            margin-bottom: 8px;
             line-height: 1.5;
         }
-
-        /* Table styling */
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin: 15px 0;
+        
+        .sidebar-info-card ul {
+            margin: 0;
+            padding-left: 20px;
         }
-
-        th {
-            background-color: #E3F2FD;
-            padding: 10px;
-            border: 1px solid #BBDEFB;
-            font-weight: bold;
-            text-align: left;
+        
+        .sidebar-info-card li {
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: var(--sidebar-text-color);
         }
-
-        td {
-            padding: 8px 10px;
-            border: 1px solid #E3F2FD;
+        
+        /* Footer section */
+        .sidebar-footer {
+            margin-top: 30px;
+            padding: 12px 10px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--sidebar-text-color);
+            background-color: var(--sidebar-element-bg);
+            border-radius: 10px;
+            margin: 30px 10px 20px 10px;
+            border: 1px solid rgba(128, 128, 128, 0.2);
         }
-
-        /* Responsive adjustments */
+        
+        /* Genetics badge */
+        .genetics-active-badge {
+            background: #FAFAFA;
+            border-radius: 12px;
+            padding: 18px;
+            margin: 20px 10px;
+            color: var(--sidebar-element-color);
+            text-align: center;
+            border: 1px solid #e0e0e0; /* Light shade of gray border */
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .genetics-active-badge:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            background: none;
+            opacity: 0;
+        }
+        
+        @keyframes ripple {
+            0% { transform: scale(0.3); opacity: 0; }
+            40% { opacity: 0.5; }
+            100% { transform: scale(1); opacity: 0; }
+        }
+        
+        .genetics-active-badge .icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+            color: var(--primary-color);
+        }
+        
+        .genetics-active-badge .title {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+            color: var(--sidebar-element-color);
+        }
+        
+        .genetics-active-badge .subtitle {
+            font-size: 12px;
+            color: var(--sidebar-element-color);
+            background: #f5f5f5;
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-top: 5px;
+        }
+        
+        /* === RESPONSIVE LAYOUT === */
+        /* Media queries for different screen sizes */
         @media (max-width: 768px) {
             .health-assessment-section {
-                padding: 15px;
+                padding: 16px;
             }
             
             .health-assessment-section h2 {
                 font-size: 1.3rem;
             }
             
-            .metric-item {
-                padding: 10px;
+            .plan-section {
+                padding: 16px;
+            }
+            
+            .stButton button {
+                width: 100%;
             }
         }
-
-        /* Serene Blue Light Mode */
-        @media (prefers-color-scheme: light) {
-            :root {
-                --background-color: #f9f9f9;
-                --tab-background-color: #e8e8e8;
-                --tab-color: #555555;
-                --tab-selected-background-color: #5cacee;
-                --tab-selected-color: #ffffff;
-                --section-header-color: #333333;
-                --section-header-border-color: #5cacee;
-                --plan-header-background-color: #5cacee;
-                --plan-header-color: #ffffff;
-                --plan-section-background-color: #ffffff;
-                --plan-section-header-color: #333333;
-                --plan-section-header-border-color: #5cacee;
-                --meal-card-background-color: #f0f8ff;
-                --meal-title-color: #1e90ff;
-                --limit-section-background-color: #fff8e1;
-                --limit-section-border-color: #ffecb3;
-                --limit-section-title-color: #ffb300;
+        
+        @media (max-width: 576px) {
+            .meal-card {
+                padding: 12px;
+            }
+            
+            .stTabs [data-baseweb="tab"] {
+                padding: 8px 12px;
+                font-size: 0.9rem;
+            }
+            
+            .stTabs [data-baseweb="tab-panel"] {
+                padding-top: 12px !important;
             }
         }
-
-        /* Serene Blue Dark Mode (Revised Unselected Tabs - Light Background) */
+        
+        /* === MODE ADAPTIVE COLORS === */
+        /* Light mode (default) - set light theme variables */
+        :root {
+            /* Fresh, light color palette */
+            --primary-color: #eeeee4;  /* Soft sky blue */
+            --primary-light: #eeeee4;
+            --primary-dark: #eeeee4;
+            --secondary-color: #eeeee4;  /* Soft mint green */
+            --secondary-light: #eeeee4;
+            --secondary-dark: #eeeee4;
+            --warning-color: #eeeee4;  /* Soft amber */
+            --success-color: #eeeee4;  /* Soft green */
+            --info-color: #eeeee4;  /* Soft blue */
+            --error-color: #eeeee4;  /* Soft red */
+            
+            /* Text colors - lighter and softer */
+            --text-color: #eeeee4;  /* Softer blue-grey */
+            --text-muted: #eeeee4;  /* Light blue-grey */
+            --text-light: #eeeee4;  /* Very light blue-grey */
+            
+            /* Background colors - even lighter */
+            --bg-primary: #eeeee4;  /* Almost white with slight blue tint */
+            --bg-secondary: #eeeee4;  /* Very light blue tint */
+            --card-bg: #eeeee4;  /* Pure white */
+            
+            /* UI elements - more rounded */
+            --border-radius: 16px;
+            --border-radius-lg: 24px;
+            --border-radius-sm: 12px;
+            --border-radius-full: 9999px;
+            
+            /* Shadows and effects - softer, more subtle */
+            --box-shadow: 0 2px 10px -2px rgba(0, 0, 0, 0.05);
+            --box-shadow-md: 0 4px 15px -3px rgba(0, 0, 0, 0.07);
+            --box-shadow-lg: 0 8px 25px -5px rgba(0, 0, 0, 0.08);
+            
+            /* Sidebar specific - lighter, airier */
+            --sidebar-bg: #F0F0F0;
+            --sidebar-element-bg: #FFFFFF;
+            --sidebar-element-active-bg: linear-gradient(135deg, #64B5F6, #42A5F5);
+            --sidebar-element-active-color: #FFFFFF;
+            --sidebar-element-color: #455A64;
+            --sidebar-text-color: #546E7A;
+            --sidebar-accent-color: #64B5F6;
+            --sidebar-badge-bg: rgba(100, 181, 246, 0.1);
+            
+            /* Form elements - cleaner, lighter */
+            --input-bg: #e7e8e9;
+            --input-border: #e7e8e9;
+            --input-text: #e7e8e9;
+            --input-focus-border: #64B5F6;
+            --input-focus-shadow: rgba(100, 181, 246, 0.2);
+            
+            /* Transitions - smoother */
+            --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Dark mode - override variables with a softer dark theme */
         @media (prefers-color-scheme: dark) {
             :root {
-                --background-color: #303030;
-                --tab-background-color: #4a5568;
-                --tab-color: #d1d5db;
-                --tab-selected-background-color: #61d46d;
-                --tab-selected-color: #212121;
-                --section-header-color: #f5f5f5;
-                --section-header-border-color: #64b5f6;
-                --plan-header-background-color: #64b5f6;
-                --plan-header-color: #212121;
-                --plan-section-background-color: #424242;
-                --plan-section-header-color: #f5f5f5;
-                --plan-section-header-border-color: #64b5f6;
-                --meal-card-background-color: #4a4a4a;
-                --meal-title-color: #90caf9;
-                --limit-section-background-color: #5e5e5e;
-                --limit-section-border-color: #757575;
-                --limit-section-title-color: #ffea00;
+                /* Softer dark theme color palette */
+                --primary-color: #eeeee4;  /* Lighter blue */
+                --primary-light: #eeeee4;
+                --primary-dark: #eeeee4;
+                --secondary-color: #eeeee4;  /* Lighter green */
+                --secondary-light: #eeeee4;
+                --secondary-dark: #eeeee4;
+                --warning-color: #eeeee4;  /* Lighter amber */
+                --success-color: #eeeee4;  /* Lighter green */
+                --info-color: #eeeee4;  /* Lighter blue */
+                --error-color: #eeeee4;  /* Lighter red */
+                
+                /* Text colors - softer for dark mode */
+                --text-color: #eeeee4;
+                --text-muted: #eeeee4;
+                --text-light: #eeeee4;
+                
+                /* Background colors - softer dark */
+                --bg-primary: #eeeee4;  /* Softer blue-grey */
+                --bg-secondary: #eeeee4;  /* Medium blue-grey */
+                --card-bg: #eeeee4;
+                
+                /* Sidebar specific - softer dark */
+                --sidebar-bg: linear-gradient(180deg, #263238 0%, #1C2A33 100%);
+                --sidebar-element-bg: rgba(255, 255, 255, 0.08);
+                --sidebar-element-active-bg: linear-gradient(135deg, #90CAF9, #64B5F6);
+                --sidebar-element-active-color: #FFFFFF;
+                --sidebar-element-color: #ECEFF1;
+                --sidebar-text-color: #CFD8DC;
+                --sidebar-accent-color: #90CAF9;
+                --sidebar-badge-bg: rgba(144, 202, 249, 0.15);
+                
+                /* Form elements - softer dark */
+                --input-bg: #455A64;
+                --input-border: #546E7A;
+                --input-text: #ECEFF1;
+                --input-focus-border: #90CAF9;
+                --input-focus-shadow: rgba(144, 202, 249, 0.25);
+                
+                /* Shadows and effects - softer for dark mode */
+                --box-shadow: 0 4px 10px -1px rgba(0, 0, 0, 0.2);
+                --box-shadow-md: 0 8px 15px -3px rgba(0, 0, 0, 0.25);
+                --box-shadow-lg: 0 12px 25px -5px rgba(0, 0, 0, 0.3);
+                --box-shadow-hover: 0 8px 20px -3px rgba(0, 0, 0, 0.3);
             }
- 
+            
+            /* Apply dark mode styles to main elements */
+            body {
+                background-color: var(--bg-primary);
+                color: var(--text-color);
+            }
+            
+            .main .block-container {
+                background-color: var(--bg-primary);
+            }
+            
+            /* Header container in dark mode */
+            .header-container {
+                background: linear-gradient(135deg, rgba(129, 140, 248, 0.1) 0%, rgba(52, 211, 153, 0.1) 100%);
+                border: 1px solid rgba(75, 85, 99, 0.4);
+            }
+            
+            /* Tab styling in dark mode */
+            .stTabs [data-baseweb="tab"] {
+                background-color: white;
+                color: var(--text-muted);
+                border: 1px solid rgba(75, 85, 99, 0.4);
+            }
+            
+            .stTabs [data-baseweb="tab"]:hover {
+                background-color: white;
+                border-color: var(--primary-color);
+                box-shadow: 0 0 10px rgba(200, 200, 200, 0.7);
+                color: var(--primary-color);
+            }
+            
+            .stTabs [aria-selected="true"] {
+                background-color: #87CEEB !important; /* Sky blue for selected tab */
+                color: #00003c !important;
+                font-weight: 600;
+                border: 1px solid var(--primary-color) !important;
+                box-shadow: 0 0 10px rgba(200, 200, 200, 0.7) !important;
+            }
+            
+            .stTabs [data-baseweb="tab-panel"] {
+                background: white;
+                border: 1px solid rgba(75, 85, 99, 0.4);
+            }
+            
+            /* Content containers in dark mode */
+            .card-container, .plan-section, .health-assessment-section, .meal-card, .marker-card {
+                background-color: rgba(31, 41, 55, 0.7);
+                border-color: rgba(75, 85, 99, 0.4);
+            }
+            
+            /* Input field styling in dark mode */
+            input, select, textarea {
+                background-color: var(--input-bg) !important;
+                color: var(--input-text) !important;
+                border-color: var(--input-border) !important;
+            }
+            
+            .stTextInput > div > div,
+            .stSelectbox > div > div > div,
+            .stNumberInput > div > div,
+            .stTextArea > div > div,
+            .stMultiSelect > div > div > div {
+                background-color: var(--input-bg) !important;
+                border-color: var(--input-border) !important;
+            }
+            
+            /* UI element colors in dark mode */
+            [data-testid="stMetricLabel"] {
+                color: var(--text-color) !important;
+            }
+            
+            [data-testid="stMetricValue"] {
+                color: var(--primary-light) !important;
+                font-weight: 600 !important;
+            }
+            
+            [data-testid="stExpander"] {
+                background-color: var(--bg-secondary) !important;
+                border-color: var(--input-border) !important;
+            }
+            
+            /* Message styling in dark mode */
+            .stSuccess {
+                background: linear-gradient(135deg, rgba(52, 211, 153, 0.1), rgba(16, 185, 129, 0.2)) !important;
+                color: var(--secondary-light) !important;
+                border: 1px solid rgba(52, 211, 153, 0.3) !important;
+            }
+            
+            .stWarning {
+                background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.2)) !important;
+                color: var(--warning-color) !important;
+                border: 1px solid rgba(251, 191, 36, 0.3) !important;
+            }
+            
+            .stInfo {
+                background: linear-gradient(135deg, rgba(96, 165, 250, 0.1), rgba(59, 130, 246, 0.2)) !important;
+                color: var(--info-color) !important;
+                border: 1px solid rgba(96, 165, 250, 0.3) !important;
+            }
+            
+            .stError {
+                background: linear-gradient(135deg, rgba(248, 113, 113, 0.1), rgba(239, 68, 68, 0.2)) !important;
+                color: var(--error-color) !important;
+                border: 1px solid rgba(248, 113, 113, 0.3) !important;
+            }
+            
+            /* Sidebar elements in dark mode */
+            .sidebar-info-card {
+                background-color: white;
+                border: 1px solid rgba(75, 85, 99, 0.4);
+            }
+            
+            .genetics-active-badge {
+                background: rgba(31, 41, 55, 0.7);
+                border: 1px solid rgba(75, 85, 99, 0.4);
+            }
+            
+            .genetics-active-badge .subtitle {
+                background: rgba(55, 65, 81, 0.7);
+            }
         }
     </style>
     """, unsafe_allow_html=True)
@@ -406,6 +2176,25 @@ def show_sidebar():
     """
     Configure and display the sidebar. Returns the current page selection.
     """
+    # Add app title at the very top of the sidebar
+    st.sidebar.markdown("""
+    <div style="background: linear-gradient(90deg, #429de3, #87CEEB); 
+                padding: 15px; 
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+        <h1 style="color: #000000; 
+                font-family: 'Trebuchet MS', sans-serif;
+                text-align: center;
+                letter-spacing: 2px;
+                font-weight: 600;
+                text-transform: uppercase;
+                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);">
+            ✨ NEURO NUTRITION ✨
+        </h1>
+    </div>
+    """, unsafe_allow_html=True)
+    
+
 
     # Initialize the page state if it doesn't exist
     if 'page' not in st.session_state:
@@ -417,16 +2206,21 @@ def show_sidebar():
         # Clear the flag
         st.session_state.nav_to_input = False
     
-    # Add a header directly above the navigation
-    st.sidebar.header("Navigation")
+    # Navigation items with improved icons
+    nav_items = [
+        {"id": "Input Data", "icon": "📊", "text": "Input Data"},
+        {"id": "Nutrition Plan", "icon": "🍽️", "text": "Nutrition Plan"},
+        {"id": "Health Assessment", "icon": "💉", "text": "Health Assessment"},
+        {"id": "Educational Resources", "icon": "📚", "text": "Resources"}
+    ]
     
-    # Create radio button based on current page with a unique key and no label
+    # Instead of custom HTML navigation, use direct radio buttons with styling
     selected_page = st.sidebar.radio(
-        "Navigation Options", 
-        ["Input Data", "Nutrition Plan", "Health Assessment", "Educational Resources"],
-        index=["Input Data", "Nutrition Plan", "Health Assessment", "Educational Resources"].index(st.session_state.page),
+        "", 
+        [item["id"] for item in nav_items],
+        index=[item["id"] for item in nav_items].index(st.session_state.page),
         key="navigation_radio",
-        label_visibility="collapsed"  # Hide the empty label completely
+        format_func=lambda x: f"{nav_items[[item['id'] for item in nav_items].index(x)]['icon']} {x}"
     )
     
     # Only update if selected page is different from current
@@ -436,45 +2230,24 @@ def show_sidebar():
     
     # Show genetic status if available
     if 'genetic_profile' in st.session_state and st.session_state.genetic_profile is not None:
-        st.sidebar.markdown("---")
-        st.sidebar.markdown(
-            """
-            <div style="
-                background-color: #E8EAF6; 
-                padding: 10px; 
-                border-radius: 5px;
-                margin-bottom: 10px;
-                text-align: center;
-            ">
-                <div style="font-size: 24px;">🧬</div>
-                <div style="font-weight: bold; color: #3F51B5;">Genetic Optimization Active</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
         
-    st.sidebar.markdown("---")
-    st.sidebar.markdown("### About")
-    st.sidebar.markdown("""
-    This application provides accessible, personalized nutrition guidance for individuals with diabetes, taking into account:
-    
-    - Health metrics and diabetes status
-    - Socioeconomic context and resources
-    - Cultural food preferences
-    - Genetic profile (if provided)
-    """)
-    
-    if 'genetic_profile' in st.session_state and st.session_state.genetic_profile is not None:
+        #Genetic insights info card
         st.sidebar.markdown("""
-        ### Genetic Insights
-        The nutrition plan and health assessment are enhanced with insights from your genetic profile, including:
-        
-        - Carbohydrate metabolism
-        - Fat sensitivity
-        - Nutrient processing
-        - Inflammation response
-        - Caffeine metabolism
-        """)
+                            
+        <h3 style="color:#000000;">About This App</h3>
+                            
+        <div class="sidebar-info-card">
+            <h4>Personalized Based On Your Genes</h4>
+            <p>Your nutrition plan is enhanced with insights from your genetic profile:</p>
+            <ul>
+                <li>Carbohydrate metabolism</li>
+                <li>Fat sensitivity</li>
+                <li>Nutrient processing</li>
+                <li>Inflammation response</li>
+                <li>Caffeine metabolism</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
         
         # Add option to clear genetic data
         if st.sidebar.button("🗑️ Clear Genetic Data", type="secondary", key="clear_genetic_data_button"):
@@ -499,31 +2272,29 @@ def show_sidebar():
             st.rerun()
     else:
         st.sidebar.markdown("""
-        ### Enhance Your Assessment
-        Upload genetic data on the Input Data page to receive more personalized recommendations tailored to your unique genetic profile.
-        """)
+        <h3 style="color:#000000;">About This App</h3>
+        <div class="sidebar-info-card">
+            <h4>Personalized Nutrition Guidance</h4>
+            <p>This application provides accessible, personalized nutrition guidance for individuals with diabetes, taking into account:</p>
+            <ul>
+                <li>Health metrics and diabetes status</li>
+                <li>Socioeconomic context</li>
+                <li>Genetic profile (optional)</li>
+            </ul>
+        </div>
         
-    st.sidebar.markdown("---")
-    st.sidebar.markdown("### Developed by:")
-    st.sidebar.markdown("Senthil Palanivelu")
+        """, unsafe_allow_html=True)
+    
+    # Footer
+    st.sidebar.markdown("""
+    <div class="sidebar-footer">
+        <p>Developed by: Senthil Palanivelu</p>
+        <p style="font-size: 12px; margin-top: 5px;">Version 1.0.0</p>
+    </div>
+    """, unsafe_allow_html=True)
     
     return st.session_state.page
 
-def input_health_data():
-    """
-    Collect health-related data from the user and save to session state.
-    
-    Returns:
-        dict: Dictionary containing user health information
-    """
-    # Initialize health_data in session state if it doesn't exist
-    previous_health_data = st.session_state.health_data.copy() if 'health_data' in st.session_state else {}
-
-    if 'health_data' not in st.session_state:
-        st.session_state.health_data = {}
-    
-    col1, col2 = st.columns(2)
-    
 def input_health_data():
     """
     Collect health-related data from the user and save to session state.
@@ -598,10 +2369,10 @@ def input_health_data():
         if 'activity_level' not in st.session_state:
             st.session_state.activity_level = "Moderately Active"  # Default value
             
-        activity_level = st.select_slider(
+        activity_level = st.selectbox(
             "Activity Level",
             options=["Sedentary", "Lightly Active", "Moderately Active", "Very Active", "Extra Active"],
-            value=st.session_state.activity_level,
+            index=["Sedentary", "Lightly Active", "Moderately Active", "Very Active", "Extra Active"].index(st.session_state.activity_level),
             key="activity_level_input"
         )
         st.session_state.activity_level = activity_level
