@@ -144,7 +144,7 @@ def display_user_data_review():
 
 def generate_nutrition_plan_workflow():
     """Handle the workflow for generating the nutrition plan."""
-    # Add custom CSS for the view plan button
+    # Add custom CSS for buttons and tabs
     st.markdown("""
     <style>
     /* Custom styling for the View My Nutrition Plan button */
@@ -158,6 +158,31 @@ def generate_nutrition_plan_workflow():
         background-color: #ADD8E6 !important; /* Lighter blue on hover */
         border-color: #4682B4 !important;
         box-shadow: 0 0 10px rgba(135, 206, 235, 0.7) !important;
+    }
+    
+    /* Custom styling for primary buttons */
+    [data-testid="baseButton-primary"] {
+        background-color: white !important; /* White background by default */
+        border-color: #5F9EA0 !important;
+        color: #00003c !important; /* Dark navy text for contrast */
+    }
+    
+    [data-testid="baseButton-primary"]:hover {
+        background-color: #FFDAB9 !important; /* Light shade of orange (Peach Puff) on hover */
+        border-color: #5F9EA0 !important;
+        box-shadow: 0 0 10px rgba(255, 218, 185, 0.7) !important;
+    }
+    
+    /* Ensure selected buttons don't change on hover */
+    [data-testid="baseButton-primary"].selected {
+        background-color: #87CEEB !important; /* Sky blue when selected */
+        color: #00003c !important;
+        border-color: #5F9EA0 !important;
+    }
+    
+    [data-testid="baseButton-primary"].selected:hover {
+        background-color: #87CEEB !important;
+        color: #00003c !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -288,18 +313,19 @@ def show_input_data_page():
         font-size: 1.05rem;
     }
     
-    .custom-tab:hover {
+    .custom-tab:not(.active):hover {
         transform: translateY(-4px);
         box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
         background-color: #f9f9f9;
     }
     
     .custom-tab.active {
-        background-color: var(--primary-color);
-        color: white;
+        background-color: #87CEEB !important; /* Sky blue for active tab */
+        color: #00003c !important; /* Dark navy text for contrast */
         font-weight: 600;
         transform: translateY(-5px);
-        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 8px 15px rgba(135, 206, 235, 0.5);
+        border: 1px solid #5F9EA0;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -315,6 +341,30 @@ def show_input_data_page():
             st.session_state.health_data = {}
         
         st.session_state.health_data = input_health_data()
+        
+        # Add custom CSS for the Save buttons
+        st.markdown("""
+        <style>
+        /* Custom styling for Save buttons */
+        button[kind="primary"][data-testid="baseButton-primary"] {
+            background-color: white !important; /* White background by default */
+            border-color: #5F9EA0 !important;
+            color: #00003c !important; /* Dark navy text for contrast */
+        }
+        
+        button[kind="primary"][data-testid="baseButton-primary"]:hover {
+            background-color: #FFDAB9 !important; /* Light shade of orange (Peach Puff) on hover */
+            border-color: #5F9EA0 !important;
+            box-shadow: 0 0 10px rgba(255, 218, 185, 0.7) !important;
+        }
+        
+        button[kind="primary"][data-testid="baseButton-primary"].selected {
+            background-color: #87CEEB !important; /* Sky blue when selected */
+            color: #00003c !important;
+            border-color: #5F9EA0 !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
         
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
@@ -374,6 +424,30 @@ def show_input_data_page():
                 st.info("You're almost there! Review your information before generating your genetically-optimized nutrition plan.")
             else:
                 st.info("You're almost there! Review your information before generating your personalized nutrition plan.")
+            
+            # Add custom CSS for these specific buttons
+            st.markdown("""
+            <style>
+            /* Custom styling for Review Your Data and Create My Nutrition Plan buttons */
+            button[kind="primary"][data-testid="baseButton-primary"] {
+                background-color: white !important; /* White background by default */
+                border-color: #5F9EA0 !important;
+                color: #00003c !important; /* Dark navy text for contrast */
+            }
+            
+            button[kind="primary"][data-testid="baseButton-primary"]:hover {
+                background-color: #FFDAB9 !important; /* Light shade of orange (Peach Puff) on hover */
+                border-color: #5F9EA0 !important;
+                box-shadow: 0 0 10px rgba(255, 218, 185, 0.7) !important;
+            }
+            
+            button[kind="primary"][data-testid="baseButton-primary"].selected {
+                background-color: #87CEEB !important; /* Sky blue when selected */
+                color: #00003c !important;
+                border-color: #5F9EA0 !important;
+            }
+            </style>
+            """, unsafe_allow_html=True)
             
             col1, col2 = st.columns(2)
             with col1:

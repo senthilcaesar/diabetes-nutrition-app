@@ -158,8 +158,16 @@ def apply_custom_css():
             position: relative;
         }
         
+        /* Remove the line below headers by default */
         h2::after {
-            content: "";
+            content: none !important;
+            display: none !important;
+        }
+        
+        /* Only show the line for specific headers where needed */
+        .with-underline::after {
+            content: "" !important;
+            display: block !important;
             position: absolute;
             bottom: -10px;
             left: 0;
@@ -271,21 +279,20 @@ def apply_custom_css():
             height: 2px;
             background-color: rgba(255, 255, 255, 0.5);
             border-radius: 50%;
-            animation: float 15s infinite linear;
         }
         
-        .neo-particle:nth-child(1) { top: 10%; left: 20%; animation-duration: 20s; animation-delay: 0s; }
-        .neo-particle:nth-child(2) { top: 40%; left: 50%; animation-duration: 30s; animation-delay: 1s; }
-        .neo-particle:nth-child(3) { top: 70%; left: 30%; animation-duration: 25s; animation-delay: 2s; }
-        .neo-particle:nth-child(4) { top: 20%; left: 80%; animation-duration: 22s; animation-delay: 3s; }
-        .neo-particle:nth-child(5) { top: 60%; left: 10%; animation-duration: 18s; animation-delay: 4s; }
-        .neo-particle:nth-child(6) { top: 30%; left: 60%; animation-duration: 28s; animation-delay: 5s; }
-        .neo-particle:nth-child(7) { top: 80%; left: 70%; animation-duration: 24s; animation-delay: 6s; }
-        .neo-particle:nth-child(8) { top: 50%; left: 40%; animation-duration: 26s; animation-delay: 7s; }
-        .neo-particle:nth-child(9) { top: 15%; left: 90%; animation-duration: 21s; animation-delay: 8s; }
-        .neo-particle:nth-child(10) { top: 85%; left: 25%; animation-duration: 19s; animation-delay: 9s; }
-        .neo-particle:nth-child(11) { top: 45%; left: 75%; animation-duration: 23s; animation-delay: 10s; }
-        .neo-particle:nth-child(12) { top: 75%; left: 55%; animation-duration: 27s; animation-delay: 11s; }
+        .neo-particle:nth-child(1) { top: 10%; left: 20%; }
+        .neo-particle:nth-child(2) { top: 40%; left: 50%; }
+        .neo-particle:nth-child(3) { top: 70%; left: 30%; }
+        .neo-particle:nth-child(4) { top: 20%; left: 80%; }
+        .neo-particle:nth-child(5) { top: 60%; left: 10%; }
+        .neo-particle:nth-child(6) { top: 30%; left: 60%; }
+        .neo-particle:nth-child(7) { top: 80%; left: 70%; }
+        .neo-particle:nth-child(8) { top: 50%; left: 40%; }
+        .neo-particle:nth-child(9) { top: 15%; left: 90%; }
+        .neo-particle:nth-child(10) { top: 85%; left: 25%; }
+        .neo-particle:nth-child(11) { top: 45%; left: 75%; }
+        .neo-particle:nth-child(12) { top: 75%; left: 55%; }
         
         @keyframes float {
             0% {
@@ -375,20 +382,17 @@ def apply_custom_css():
             border-radius: 50%;
             width: 100%;
             height: 100%;
-            animation: neo-rotate3d 10s linear infinite;
             box-shadow: var(--neon-glow-cyan);
         }
         
         .neo-dna-ring:nth-child(1) {
             border-top: 2px solid var(--primary-color);
             border-bottom: 2px solid var(--primary-color);
-            animation-delay: 0s;
         }
         
         .neo-dna-ring:nth-child(2) {
             border-left: 2px solid var(--secondary-color);
             border-right: 2px solid var(--secondary-color);
-            animation-delay: -3.33s;
         }
         
         .neo-dna-ring:nth-child(3) {
@@ -397,14 +401,7 @@ def apply_custom_css():
             width: 80%;
             height: 80%;
             top: 10%;
-        
             left: 10%;
-            animation-delay: -6.66s;
-        }
-        
-        @keyframes neo-rotate3d {
-            from { transform: rotateX(0deg) rotateY(0deg); }
-            to { transform: rotateX(360deg) rotateY(360deg); }
         }
         
         /* Futuristic Pulse Animation with hexagons */
@@ -422,35 +419,26 @@ def apply_custom_css():
             width: 60px;
             height: 60px;
             background-color: transparent;
-            opacity: 0;
-            animation: neo-pulse 4s ease-out infinite;
+            opacity: 1;
             clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
             border: 2px solid var(--primary-color);
             box-shadow: var(--neon-glow-cyan);
         }
         
         .neo-hexagon:nth-child(1) {
-            animation-delay: 0s;
+            /* No animation delay */
         }
         
         .neo-hexagon:nth-child(2) {
-            animation-delay: 1.33s;
             border-color: var(--secondary-color);
             box-shadow: var(--neon-glow-magenta);
         }
         
         .neo-hexagon:nth-child(3) {
-            animation-delay: 2.66s;
             border-color: var(--accent-color);
             box-shadow: var(--neon-glow-purple);
         }
         
-        @keyframes neo-pulse {
-            0% { transform: scale(0.1) rotate(0deg); opacity: 0; }
-            20% { opacity: 1; }
-            80% { opacity: 1; }
-            100% { transform: scale(1.5) rotate(30deg); opacity: 0; }
-        }
         
         /* Futuristic badges */
         .neo-badge, .neo-upgrade-badge {
@@ -484,16 +472,10 @@ def apply_custom_css():
         .neo-badge-glow {
             position: absolute;
             top: 0;
-            left: -100%;
-            width: 50%;
+            left: 0;
+            width: 0;
             height: 100%;
-            background: linear-gradient(
-                90deg, 
-                transparent, 
-                rgba(255, 255, 255, 0.2), 
-                transparent
-            );
-            animation: neo-badge-glow 3s infinite;
+            background: none;
         }
         
         @keyframes neo-badge-glow {
@@ -523,16 +505,23 @@ def apply_custom_css():
             justify-content: flex-start;
         }
         
+        /* Override any default button styling */
+        button[kind="primary"] {
+            background-color: white !important;
+            color: #00003c !important;
+            border-color: #5F9EA0 !important;
+        }
+        
         .stTabs [data-baseweb="tab"] {
             padding: 16px 30px 16px 16px !important; /* Consistent padding for all tabs */
             margin: 5px 0 !important;
             border-radius: var(--border-radius) !important;
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
-            background-color: white !important;
-            color: var(--text-muted) !important;
+            background-color: #FFFFFF !important; /* White background */
+            color: #000000 !important; /* Dark black text for better visibility */
             border: 1px solid rgba(0, 0, 60, 0.2) !important;
             font-family: 'Share Tech Mono', monospace !important;
-            font-weight: 500 !important;
+            font-weight: 700 !important; /* Bolder text for better visibility */
             box-shadow: var(--box-shadow) !important;
             position: relative;
             overflow: hidden;
@@ -549,19 +538,19 @@ def apply_custom_css():
             content: "";
             position: absolute;
             top: 0;
-            left: -100%;
-            width: 50%;
+            left: 0;
+            width: 0;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 0, 60, 0.2), transparent);
-            animation: neo-badge-glow 3s infinite;
+            background: none;
             z-index: 0;
             opacity: 0;
             transition: opacity 0.3s ease;
         }
         
-        .stTabs [data-baseweb="tab"]:hover {
+        .stTabs [data-baseweb="tab"]:not([aria-selected="true"]):hover {
             border-color: var(--primary-color) !important;
             box-shadow: var(--neon-glow-cyan) !important;
+            background-color: #F0F8FF !important; /* Light shade of blue (Alice Blue) on hover */
             color: var(--primary-color) !important;
             transform: none !important; /* Remove transform to prevent layout shifts */
         }
@@ -571,12 +560,59 @@ def apply_custom_css():
         }
         
         .stTabs [aria-selected="true"] {
-            background-color: white !important;
+            background-color: #87CEEB !important; /* Sky blue for selected tab */
             color: var(--primary-color) !important;
             font-weight: 700 !important;
             box-shadow: var(--neon-glow-cyan) !important;
             border: 1px solid var(--primary-color) !important;
-            animation: neo-pulse-glow 2s infinite;
+        }
+        
+        /* Completely remove any red line or indicator from selected tabs */
+        .stTabs [data-baseweb="tab"][aria-selected="true"]::after,
+        .stTabs [data-baseweb="tab"][aria-selected="true"]::before,
+        .stTabs [data-baseweb="tab-list"] [data-baseweb="tab"][aria-selected="true"]::after,
+        .stTabs [data-baseweb="tab-list"] [data-baseweb="tab"][aria-selected="true"]::before {
+            display: none !important;
+            content: none !important;
+            border: none !important;
+            background: none !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+        }
+        
+        /* Override any default styling for selected tabs */
+        .stTabs [data-baseweb="tab-list"] [data-baseweb="tab"][aria-selected="true"],
+        .stTabs [data-baseweb="tab-list"] [data-baseweb="tab"][aria-selected="true"]:hover,
+        .stTabs [data-baseweb="tab-list"] [data-baseweb="tab"][aria-selected="true"]:focus {
+            border-bottom: none !important;
+            border-bottom-color: transparent !important;
+            border-top: 1px solid var(--primary-color) !important;
+            border-left: 1px solid var(--primary-color) !important;
+            border-right: 1px solid var(--primary-color) !important;
+            box-shadow: var(--neon-glow-cyan) !important;
+        }
+        
+        /* Remove any hover effects that might show red lines */
+        .stTabs [data-baseweb="tab-list"] [data-baseweb="tab"][aria-selected="true"]:hover::after,
+        .stTabs [data-baseweb="tab-list"] [data-baseweb="tab"][aria-selected="true"]:hover::before {
+            display: none !important;
+            content: none !important;
+            border: none !important;
+            background: none !important;
+        }
+        
+        /* Remove any indicator or highlight elements */
+        .stTabs [data-baseweb="tab-highlight"],
+        .stTabs [data-baseweb="tab-border"],
+        .stTabs [role="tablist"] [data-baseweb="tab-highlight"],
+        .stTabs [role="tablist"] [data-baseweb="tab-border"] {
+            display: none !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+            height: 0 !important;
+            width: 0 !important;
+            border: none !important;
+            background: none !important;
         }
         
         .stTabs [aria-selected="true"]::after {
@@ -655,12 +691,11 @@ def apply_custom_css():
         .plan-header::before {
             content: "";
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-            animation: rotate 60s linear infinite;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            background: none;
             z-index: 0;
         }
         
@@ -969,11 +1004,10 @@ def apply_custom_css():
             content: "" !important;
             position: absolute !important;
             top: 0 !important;
-            left: -100% !important;
-            width: 50% !important;
+            left: 0 !important;
+            width: 0 !important;
             height: 100% !important;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent) !important;
-            animation: neo-button-glow 3s infinite !important;
+            background: none !important;
         }
         
         @keyframes neo-button-glow {
@@ -987,14 +1021,20 @@ def apply_custom_css():
         
         /* Primary button - neon cyan */
         .stButton button[kind="primary"] {
-            background-color: white !important;
+            background-color: white !important; /* White background by default */
             border: 1px solid var(--primary-color) !important;
             color: var(--primary-color) !important;
         }
         
         .stButton button[kind="primary"]:hover {
-            background-color: white !important;
+            background-color: #FFDAB9 !important; /* Light shade of orange (Peach Puff) on hover */
             box-shadow: var(--neon-glow-cyan) !important;
+        }
+        
+        .stButton button[kind="primary"].selected {
+            background-color: #87CEEB !important; /* Sky blue when selected */
+            color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
         }
         
         /* Secondary button - neon magenta */
@@ -1228,11 +1268,10 @@ def apply_custom_css():
             content: "";
             position: absolute;
             top: 0;
-            left: -100%;
-            width: 50%;
+            left: 0;
+            width: 0;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            animation: neo-badge-glow 3s infinite;
+            background: none;
         }
         
         .genetic-badge:hover {
@@ -1324,48 +1363,57 @@ def apply_custom_css():
             flex-direction: column;
         }
         
+        /* Sidebar tabs styling to match main tabs */
         .stRadio > div > label {
-            padding: 10px 30px 10px 12px !important; /* Consistent padding for all sidebar tabs */
-            margin: 3px 8px !important;
+            padding: 16px 30px 16px 16px !important; /* Match padding with main tabs */
+            margin: 5px 0 !important;
             border-radius: var(--border-radius) !important;
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
-            background-color: white !important;
-            color: var(--text-color) !important;
-            border: 1px solid rgba(0, 240, 255, 0.2) !important;
+            background-color: #FFFFFF !important; /* White background */
+            color: #000000 !important; /* Dark black text for better visibility */
+            border: 1px solid rgba(0, 0, 60, 0.2) !important;
             font-family: 'Share Tech Mono', monospace !important;
-            font-weight: 500 !important;
+            font-weight: 700 !important; /* Bolder text to match main tabs */
             box-shadow: var(--box-shadow) !important;
             position: relative;
             overflow: hidden;
             text-transform: uppercase !important;
-            letter-spacing: 0.08em !important;
-            font-size: 0.8rem !important;
-            width: auto !important; /* Prevent width changes */
-            box-sizing: border-box !important; /* Include padding in width calculation */
+            letter-spacing: 0.1em !important; /* Match letter spacing with main tabs */
+            font-size: 0.9rem !important; /* Match font size with main tabs */
+            width: auto !important;
+            box-sizing: border-box !important;
         }
         
-        .stRadio > div > label:hover {
+        .stRadio > div > label:not(.stRadio > div [data-baseweb="radio"] [data-checked="true"] ~ label):hover {
             border-color: var(--primary-color) !important;
             box-shadow: var(--neon-glow-cyan) !important;
-            color: #00003c !important;
-            transform: none !important; /* Remove transform to prevent layout shifts */
+            background-color: #F0F8FF !important; /* Light shade of blue (Alice Blue) on hover - match main tabs */
+            color: var(--primary-color) !important;
+            transform: none !important;
+        }
+        
+        /* Override hover styles for selected sidebar navigation items to maintain their appearance */
+        .stRadio > div [data-baseweb="radio"] [data-checked="true"] ~ label:hover {
+            background-color: #87CEEB !important; /* Sky blue for selected tab */
+            color: var(--primary-color) !important;
+            border: 1px solid var(--primary-color) !important;
+            box-shadow: var(--neon-glow-cyan) !important;
         }
         
         .stRadio > div > label:before {
             content: "";
             position: absolute;
             top: 0;
-            left: -100%;
-            width: 50%;
+            left: 0;
+            width: 0;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.2), transparent);
-            animation: neo-badge-glow 3s infinite;
+            background: none;
         }
         
         .stRadio > div [data-baseweb="radio"] [data-checked="true"] ~ label {
-            background-color: white !important;
+            background-color: #87CEEB !important; /* Sky blue for selected sidebar tab */
             color: var(--primary-color) !important;
-            font-weight: 600 !important;
+            font-weight: 700 !important;
             box-shadow: var(--neon-glow-cyan) !important;
             border: 1px solid var(--primary-color) !important;
         }
@@ -1404,9 +1452,7 @@ def apply_custom_css():
             100% { box-shadow: 0 0 5px rgba(0, 240, 255, 0.5); }
         }
         
-        .stRadio > div [data-baseweb="radio"] [data-checked="true"] ~ label {
-            animation: neo-pulse-glow 2s infinite;
-        }
+        /* Removed animation from sidebar tabs */
         
         /* Futuristic sidebar section header */
         .sidebar-section {
@@ -1542,13 +1588,12 @@ def apply_custom_css():
         .genetics-active-badge:before {
             content: "";
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255, 159, 28, 0.15) 0%, rgba(255, 159, 28, 0) 70%);
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            background: none;
             opacity: 0;
-            animation: ripple 3s infinite ease-out;
         }
         
         @keyframes ripple {
@@ -1756,7 +1801,7 @@ def apply_custom_css():
             }
             
             .stTabs [aria-selected="true"] {
-                background-color: white !important;
+                background-color: #87CEEB !important; /* Sky blue for selected tab */
                 color: #00003c !important;
                 font-weight: 600;
                 border: 1px solid var(--primary-color) !important;
