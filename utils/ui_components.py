@@ -215,7 +215,7 @@ def apply_custom_css():
             top: 0 !important;
             padding-top: 4rem !important;
             background: var(--bg-secondary);
-            border-right: 1px solid rgba(0, 240, 255, 0.2);
+            border-right: 1px solid #e0e0e0; /* Light shade of gray border */
             box-shadow: 5px 0 20px rgba(0, 0, 0, 0.5);
         }
         
@@ -629,9 +629,9 @@ def apply_custom_css():
         /* Fix spacing around tab panels */
         .stTabs [data-baseweb="tab-panel"] {
             padding-top: 1.5rem !important;
-            background: white;
+            background: #f5f5f5; /* Light shade of gray */
             border-radius: var(--border-radius-lg);
-            border: 1px solid rgba(0, 240, 255, 0.2);
+            border: 1px solid #e0e0e0; /* Light shade of gray border */
             padding: 1.5rem !important;
             margin-top: 0.5rem;
             box-shadow: var(--box-shadow);
@@ -1101,74 +1101,389 @@ def apply_custom_css():
         }
         
         /* === DATA INPUT ELEMENTS === */
-        /* Futuristic input fields */
-        .stTextInput > div > div {
+        /* Make all input field labels bold with stronger selectors */
+        div[data-testid="stForm"] label,
+        div.stNumberInput label,
+        div.stTextInput label,
+        div.stSelectbox label,
+        div.stMultiSelect label,
+        div.stTextArea label,
+        div.stDateInput label,
+        div.stTimeInput label,
+        div.stSlider label,
+        div.stFileUploader label,
+        div[data-baseweb="form-control"] label,
+        div[data-testid="stVerticalBlock"] label {
+            font-weight: 900 !important;
+            font-family: 'Orbitron', sans-serif !important;
+            color: #000000 !important;
+            font-size: 1rem !important;
+            letter-spacing: 0.05em !important;
+        }
+        
+        /* Futuristic input fields with stronger selectors */
+        .stTextInput > div > div,
+        div[data-baseweb="input"] > div,
+        div[data-baseweb="base-input"] {
             border-radius: var(--border-radius) !important;
-            border: 1px solid rgba(0, 240, 255, 0.3) !important;
+            border: none !important;
+            border-color: transparent !important;
             background-color: white !important;
             transition: var(--transition) !important;
             font-family: 'Share Tech Mono', monospace !important;
+            box-shadow: none !important;
         }
         
-        .stTextInput > div > div:focus-within {
-            border-color: var(--primary-color) !important;
+        .stTextInput > div > div:focus-within,
+        div[data-baseweb="input"] > div:focus-within,
+        div[data-baseweb="base-input"]:focus-within {
+            border: none !important;
+            border-color: transparent !important;
             box-shadow: var(--neon-glow-cyan) !important;
         }
         
-        /* Futuristic select boxes */
-        .stSelectbox > div > div > div {
+        /* Futuristic select boxes with stronger selectors */
+        .stSelectbox > div > div > div,
+        div[data-baseweb="select"] > div,
+        div[role="combobox"] {
             border-radius: var(--border-radius) !important;
-            border: 1px solid rgba(0, 240, 255, 0.3) !important;
+            border: none !important;
+            border-color: transparent !important;
             background-color: white !important;
             transition: var(--transition) !important;
             font-family: 'Share Tech Mono', monospace !important;
+            box-shadow: none !important;
         }
         
-        .stSelectbox > div > div > div:focus-within {
-            border-color: var(--primary-color) !important;
+        .stSelectbox > div > div > div:focus-within,
+        div[data-baseweb="select"] > div:focus-within,
+        div[role="combobox"]:focus-within {
+            border: none !important;
+            border-color: transparent !important;
             box-shadow: var(--neon-glow-cyan) !important;
         }
         
-        /* Futuristic number inputs */
-        .stNumberInput > div > div {
+        /* Futuristic number inputs with stronger selectors */
+        .stNumberInput > div > div,
+        input[type="number"] {
             border-radius: var(--border-radius) !important;
-            border: 1px solid rgba(0, 240, 255, 0.3) !important;
+            border: none !important;
+            border-color: transparent !important;
             background-color: white !important;
             transition: var(--transition) !important;
             font-family: 'Share Tech Mono', monospace !important;
+            box-shadow: none !important;
         }
         
-        .stNumberInput > div > div:focus-within {
-            border-color: var(--primary-color) !important;
+        .stNumberInput > div > div:focus-within,
+        input[type="number"]:focus-within {
+            border: none !important;
+            border-color: transparent !important;
             box-shadow: var(--neon-glow-cyan) !important;
         }
         
-        /* Futuristic text areas */
-        .stTextArea > div > div {
+        /* Futuristic text areas with stronger selectors */
+        .stTextArea > div > div,
+        textarea {
             border-radius: var(--border-radius) !important;
-            border: 1px solid rgba(0, 240, 255, 0.3) !important;
+            border: none !important;
+            border-color: transparent !important;
             background-color: white !important;
             transition: var(--transition) !important;
             font-family: 'Share Tech Mono', monospace !important;
+            box-shadow: none !important;
         }
         
-        .stTextArea > div > div:focus-within {
-            border-color: var(--primary-color) !important;
+        .stTextArea > div > div:focus-within,
+        textarea:focus-within {
+            border: none !important;
+            border-color: transparent !important;
             box-shadow: var(--neon-glow-cyan) !important;
         }
         
-        /* Futuristic multiselect */
-        .stMultiSelect > div > div > div {
+        /* Futuristic multiselect with stronger selectors */
+        .stMultiSelect > div > div > div,
+        div[role="listbox"] {
             border-radius: var(--border-radius) !important;
-            border: 1px solid rgba(0, 240, 255, 0.3) !important;
+            border: none !important;
+            border-color: transparent !important;
             background-color: white !important;
             transition: var(--transition) !important;
             font-family: 'Share Tech Mono', monospace !important;
+            box-shadow: none !important;
         }
         
-        .stMultiSelect > div > div > div:focus-within {
-            border-color: var(--primary-color) !important;
+        .stMultiSelect > div > div > div:focus-within,
+        div[role="listbox"]:focus-within {
+            border: none !important;
+            border-color: transparent !important;
             box-shadow: var(--neon-glow-cyan) !important;
+        }
+        
+        /* Force remove all borders from input elements */
+        input, select, textarea, button {
+            border: none !important;
+            border-color: transparent !important;
+            box-shadow: none !important;
+        }
+        
+        /* Extremely aggressive approach to remove all borders */
+        /* Target all possible input elements and their containers */
+        input, 
+        select, 
+        textarea, 
+        button,
+        [data-baseweb*="input"],
+        [data-baseweb*="select"],
+        [data-baseweb*="textarea"],
+        [data-baseweb*="phone-input"],
+        [data-baseweb*="input-container"],
+        [data-baseweb*="form-control"],
+        [data-baseweb*="popover"],
+        [data-baseweb*="menu"],
+        [data-baseweb*="list"],
+        [data-baseweb*="select-dropdown"],
+        [data-testid*="stForm"],
+        .stNumberInput,
+        .stTextInput,
+        .stSelectbox,
+        .stTextArea,
+        .stMultiSelect,
+        .stDateInput,
+        .stTimeInput,
+        .stFileUploader,
+        div[role="combobox"],
+        div[role="listbox"],
+        div[role="textbox"],
+        div[role="spinbutton"],
+        div[class*="input"],
+        div[class*="select"],
+        div[class*="text"],
+        div[class*="field"],
+        div[class*="control"],
+        div[class*="form"],
+        div[class*="Input"],
+        div[class*="Select"],
+        div[class*="Text"],
+        div[class*="Field"],
+        div[class*="Control"],
+        div[class*="Form"],
+        /* Target all children of these elements */
+        [data-baseweb*="input"] *,
+        [data-baseweb*="select"] *,
+        [data-baseweb*="textarea"] *,
+        [data-baseweb*="phone-input"] *,
+        [data-baseweb*="input-container"] *,
+        [data-baseweb*="form-control"] *,
+        [data-baseweb*="popover"] *,
+        [data-baseweb*="menu"] *,
+        [data-baseweb*="list"] *,
+        [data-baseweb*="select-dropdown"] *,
+        [data-testid*="stForm"] *,
+        .stNumberInput *,
+        .stTextInput *,
+        .stSelectbox *,
+        .stTextArea *,
+        .stMultiSelect *,
+        .stDateInput *,
+        .stTimeInput *,
+        .stFileUploader *,
+        div[role="combobox"] *,
+        div[role="listbox"] *,
+        div[role="textbox"] *,
+        div[role="spinbutton"] *,
+        div[class*="input"] *,
+        div[class*="select"] *,
+        div[class*="text"] *,
+        div[class*="field"] *,
+        div[class*="control"] *,
+        div[class*="form"] *,
+        div[class*="Input"] *,
+        div[class*="Select"] *,
+        div[class*="Text"] *,
+        div[class*="Field"] *,
+        div[class*="Control"] *,
+        div[class*="Form"] * {
+            border: none !important;
+            border-color: transparent !important;
+            outline: none !important;
+            box-shadow: none !important;
+        }
+        
+        /* Target all states: focus, hover, active, focus-within, etc. */
+        input:focus, 
+        select:focus, 
+        textarea:focus, 
+        button:focus,
+        input:hover, 
+        select:hover, 
+        textarea:hover, 
+        button:hover,
+        input:active, 
+        select:active, 
+        textarea:active, 
+        button:active,
+        [data-baseweb*="input"]:focus,
+        [data-baseweb*="select"]:focus,
+        [data-baseweb*="textarea"]:focus,
+        [data-baseweb*="phone-input"]:focus,
+        [data-baseweb*="input-container"]:focus,
+        [data-baseweb*="form-control"]:focus,
+        [data-baseweb*="popover"]:focus,
+        [data-baseweb*="menu"]:focus,
+        [data-baseweb*="list"]:focus,
+        [data-baseweb*="select-dropdown"]:focus,
+        [data-baseweb*="input"]:hover,
+        [data-baseweb*="select"]:hover,
+        [data-baseweb*="textarea"]:hover,
+        [data-baseweb*="phone-input"]:hover,
+        [data-baseweb*="input-container"]:hover,
+        [data-baseweb*="form-control"]:hover,
+        [data-baseweb*="popover"]:hover,
+        [data-baseweb*="menu"]:hover,
+        [data-baseweb*="list"]:hover,
+        [data-baseweb*="select-dropdown"]:hover,
+        [data-baseweb*="input"]:active,
+        [data-baseweb*="select"]:active,
+        [data-baseweb*="textarea"]:active,
+        [data-baseweb*="phone-input"]:active,
+        [data-baseweb*="input-container"]:active,
+        [data-baseweb*="form-control"]:active,
+        [data-baseweb*="popover"]:active,
+        [data-baseweb*="menu"]:active,
+        [data-baseweb*="list"]:active,
+        [data-baseweb*="select-dropdown"]:active,
+        [data-baseweb*="input"]:focus-within,
+        [data-baseweb*="select"]:focus-within,
+        [data-baseweb*="textarea"]:focus-within,
+        [data-baseweb*="phone-input"]:focus-within,
+        [data-baseweb*="input-container"]:focus-within,
+        [data-baseweb*="form-control"]:focus-within,
+        [data-baseweb*="popover"]:focus-within,
+        [data-baseweb*="menu"]:focus-within,
+        [data-baseweb*="list"]:focus-within,
+        [data-baseweb*="select-dropdown"]:focus-within,
+        [data-testid*="stForm"]:focus,
+        [data-testid*="stForm"]:hover,
+        [data-testid*="stForm"]:active,
+        [data-testid*="stForm"]:focus-within,
+        .stNumberInput:focus,
+        .stTextInput:focus,
+        .stSelectbox:focus,
+        .stTextArea:focus,
+        .stMultiSelect:focus,
+        .stDateInput:focus,
+        .stTimeInput:focus,
+        .stFileUploader:focus,
+        .stNumberInput:hover,
+        .stTextInput:hover,
+        .stSelectbox:hover,
+        .stTextArea:hover,
+        .stMultiSelect:hover,
+        .stDateInput:hover,
+        .stTimeInput:hover,
+        .stFileUploader:hover,
+        .stNumberInput:active,
+        .stTextInput:active,
+        .stSelectbox:active,
+        .stTextArea:active,
+        .stMultiSelect:active,
+        .stDateInput:active,
+        .stTimeInput:active,
+        .stFileUploader:active,
+        .stNumberInput:focus-within,
+        .stTextInput:focus-within,
+        .stSelectbox:focus-within,
+        .stTextArea:focus-within,
+        .stMultiSelect:focus-within,
+        .stDateInput:focus-within,
+        .stTimeInput:focus-within,
+        .stFileUploader:focus-within,
+        div[role="combobox"]:focus,
+        div[role="listbox"]:focus,
+        div[role="textbox"]:focus,
+        div[role="spinbutton"]:focus,
+        div[role="combobox"]:hover,
+        div[role="listbox"]:hover,
+        div[role="textbox"]:hover,
+        div[role="spinbutton"]:hover,
+        div[role="combobox"]:active,
+        div[role="listbox"]:active,
+        div[role="textbox"]:active,
+        div[role="spinbutton"]:active,
+        div[role="combobox"]:focus-within,
+        div[role="listbox"]:focus-within,
+        div[role="textbox"]:focus-within,
+        div[role="spinbutton"]:focus-within,
+        div[class*="input"]:focus,
+        div[class*="select"]:focus,
+        div[class*="text"]:focus,
+        div[class*="field"]:focus,
+        div[class*="control"]:focus,
+        div[class*="form"]:focus,
+        div[class*="Input"]:focus,
+        div[class*="Select"]:focus,
+        div[class*="Text"]:focus,
+        div[class*="Field"]:focus,
+        div[class*="Control"]:focus,
+        div[class*="Form"]:focus,
+        div[class*="input"]:hover,
+        div[class*="select"]:hover,
+        div[class*="text"]:hover,
+        div[class*="field"]:hover,
+        div[class*="control"]:hover,
+        div[class*="form"]:hover,
+        div[class*="Input"]:hover,
+        div[class*="Select"]:hover,
+        div[class*="Text"]:hover,
+        div[class*="Field"]:hover,
+        div[class*="Control"]:hover,
+        div[class*="Form"]:hover,
+        div[class*="input"]:active,
+        div[class*="select"]:active,
+        div[class*="text"]:active,
+        div[class*="field"]:active,
+        div[class*="control"]:active,
+        div[class*="form"]:active,
+        div[class*="Input"]:active,
+        div[class*="Select"]:active,
+        div[class*="Text"]:active,
+        div[class*="Field"]:active,
+        div[class*="Control"]:active,
+        div[class*="Form"]:active,
+        div[class*="input"]:focus-within,
+        div[class*="select"]:focus-within,
+        div[class*="text"]:focus-within,
+        div[class*="field"]:focus-within,
+        div[class*="control"]:focus-within,
+        div[class*="form"]:focus-within,
+        div[class*="Input"]:focus-within,
+        div[class*="Select"]:focus-within,
+        div[class*="Text"]:focus-within,
+        div[class*="Field"]:focus-within,
+        div[class*="Control"]:focus-within,
+        div[class*="Form"]:focus-within {
+            border: none !important;
+            border-color: transparent !important;
+            outline: none !important;
+            box-shadow: none !important;
+        }
+        
+        /* Target all validation states */
+        [aria-invalid="true"],
+        [aria-invalid="true"] *,
+        [data-invalid="true"],
+        [data-invalid="true"] *,
+        .invalid,
+        .invalid *,
+        .error,
+        .error *,
+        .has-error,
+        .has-error * {
+            border: none !important;
+            border-color: transparent !important;
+            outline: none !important;
+            box-shadow: none !important;
         }
         
         /* Override Streamlit's default accent colors for futuristic form elements */
@@ -1218,7 +1533,7 @@ def apply_custom_css():
         /* Futuristic metrics */
         [data-testid="stMetric"] {
             background-color: white !important;
-            border: 1px solid rgba(0, 240, 255, 0.3) !important;
+            border: 1px solid #e0e0e0 !important; /* Light shade of gray border */
             border-radius: var(--border-radius) !important;
             padding: 1rem !important;
             box-shadow: var(--box-shadow) !important;
@@ -1352,7 +1667,7 @@ def apply_custom_css():
         /* Futuristic sidebar styling */
         section[data-testid="stSidebar"] {
             background: var(--bg-secondary);
-            border-right: 1px solid rgba(0, 240, 255, 0.2);
+            border-right: 1px solid #e0e0e0; /* Light shade of gray border */
             box-shadow: 5px 0 20px rgba(0, 0, 0, 0.5);
         }
         
@@ -1491,7 +1806,7 @@ def apply_custom_css():
             border-radius: var(--border-radius);
             padding: 18px;
             margin: 15px 10px;
-            border: 1px solid rgba(0, 240, 255, 0.2);
+            border: 1px solid #e0e0e0; /* Light shade of gray border */
             box-shadow: var(--box-shadow);
         }
         
@@ -1527,7 +1842,7 @@ def apply_custom_css():
             border-radius: 12px;
             padding: 18px;
             margin: 15px 10px;
-            border: 1px solid #f0f0f0;
+            border: 1px solid #e0e0e0; /* Light shade of gray border */
             box-shadow: var(--box-shadow);
         }
         
@@ -1579,7 +1894,7 @@ def apply_custom_css():
             margin: 20px 10px;
             color: var(--sidebar-element-color);
             text-align: center;
-            border: 1px solid #f0f0f0;
+            border: 1px solid #e0e0e0; /* Light shade of gray border */
             position: relative;
             overflow: hidden;
             box-shadow: var(--box-shadow);
