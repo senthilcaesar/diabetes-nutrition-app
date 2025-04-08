@@ -23,7 +23,7 @@ def display_user_data_review():
     
     with health_tab:
         # Format the health data in a more readable way
-        st.subheader("Your Health Information")
+        st.markdown("<h4 style='font-size: 18px;'>Your Health Information</h4>", unsafe_allow_html=True)
         health_data = st.session_state.health_data
         
         col1, col2 = st.columns(2)
@@ -61,7 +61,8 @@ def display_user_data_review():
 
     with socio_tab:
         # Format the socioeconomic data in a more readable way
-        st.subheader("Your Socioeconomic Information")
+        st.markdown("<h4 style='font-size: 18px;'>Your Socioeconomic Information</h4>", unsafe_allow_html=True)
+
         socio_data = st.session_state.socio_data
         
         col1, col2 = st.columns(2)
@@ -81,7 +82,9 @@ def display_user_data_review():
     with genetic_tab:
         # Show genetic data preview if available
         if 'genetic_profile' in st.session_state and st.session_state.genetic_profile:
-            st.subheader("Your Genetic Profile")
+            
+            st.markdown("<h4 style='font-size: 18px;'>Your Genetic Profile</h4>", unsafe_allow_html=True)
+
             genetic_profile = st.session_state.genetic_profile
             
             # Show overall summary
@@ -144,54 +147,12 @@ def display_user_data_review():
 
 def generate_nutrition_plan_workflow():
     """Handle the workflow for generating the nutrition plan."""
-    # Add custom CSS for buttons and tabs
-    st.markdown("""
-    <style>
-    /* Custom styling for the View My Nutrition Plan button */
-    [data-testid="baseButton-secondary"] {
-        background-color: #87CEEB !important; /* Sky blue */
-        border-color: #5F9EA0 !important;
-        color: #00003c !important; /* Dark navy text for contrast */
-    }
-    
-    [data-testid="baseButton-secondary"]:hover {
-        background-color: #ADD8E6 !important; /* Lighter blue on hover */
-        border-color: #4682B4 !important;
-        box-shadow: 0 0 10px rgba(135, 206, 235, 0.7) !important;
-    }
-    
-    /* Custom styling for primary buttons */
-    [data-testid="baseButton-primary"] {
-        background-color: white !important; /* White background by default */
-        border-color: #5F9EA0 !important;
-        color: #00003c !important; /* Dark navy text for contrast */
-    }
-    
-    [data-testid="baseButton-primary"]:hover {
-        background-color: #FFDAB9 !important; /* Light shade of orange (Peach Puff) on hover */
-        border-color: #5F9EA0 !important;
-        box-shadow: 0 0 10px rgba(255, 218, 185, 0.7) !important;
-    }
-    
-    /* Ensure selected buttons don't change on hover */
-    [data-testid="baseButton-primary"].selected {
-        background-color: #87CEEB !important; /* Sky blue when selected */
-        color: #00003c !important;
-        border-color: #5F9EA0 !important;
-    }
-    
-    [data-testid="baseButton-primary"].selected:hover {
-        background-color: #87CEEB !important;
-        color: #00003c !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
     
     # Create a placeholder for the header text
     header_placeholder = st.empty()
     header_placeholder.markdown("""
     <div style="text-align: center; padding: 10px;">
-        <h3>Crafting Your Personalized Nutrition Plan</h3>
+        <h4>Crafting Your Personalized Nutrition Plan</h4>
         <p>Analyzing your health data and creating customized recommendations...</p>
     </div>
     """, unsafe_allow_html=True)
@@ -273,10 +234,12 @@ def generate_nutrition_plan_workflow():
             # Show completion animation
             st.balloons()
             
-            # Add button to navigate to View Plan page
-            if st.button("View My Nutrition Plan →", type="secondary", key="view_plan_button", 
-                        use_container_width=True, on_click=navigate_to_view_plan):
-                pass  # The on_click function handles the navigation
+            # Add button to navigate to View Plan page with centered layout
+            col1, col2, col3 = st.columns([1, 3, 1])
+            with col2:
+                if st.button("View My Nutrition Plan →", type="secondary", key="view_plan_button", 
+                            use_container_width=True, on_click=navigate_to_view_plan):
+                    pass  # The on_click function handles the navigation
                 
         except Exception as e:
             # Clear progress elements
@@ -288,47 +251,6 @@ def generate_nutrition_plan_workflow():
 
 def show_input_data_page():
     """Show the input data page with tabs for health, socioeconomic, and genetic information."""
-    # Create custom style for tab titles to match button styling
-    st.markdown("""
-    <style>
-    /* Special styling for the custom tabs in input page */
-    .custom-tabs-container {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 1rem;
-        overflow-x: auto;
-    }
-    
-    .custom-tab {
-        background-color: #f5f5f5;
-        border-radius: 10px;
-        padding: 16px 24px;
-        text-align: center;
-        cursor: pointer;
-        flex-grow: 1;
-        font-weight: 500;
-        color: #555555;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
-        font-size: 1.05rem;
-    }
-    
-    .custom-tab:not(.active):hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-        background-color: #f9f9f9;
-    }
-    
-    .custom-tab.active {
-        background-color: #87CEEB !important; /* Sky blue for active tab */
-        color: #00003c !important; /* Dark navy text for contrast */
-        font-weight: 600;
-        transform: translateY(-5px);
-        box-shadow: 0 8px 15px rgba(135, 206, 235, 0.5);
-        border: 1px solid #5F9EA0;
-    }
-    </style>
-    """, unsafe_allow_html=True)
     
     # Create tabs
     tab_titles = ["🩺 Health Information", "🏘️ Socioeconomic Information", "🧬 Genetic Information", "🚀 Generate Plan"]
@@ -342,35 +264,11 @@ def show_input_data_page():
         
         st.session_state.health_data = input_health_data()
         
-        # Add custom CSS for the Save buttons
-        st.markdown("""
-        <style>
-        /* Custom styling for Save buttons */
-        button[kind="primary"][data-testid="baseButton-primary"] {
-            background-color: white !important; /* White background by default */
-            border-color: #5F9EA0 !important;
-            color: #00003c !important; /* Dark navy text for contrast */
-        }
-        
-        button[kind="primary"][data-testid="baseButton-primary"]:hover {
-            background-color: #FFDAB9 !important; /* Light shade of orange (Peach Puff) on hover */
-            border-color: #5F9EA0 !important;
-            box-shadow: 0 0 10px rgba(255, 218, 185, 0.7) !important;
-        }
-        
-        button[kind="primary"][data-testid="baseButton-primary"].selected {
-            background-color: #87CEEB !important; /* Sky blue when selected */
-            color: #00003c !important;
-            border-color: #5F9EA0 !important;
-        }
-        </style>
-        """, unsafe_allow_html=True)
-        
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
             if st.button("💾 Save Health Information", key="save_health", use_container_width=True, 
                         type="primary", help="Save your health information and proceed to the next tab"):
-                st.markdown('<div class="success-message">', unsafe_allow_html=True)
+    
                 st.success("Health information saved! Please proceed to the Socioeconomic Information tab.")
                 st.markdown('</div>', unsafe_allow_html=True)
         
@@ -388,7 +286,6 @@ def show_input_data_page():
         with col2:
             if st.button("💾 Save Socioeconomic Information", key="save_socio", use_container_width=True, 
                         type="primary", help="Save your socioeconomic information and proceed to genetic information"):
-                st.markdown('<div class="success-message">', unsafe_allow_html=True)
                 st.success("Socioeconomic information saved! Please proceed to the Genetic Information tab.")
                 st.markdown('</div>', unsafe_allow_html=True)
         
@@ -404,7 +301,6 @@ def show_input_data_page():
         with col2:
             if st.button("💾 Save Genetic Information", key="save_genetic", use_container_width=True, 
                         type="primary", help="Save your genetic information and proceed to generate plan"):
-                st.markdown('<div class="success-message">', unsafe_allow_html=True)
                 if 'genetic_profile' in st.session_state and st.session_state.genetic_profile is not None:
                     st.success("Genetic information saved! Your nutrition plan will incorporate genetic insights. Please proceed to the Generate Plan tab.")
                 else:
@@ -425,40 +321,23 @@ def show_input_data_page():
             else:
                 st.info("You're almost there! Review your information before generating your personalized nutrition plan.")
             
-            # Add custom CSS for these specific buttons
-            st.markdown("""
-            <style>
-            /* Custom styling for Review Your Data and Create My Nutrition Plan buttons */
-            button[kind="primary"][data-testid="baseButton-primary"] {
-                background-color: white !important; /* White background by default */
-                border-color: #5F9EA0 !important;
-                color: #00003c !important; /* Dark navy text for contrast */
-            }
             
-            button[kind="primary"][data-testid="baseButton-primary"]:hover {
-                background-color: #FFDAB9 !important; /* Light shade of orange (Peach Puff) on hover */
-                border-color: #5F9EA0 !important;
-                box-shadow: 0 0 10px rgba(255, 218, 185, 0.7) !important;
-            }
-            
-            button[kind="primary"][data-testid="baseButton-primary"].selected {
-                background-color: #87CEEB !important; /* Sky blue when selected */
-                color: #00003c !important;
-                border-color: #5F9EA0 !important;
-            }
-            </style>
-            """, unsafe_allow_html=True)
-            
-            col1, col2 = st.columns(2)
-            with col1:
-                show_button = st.button("📋 Review Your Data", use_container_width=True, type="primary",
-                                      help="View the information you've provided")
+            # Create a centered column layout with custom widths for buttons
+            col1, col2, col3 = st.columns([1, 3, 1])
             with col2:
-                # Customize the button text based on genetic data availability
-                button_text = "✨ Create My Nutrition Plan" if has_genetic_data else "✨ Create My Nutrition Plan"
-                generate_button = st.button(button_text, key="generate_plan", 
-                                          use_container_width=True, type="primary",
-                                          help="Generate your personalized nutrition plan based on your information")
+                # Create a two-column layout within the center column for the buttons
+                btn_col1, btn_col2 = st.columns(2)
+                
+                with btn_col1:
+                    show_button = st.button("📋 Review Your Data", use_container_width=True, type="primary",
+                                          help="View the information you've provided")
+                
+                with btn_col2:
+                    # Customize the button text based on genetic data availability
+                    button_text = "✨ Create My Nutrition Plan" if has_genetic_data else "✨ Create My Nutrition Plan"
+                    generate_button = st.button(button_text, key="generate_plan", 
+                                              use_container_width=True, type="primary",
+                                              help="Generate your personalized nutrition plan based on your information")
             
             if show_button:
                 display_user_data_review()
@@ -481,32 +360,3 @@ def show_input_data_page():
                 <p>Click on the tabs above to enter your information.</p>
             </div>
             """, unsafe_allow_html=True)
-            
-            # Add some helpful guidance images
-            col1, col2, col3 = st.columns(3)
-            with col1:
-                st.markdown("""
-                <div style="text-align: center; padding: 10px;">
-                    <div style="font-size: 36px;">🩺</div>
-                    <h4>Step 1: Health Information</h4>
-                    <p>Share your health metrics.</p>
-                </div>
-                """, unsafe_allow_html=True)
-            
-            with col2:
-                st.markdown("""
-                <div style="text-align: center; padding: 10px;">
-                    <div style="font-size: 36px;">🏘️</div>
-                    <h4>Step 2: Socioeconomic Information</h4>
-                    <p>Tell us about your lifestyle and resources.</p>
-                </div>
-                """, unsafe_allow_html=True)
-                
-            with col3:
-                st.markdown("""
-                <div style="text-align: center; padding: 10px;">
-                    <div style="font-size: 36px;">🧬</div>
-                    <h4>Step 3: Genetic Information (Optional)</h4>
-                    <p>Add genetic insights for optimization.</p>
-                </div>
-                """, unsafe_allow_html=True)

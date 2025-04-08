@@ -11,47 +11,6 @@ def show_header():
     # Check if genetic data is available to customize the header
     has_genetic_data = 'genetic_profile' in st.session_state and st.session_state.genetic_profile is not None
     
-    if has_genetic_data:
-        st.markdown('''
-        <div class="neo-header-content">
-            <div class="neo-header-icon">
-                <div class="neo-dna-animation">
-                    <div class="neo-dna-ring"></div>
-                    <div class="neo-dna-ring"></div>
-                    <div class="neo-dna-ring"></div>
-                </div>
-            </div>
-            <div class="neo-header-text">
-                <div class="neo-title-container">
-                    <h1 class="neo-title"><span class="neo-title-prefix">GENOME</span>OPTIMIZED</h1>
-                </div>
-                <p class="neo-subtitle">ADVANCED NUTRITIONAL PROTOCOL <span class="neo-highlight">v2.0</span></p>
-                <div class="neo-badge">
-                    <div class="neo-badge-glow"></div>
-                    <span class="neo-badge-icon">⚛</span>
-                    <span class="neo-badge-text">GENETIC ENHANCEMENT ACTIVE</span>
-                </div>
-            </div>
-        </div>
-        ''', unsafe_allow_html=True)
-    else:
-        st.markdown('''
-        <div class="neo-header-content">
-            <div class="neo-header-icon">
-                <div class="neo-pulse-animation">
-                    <div class="neo-hexagon"></div>
-                    <div class="neo-hexagon"></div>
-                    <div class="neo-hexagon"></div>
-                </div>
-            </div>
-            <div class="neo-header-text">
-                <div class="neo-title-container">
-                    <h1 class="neo-title"><span class="neo-title-prefix">NEURO</span>NUTRITION</h1>
-                </div>
-                <p class="neo-subtitle">METABOLIC OPTIMIZATION SYSTEM <span class="neo-highlight">v1.0</span></p>
-            </div>
-        </div>
-        ''', unsafe_allow_html=True)
     
     # Add the particle animation background
     st.markdown('''
@@ -88,9 +47,9 @@ def apply_custom_css():
             --primary-color: #00003c;  /* Dark navy blue */
             --primary-light: #0000a0;  /* Lighter navy blue */
             --primary-dark: #000020;  /* Darker navy blue */
-            --secondary-color: #FF00E4;  /* Neon magenta */
-            --secondary-light: #FF8AFA;
-            --secondary-dark: #C800B2;
+            --secondary-color: #87CEEB;  /* Neon magenta */
+            --secondary-light: #87CEEB;
+            --secondary-dark: #87CEEB;
             --accent-color: #7B42F6;  /* Neon purple */
             --warning-color: #FFD600;  /* Neon yellow */
             --success-color: #00FF94;  /* Neon green */
@@ -213,7 +172,7 @@ def apply_custom_css():
         /* Sidebar adjustments - futuristic dark panel */
         section[data-testid="stSidebar"] {
             top: 0 !important;
-            padding-top: 4rem !important;
+            padding-top: 1rem !important; /* Reduced padding to move content up */
             background: var(--bg-secondary);
             border-right: 1px solid #e0e0e0; /* Light shade of gray border */
             box-shadow: 5px 0 20px rgba(0, 0, 0, 0.5);
@@ -633,7 +592,7 @@ def apply_custom_css():
             border-radius: var(--border-radius-lg);
             border: 1px solid #e0e0e0; /* Light shade of gray border */
             padding: 1.5rem !important;
-            margin-top: 0.5rem;
+            margin-top: 0.8rem; /* Increased space between tabs and panel */
             box-shadow: var(--box-shadow);
         }
         
@@ -1015,9 +974,6 @@ def apply_custom_css():
             100% { left: 200%; }
         }
         
-        .stButton button:hover {
-            box-shadow: var(--neon-glow-cyan) !important;
-        }
         
         /* Primary button - neon cyan */
         .stButton button[kind="primary"] {
@@ -1037,17 +993,17 @@ def apply_custom_css():
             border-color: var(--primary-color) !important;
         }
         
-        /* Secondary button - neon magenta */
-        .stButton button[kind="secondary"] {
-            background-color: white !important;
-            border: 1px solid var(--secondary-color) !important;
-            color: var(--secondary-color) !important;
-        }
-        
-        .stButton button[kind="secondary"]:hover {
-            background-color: white !important;
-            box-shadow: var(--neon-glow-magenta) !important;
-        }
+/* Secondary button - neon magenta */
+.stButton button[kind="secondary"] {
+    background-color: white !important;
+    border: 1px solid #000000 !important; /* Changed border color to black */
+    color: #000000 !important; /* Changed text color to black */
+}
+
+.stButton button[kind="secondary"]:hover {
+    background-color: #FFDAB9 !important; /* Light shade of green on hover */
+    /* Removed hover animation (box-shadow) */
+}
         
         /* Success message - lighter, airier */
         .success-message {
@@ -1530,34 +1486,35 @@ def apply_custom_css():
             box-shadow: var(--neon-glow-cyan) !important;
         }
         
-        /* Futuristic metrics */
+        /* Metrics styling */
         [data-testid="stMetric"] {
             background-color: white !important;
             border: 1px solid #e0e0e0 !important; /* Light shade of gray border */
-            border-radius: var(--border-radius) !important;
+            border-radius: 4px !important;
             padding: 1rem !important;
-            box-shadow: var(--box-shadow) !important;
+            box-shadow: none !important;
+            transition: none !important;
         }
         
         [data-testid="stMetric"]:hover {
-            border-color: var(--primary-color) !important;
-            box-shadow: var(--neon-glow-cyan) !important;
+            border-color: #e0e0e0 !important;
+            box-shadow: none !important;
         }
         
         [data-testid="stMetricLabel"] {
-            font-family: 'Share Tech Mono', monospace !important;
-            color: var(--text-muted) !important;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important;
+            color: #333333 !important;
             font-size: 0.85rem !important;
-            letter-spacing: 0.05em !important;
-            text-transform: uppercase !important;
+            letter-spacing: normal !important;
+            text-transform: none !important;
         }
         
         [data-testid="stMetricValue"] {
-            font-family: 'Orbitron', sans-serif !important;
-            color: var(--primary-color) !important;
-            font-weight: 700 !important;
-            font-size: 1.75rem !important;
-            text-shadow: var(--neon-glow-cyan) !important;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important;
+            color: #333333 !important;
+            font-weight: 600 !important;
+            font-size: 1.5rem !important;
+            text-shadow: none !important;
         }
         
         /* === GENETIC DATA VISUALIZATION === */
@@ -1678,81 +1635,91 @@ def apply_custom_css():
             flex-direction: column;
         }
         
-        /* Sidebar tabs styling to match main tabs */
+        /* Sidebar tabs styling - pill-shaped design */
+        .stRadio > div {
+            gap: 12px !important; /* Increased spacing between tabs */
+        }
+        
         .stRadio > div > label {
-            padding: 16px 30px 16px 16px !important; /* Match padding with main tabs */
-            margin: 5px 0 !important;
-            border-radius: var(--border-radius) !important;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+            padding: 12px 16px !important; /* Adjusted padding for pill shape */
+            margin: 0 !important;
+            border-radius: 50px !important; /* Pill shape */
+            transition: all 0.2s ease !important;
             background-color: #FFFFFF !important; /* White background */
-            color: #000000 !important; /* Dark black text for better visibility */
-            border: 1px solid rgba(0, 0, 60, 0.2) !important;
+            color: #333333 !important; /* Dark gray text */
+            border: none !important;
             font-family: 'Share Tech Mono', monospace !important;
-            font-weight: 700 !important; /* Bolder text to match main tabs */
-            box-shadow: var(--box-shadow) !important;
+            font-weight: 600 !important;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important; /* Subtle shadow */
             position: relative;
             overflow: hidden;
             text-transform: uppercase !important;
-            letter-spacing: 0.1em !important; /* Match letter spacing with main tabs */
-            font-size: 0.9rem !important; /* Match font size with main tabs */
-            width: auto !important;
+            letter-spacing: 0.05em !important;
+            font-size: 0.85rem !important;
+            width: 100% !important; /* Full width */
             box-sizing: border-box !important;
+            display: flex !important;
+            align-items: center !important;
         }
         
         .stRadio > div > label:not(.stRadio > div [data-baseweb="radio"] [data-checked="true"] ~ label):hover {
-            border-color: var(--primary-color) !important;
-            box-shadow: var(--neon-glow-cyan) !important;
-            background-color: #F0F8FF !important; /* Light shade of blue (Alice Blue) on hover - match main tabs */
-            color: var(--primary-color) !important;
-            transform: none !important;
+            background-color: #F8F8F8 !important; /* Very light gray on hover */
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15) !important; /* Slightly stronger shadow on hover */
+            transform: translateY(-1px) !important; /* Slight lift effect */
         }
         
-        /* Override hover styles for selected sidebar navigation items to maintain their appearance */
+        /* Override hover styles for selected sidebar navigation items */
         .stRadio > div [data-baseweb="radio"] [data-checked="true"] ~ label:hover {
-            background-color: #87CEEB !important; /* Sky blue for selected tab */
-            color: var(--primary-color) !important;
-            border: 1px solid var(--primary-color) !important;
-            box-shadow: var(--neon-glow-cyan) !important;
+            background-color: #FFFFFF !important; /* Keep white background for selected */
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15) !important;
         }
         
-        .stRadio > div > label:before {
+        /* Selected tab styling */
+        .stRadio > div [data-baseweb="radio"] [data-checked="true"] ~ label {
+            background-color: #FFFFFF !important; /* White background */
+            color: #333333 !important; /* Dark gray text */
+            font-weight: 700 !important;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15) !important; /* Slightly stronger shadow */
+        }
+        
+        /* Red dot indicator for selected tab */
+        .stRadio > div [data-baseweb="radio"] [data-checked="true"] ~ label:before {
             content: "";
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 0;
-            height: 100%;
-            background: none;
-        }
-        
-        .stRadio > div [data-baseweb="radio"] [data-checked="true"] ~ label {
-            background-color: #87CEEB !important; /* Sky blue for selected sidebar tab */
-            color: var(--primary-color) !important;
-            font-weight: 700 !important;
-            box-shadow: var(--neon-glow-cyan) !important;
-            border: 1px solid var(--primary-color) !important;
-        }
-        
-        .stRadio > div [data-baseweb="radio"] [data-checked="true"] ~ label:after {
-            content: "▶";
-            position: absolute;
+            left: 12px;
             top: 50%;
-            right: 12px;
             transform: translateY(-50%);
-            color: var(--primary-color);
-            font-size: 0.75rem;
-            text-shadow: var(--neon-glow-cyan);
+            width: 8px;
+            height: 8px;
+            background-color: #FF4B4B; /* Red dot */
+            border-radius: 50%;
         }
         
-        /* Make radio buttons fit better in futuristic sidebar */
+        /* Add left padding for the icon space in all tabs */
+        .stRadio > div > label {
+            padding-left: 32px !important; /* Space for icon/indicator */
+        }
+        
+        /* Style for the radio button text and icons */
         .stRadio [data-testid="stMarkdownContainer"] {
             font-size: 0.85rem !important;
-            letter-spacing: 0.1em !important;
+            letter-spacing: 0.05em !important;
             display: flex;
             align-items: center;
             justify-content: flex-start;
             font-family: 'Share Tech Mono', monospace !important;
             text-transform: uppercase !important;
+            width: 100% !important;
+        }
+        
+        /* Style for the icons in the radio buttons */
+        .stRadio [data-testid="stMarkdownContainer"] code {
+            font-family: inherit !important;
+            background: none !important;
+            padding: 0 !important;
+            margin-right: 8px !important;
+            color: inherit !important;
+            border: none !important;
         }
         
         /* Hide the actual radio button circle and only keep the label */
@@ -1810,10 +1777,10 @@ def apply_custom_css():
             box-shadow: var(--box-shadow);
         }
         
-        .sidebar-info-card:hover {
-            border-color: var(--primary-color);
-            box-shadow: var(--neon-glow-cyan);
-        }
+/* Removed hover animation */
+.sidebar-info-card:hover {
+    /* No hover effects */
+}
         
         .sidebar-info-card h4 {
             font-family: 'Orbitron', sans-serif;
@@ -1986,7 +1953,6 @@ def apply_custom_css():
             --secondary-color: #eeeee4;  /* Soft mint green */
             --secondary-light: #eeeee4;
             --secondary-dark: #eeeee4;
-            --accent-color: #eeeee4;  /* Soft pink */
             --warning-color: #eeeee4;  /* Soft amber */
             --success-color: #eeeee4;  /* Soft green */
             --info-color: #eeeee4;  /* Soft blue */
@@ -2012,7 +1978,6 @@ def apply_custom_css():
             --box-shadow: 0 2px 10px -2px rgba(0, 0, 0, 0.05);
             --box-shadow-md: 0 4px 15px -3px rgba(0, 0, 0, 0.07);
             --box-shadow-lg: 0 8px 25px -5px rgba(0, 0, 0, 0.08);
-            --box-shadow-hover: 0 6px 20px -3px rgba(100, 181, 246, 0.15);
             
             /* Sidebar specific - lighter, airier */
             --sidebar-bg: #F0F0F0;
@@ -2045,7 +2010,6 @@ def apply_custom_css():
                 --secondary-color: #eeeee4;  /* Lighter green */
                 --secondary-light: #eeeee4;
                 --secondary-dark: #eeeee4;
-                --accent-color: #eeeee4;  /* Lighter pink */
                 --warning-color: #eeeee4;  /* Lighter amber */
                 --success-color: #eeeee4;  /* Lighter green */
                 --info-color: #eeeee4;  /* Lighter blue */
@@ -2213,7 +2177,22 @@ def show_sidebar():
     Configure and display the sidebar. Returns the current page selection.
     """
     # Add app title at the very top of the sidebar
-    st.sidebar.markdown('<h1 style="font-family: \'Orbitron\', sans-serif; color: #00003c; font-size: 24px; text-align: center; margin-top: 0px; margin-bottom: 0px; text-transform: uppercase; letter-spacing: 0.1em; text-shadow: 0 0 0px rgba(0, 240, 255, 0.5);">Neuro Nutrition</h1>', unsafe_allow_html=True)
+    st.sidebar.markdown("""
+    <div style="background: linear-gradient(90deg, #429de3, #87CEEB); 
+                padding: 15px; 
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+        <h1 style="color: #000000; 
+                font-family: 'Trebuchet MS', sans-serif;
+                text-align: center;
+                letter-spacing: 2px;
+                font-weight: 600;
+                text-transform: uppercase;
+                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);">
+            ✨ NEURO NUTRITION ✨
+        </h1>
+    </div>
+    """, unsafe_allow_html=True)
     
 
 
@@ -2251,19 +2230,12 @@ def show_sidebar():
     
     # Show genetic status if available
     if 'genetic_profile' in st.session_state and st.session_state.genetic_profile is not None:
-        st.sidebar.markdown("""
-        <div class="genetics-active-badge">
-            <div class="icon">🧬</div>
-            <div class="title">Genetic Optimization Active</div>
-            <div class="subtitle">Your plan includes genetic insights</div>
-        </div>
-        """, unsafe_allow_html=True)
         
-        # Genetic insights info card
+        #Genetic insights info card
         st.sidebar.markdown("""
-        <div class="sidebar-section">
-            <h3>Genetic Insights</h3>
-        </div>
+                            
+        <h3 style="color:#000000;">About This App</h3>
+                            
         <div class="sidebar-info-card">
             <h4>Personalized Based On Your Genes</h4>
             <p>Your nutrition plan is enhanced with insights from your genetic profile:</p>
@@ -2300,24 +2272,17 @@ def show_sidebar():
             st.rerun()
     else:
         st.sidebar.markdown("""
-        <div class="sidebar-section">
-            <h3 style="color: #00003c;">About This App</h3>
-        </div>
+        <h3 style="color:#000000;">About This App</h3>
         <div class="sidebar-info-card">
             <h4>Personalized Nutrition Guidance</h4>
             <p>This application provides accessible, personalized nutrition guidance for individuals with diabetes, taking into account:</p>
             <ul>
                 <li>Health metrics and diabetes status</li>
-                <li>Socioeconomic context and resources</li>
-                <li>Cultural food preferences</li>
-                <li>Genetic profile (if provided)</li>
+                <li>Socioeconomic context</li>
+                <li>Genetic profile (optional)</li>
             </ul>
         </div>
         
-        <div class="sidebar-info-card">
-            <h4>Enhance Your Assessment</h4>
-            <p>Upload genetic data on the Input Data page to receive more personalized recommendations tailored to your unique genetic profile.</p>
-        </div>
         """, unsafe_allow_html=True)
     
     # Footer

@@ -115,7 +115,9 @@ def create_glucose_log():
 
 def show_educational_resources():
     """Display educational resources about diabetes nutrition."""
-    st.header("Educational Resources")
+    st.markdown("<h4 style='font-size: 22px;'>Educational Resources</h4>", unsafe_allow_html=True)
+
+    
     
     # Create tabs
     tab_names = [
