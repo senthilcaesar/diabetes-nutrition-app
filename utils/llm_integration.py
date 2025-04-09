@@ -96,7 +96,8 @@ def generate_health_assessment(user_data, api_key):
             health assessment and provides endocrine consultations. You lead active clinical research programs in the fields of osteoporosis and obesity/metabolic diseases.
             Your task is to transform patient data into actionable insights by analyzing all available patient data, suggesting diagnoses and generating care plans.
             Please focus on diabetes management, identify potential risks and areas of concern, and recommend 
-            strategies for improvement. You must return your assessment in the exact structured format requested.
+            strategies for improvement. Please also consider how the current medications and other health conditions may affect the patient's diabetes management.
+            You must return your assessment in the exact structured format requested.
             """
             },
             {"role": "user", "content": prompt}

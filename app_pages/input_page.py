@@ -237,7 +237,7 @@ def generate_nutrition_plan_workflow():
             # Add button to navigate to View Plan page with centered layout
             col1, col2, col3 = st.columns([1, 3, 1])
             with col2:
-                if st.button("View My Nutrition Plan →", type="secondary", key="view_plan_button", 
+                if st.button("View My Nutrition Plan", type="secondary", key="view_plan_button", 
                             use_container_width=True, on_click=navigate_to_view_plan):
                     pass  # The on_click function handles the navigation
                 

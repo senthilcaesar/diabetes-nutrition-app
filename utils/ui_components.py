@@ -1001,8 +1001,15 @@ def apply_custom_css():
 }
 
 .stButton button[kind="secondary"]:hover {
-    background-color: #FFDAB9 !important; /* Light shade of green on hover */
+    background-color: #FFDAB9 !important; /* Light shade of orange (Peach Puff) on hover */
     /* Removed hover animation (box-shadow) */
+}
+
+/* Specific styling for the "View My Nutrition Plan" button */
+.stButton button[data-testid="view_plan_button"]:hover,
+.stButton button[key="view_plan_button"]:hover,
+button[data-testid="view_plan_button"]:hover {
+    background-color: #E8F5E9 !important; /* Light shade of green on hover */
 }
         
         /* Success message - lighter, airier */
@@ -1138,6 +1145,64 @@ def apply_custom_css():
             box-shadow: var(--neon-glow-cyan) !important;
         }
         
+        /* Extremely aggressive approach to hide increment/decrement buttons */
+        .stNumberInput button,
+        .stNumberInput [role="button"],
+        .stNumberInput [data-testid*="Increment"],
+        .stNumberInput [data-testid*="Decrement"],
+        .stNumberInput button[aria-label*="Increment"],
+        .stNumberInput button[aria-label*="Decrement"],
+        .stNumberInput div > button,
+        .stNumberInput > div > div > button,
+        .stNumberInput > div > div > div > button,
+        .stNumberInput button:first-child,
+        .stNumberInput button:last-child,
+        .stNumberInput button:nth-child(1),
+        .stNumberInput button:nth-child(2),
+        .stNumberInput button:nth-child(3),
+        .stNumberInput button:nth-child(n),
+        div[data-testid*="stNumberInput"] button,
+        div[data-baseweb*="input-container"] button,
+        div[data-baseweb*="numberinput"] button {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            width: 0 !important;
+            height: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            border: none !important;
+            position: absolute !important;
+            overflow: hidden !important;
+            clip: rect(0, 0, 0, 0) !important;
+            clip-path: inset(50%) !important;
+        }
+        
+        /* Force number input to take full width without buttons */
+        .stNumberInput input[type="number"],
+        div[data-testid*="stNumberInput"] input[type="number"] {
+            width: 100% !important;
+            min-width: 100% !important;
+            max-width: 100% !important;
+            padding-right: 8px !important;
+            padding-left: 8px !important;
+            box-sizing: border-box !important;
+        }
+        
+        /* Remove spinner buttons from number inputs for all browsers */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none !important;
+            appearance: none !important;
+            margin: 0 !important;
+            display: none !important;
+        }
+        
+        input[type="number"] {
+            -moz-appearance: textfield !important;
+            appearance: textfield !important;
+        }
+        
         /* Futuristic text areas with stronger selectors */
         .stTextArea > div > div,
         textarea {
@@ -1157,24 +1222,45 @@ def apply_custom_css():
             box-shadow: var(--neon-glow-cyan) !important;
         }
         
-        /* Futuristic multiselect with stronger selectors */
-        .stMultiSelect > div > div > div,
-        div[role="listbox"] {
-            border-radius: var(--border-radius) !important;
-            border: none !important;
-            border-color: transparent !important;
-            background-color: white !important;
-            transition: var(--transition) !important;
-            font-family: 'Share Tech Mono', monospace !important;
-            box-shadow: none !important;
-        }
-        
-        .stMultiSelect > div > div > div:focus-within,
-        div[role="listbox"]:focus-within {
-            border: none !important;
-            border-color: transparent !important;
-            box-shadow: var(--neon-glow-cyan) !important;
-        }
+/* Futuristic multiselect with stronger selectors */
+.stMultiSelect > div > div > div,
+div[role="listbox"] {
+    border-radius: var(--border-radius) !important;
+    border: 1px solid #e0e0e0 !important; /* Light border for better visibility */
+    background-color: white !important;
+    transition: var(--transition) !important;
+    font-family: 'Share Tech Mono', monospace !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important; /* Subtle shadow for depth */
+}
+
+.stMultiSelect > div > div > div:hover {
+    border-color: #b0b0b0 !important; /* Darker border on hover */
+}
+
+.stMultiSelect > div > div > div:focus-within,
+div[role="listbox"]:focus-within {
+    border: 1px solid var(--primary-color) !important;
+    box-shadow: var(--neon-glow-cyan) !important;
+}
+
+/* Improve multiselect dropdown styling */
+div[role="listbox"] {
+    border: 1px solid #e0e0e0 !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1) !important;
+    z-index: 1000 !important; /* Ensure dropdown appears above other elements */
+}
+
+/* Style for selected items in multiselect */
+[data-baseweb="tag"] {
+    background-color: #f0f0f0 !important;
+    border: 1px solid #d0d0d0 !important;
+    margin: 2px !important;
+    padding: 4px 8px !important;
+}
+
+[data-baseweb="tag"]:hover {
+    background-color: #e0e0e0 !important;
+}
         
         /* Force remove all borders from input elements */
         input, select, textarea, button {
@@ -2189,7 +2275,7 @@ def show_sidebar():
                 font-weight: 600;
                 text-transform: uppercase;
                 text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);">
-            ✨ NEURO NUTRITION ✨
+                NEURO NUTRITION
         </h1>
     </div>
     """, unsafe_allow_html=True)
@@ -2237,7 +2323,6 @@ def show_sidebar():
         <h3 style="color:#000000;">About This App</h3>
                             
         <div class="sidebar-info-card">
-            <h4>Personalized Based On Your Genes</h4>
             <p>Your nutrition plan is enhanced with insights from your genetic profile:</p>
             <ul>
                 <li>Carbohydrate metabolism</li>
@@ -2274,8 +2359,7 @@ def show_sidebar():
         st.sidebar.markdown("""
         <h3 style="color:#000000;">About This App</h3>
         <div class="sidebar-info-card">
-            <h4>Personalized Nutrition Guidance</h4>
-            <p>This application provides accessible, personalized nutrition guidance for individuals with diabetes, taking into account:</p>
+            <p>This application provides personalized nutrition guidance for individuals with diabetes, taking into account:</p>
             <ul>
                 <li>Health metrics and diabetes status</li>
                 <li>Socioeconomic context</li>
@@ -2441,7 +2525,7 @@ def input_health_data():
             st.session_state.medications = ""  # Default value
             
         medications = st.text_area(
-            "Current Medications (one per line)",
+            "Current Medications (separate by commas)",
             value=st.session_state.medications,
             key="medications_input"
         )
@@ -2451,7 +2535,7 @@ def input_health_data():
             st.session_state.other_conditions = ""  # Default value
             
         other_conditions = st.text_area(
-            "Other Health Conditions (one per line)",
+            "Other Health Conditions (separate by commas)",
             value=st.session_state.other_conditions,
             key="other_conditions_input"
         )
