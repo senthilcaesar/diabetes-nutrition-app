@@ -11,7 +11,7 @@ def show_header():
     # Check if genetic data is available to customize the header
     has_genetic_data = 'genetic_profile' in st.session_state and st.session_state.genetic_profile is not None
     
-    
+    # Hello
     # Add the particle animation background
     st.markdown('''
     <div class="neo-particles">
