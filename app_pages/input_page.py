@@ -252,111 +252,166 @@ def generate_nutrition_plan_workflow():
 def show_input_data_page():
     """Show the input data page with tabs for health, socioeconomic, and genetic information."""
     
-    # Create tabs
-    tab_titles = ["🩺 Health Information", "🏘️ Socioeconomic Information", "🧬 Genetic Information", "🚀 Generate Plan"]
-    tabs = st.tabs(tab_titles)
+    # Add custom CSS to style the active tab with a light blue background
+    st.markdown("""
+    <style>
+    /* Style for the active tab (primary button) */
+    .stButton button[kind="primary"] {
+        background-color: #87CEEB !important; /* Sky blue */
+        color: #333333 !important; /* Dark gray for text */
+        border-color: #000000 !important; /* Black border */
+        font-weight: 600 !important;
+    }
     
-    with tabs[0]:
-        st.markdown("")
+     /* Hover effect for inactive tabs */
+    .stButton button[kind="secondary"]:hover {
+        background-color: #E5E4E2 !important; /* Very light blue on hover */
+        color: #333333 !important; /* Dark gray for text */
+        border-color: #000000 !important; /* Black border */
+        font-weight: 600 !important;
+    }
+    
+    </style>
+    """, unsafe_allow_html=True)
+    
+    # Initialize current page in session state if it doesn't exist
+    if 'current_page' not in st.session_state:
+        st.session_state.current_page = "health"
+    
+    # Create a container for the tab-like navigation
+    tab_container = st.container()
+    
+    # Create a container for the content
+    content_container = st.container()
+    
+    # Display the tab-like navigation
+    with tab_container:
+        col1, col2, col3, col4 = st.columns(4)
         
-        if 'health_data' not in st.session_state:
-            st.session_state.health_data = {}
+        with col1:
+            health_tab_style = "primary" if st.session_state.current_page == "health" else "secondary"
+            if st.button("🩺 Health Information", key="health_tab", use_container_width=True, type=health_tab_style):
+                st.session_state.current_page = "health"
+                st.rerun()
         
-        st.session_state.health_data = input_health_data()
-        
-        col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
-            if st.button("💾 Save Health Information", key="save_health", use_container_width=True, 
-                        type="primary", help="Save your health information and proceed to the next tab"):
+            socio_tab_style = "primary" if st.session_state.current_page == "socio" else "secondary"
+            if st.button("🏘️ Socioeconomic Information", key="socio_tab", use_container_width=True, type=socio_tab_style):
+                st.session_state.current_page = "socio"
+                st.rerun()
+        
+        with col3:
+            genetic_tab_style = "primary" if st.session_state.current_page == "genetic" else "secondary"
+            if st.button("🧬 Genetic Information", key="genetic_tab", use_container_width=True, type=genetic_tab_style):
+                st.session_state.current_page = "genetic"
+                st.rerun()
+        
+        with col4:
+            generate_tab_style = "primary" if st.session_state.current_page == "generate" else "secondary"
+            if st.button("🚀 Generate Plan", key="generate_tab", use_container_width=True, type=generate_tab_style):
+                st.session_state.current_page = "generate"
+                st.rerun()
     
-                st.success("Health information saved! Please proceed to the Socioeconomic Information tab.")
-                st.markdown('</div>', unsafe_allow_html=True)
-        
-        st.markdown('</div>', unsafe_allow_html=True)
-    
-    with tabs[1]:
-        st.markdown("")
-        
-        if 'socio_data' not in st.session_state:
-            st.session_state.socio_data = {}
-        
-        st.session_state.socio_data = input_socioeconomic_data()
-        
-        col1, col2, col3 = st.columns([1, 2, 1])
-        with col2:
-            if st.button("💾 Save Socioeconomic Information", key="save_socio", use_container_width=True, 
-                        type="primary", help="Save your socioeconomic information and proceed to genetic information"):
-                st.success("Socioeconomic information saved! Please proceed to the Genetic Information tab.")
-                st.markdown('</div>', unsafe_allow_html=True)
-        
-        st.markdown('</div>', unsafe_allow_html=True)
-    
-    with tabs[2]:
-        st.markdown("")
-        
-        # Collect genetic data
-        input_genetic_data()
-        
-        col1, col2, col3 = st.columns([1, 2, 1])
-        with col2:
-            if st.button("💾 Save Genetic Information", key="save_genetic", use_container_width=True, 
-                        type="primary", help="Save your genetic information and proceed to generate plan"):
-                if 'genetic_profile' in st.session_state and st.session_state.genetic_profile is not None:
-                    st.success("Genetic information saved! Your nutrition plan will incorporate genetic insights. Please proceed to the Generate Plan tab.")
-                else:
-                    st.success("No genetic data provided. Your plan will be generated without genetic optimization. Please proceed to the Generate Plan tab.")
-                st.markdown('</div>', unsafe_allow_html=True)
-        
-        st.markdown('</div>', unsafe_allow_html=True)
-    
-    with tabs[3]:
-        st.markdown("")
-        
-        if 'health_data' in st.session_state and 'socio_data' in st.session_state:
-            # Check if genetic data is available
-            has_genetic_data = 'genetic_profile' in st.session_state and st.session_state.genetic_profile is not None
+    # Display the content based on the current page
+    with content_container:
+        if st.session_state.current_page == "health":
+            if 'health_data' not in st.session_state:
+                st.session_state.health_data = {}
             
-            if has_genetic_data:
-                st.info("You're almost there! Review your information before generating your genetically-optimized nutrition plan.")
-            else:
-                st.info("You're almost there! Review your information before generating your personalized nutrition plan.")
+            st.session_state.health_data = input_health_data()
             
-            
-            # Create a centered column layout with custom widths for buttons
-            col1, col2, col3 = st.columns([1, 3, 1])
+            col1, col2, col3 = st.columns([1, 2, 1])
             with col2:
-                # Create a two-column layout within the center column for the buttons
-                btn_col1, btn_col2 = st.columns(2)
+                # Create a custom styled button with light orange background
                 
-                with btn_col1:
-                    show_button = st.button("📋 Review Your Data", use_container_width=True, type="primary",
-                                          help="View the information you've provided")
+                if st.button("💾 Save Health Information", key="save_health", use_container_width=True, 
+                            type="secondary", help="Save your health information and proceed to the next tab"):
+                    # Switch to the next page
+                    st.session_state.current_page = "socio"
+                    st.success("Health information saved! Proceeding to the Socioeconomic Information tab.")
+                    st.rerun()
+        
+        elif st.session_state.current_page == "socio":
+            if 'socio_data' not in st.session_state:
+                st.session_state.socio_data = {}
+            
+            st.session_state.socio_data = input_socioeconomic_data()
+            
+            col1, col2, col3 = st.columns([1, 2, 1])
+            with col2:
+                # Create a custom styled button with light orange background
                 
-                with btn_col2:
-                    # Customize the button text based on genetic data availability
-                    button_text = "✨ Create My Nutrition Plan" if has_genetic_data else "✨ Create My Nutrition Plan"
-                    generate_button = st.button(button_text, key="generate_plan", 
-                                              use_container_width=True, type="primary",
-                                              help="Generate your personalized nutrition plan based on your information")
+                if st.button("💾 Save Socioeconomic Information", key="save_socio", use_container_width=True, 
+                            type="secondary", help="Save your socioeconomic information and proceed to genetic information"):
+                    # Switch to the next page
+                    st.session_state.current_page = "genetic"
+                    st.success("Socioeconomic information saved! Proceeding to the Genetic Information tab.")
+                    st.rerun()
+        
+        elif st.session_state.current_page == "genetic":
+            # Collect genetic data
+            input_genetic_data()
             
-            if show_button:
-                display_user_data_review()
+            col1, col2, col3 = st.columns([1, 2, 1])
+            with col2:
+                # Create a custom styled button with light orange background
+                
+                if st.button("💾 Save Genetic Information", key="save_genetic", use_container_width=True, 
+                            type="secondary", help="Save your genetic information and proceed to generate plan"):
+                    # Switch to the next page
+                    st.session_state.current_page = "generate"
+                    if 'genetic_profile' in st.session_state and st.session_state.genetic_profile is not None:
+                        st.success("Genetic information saved! Your nutrition plan will incorporate genetic insights. Proceeding to the Generate Plan tab.")
+                    else:
+                        st.success("No genetic data provided. Your plan will be generated without genetic optimization. Proceeding to the Generate Plan tab.")
+                    st.rerun()
+        
+        elif st.session_state.current_page == "generate":
+            if 'health_data' in st.session_state and 'socio_data' in st.session_state:
+                # Check if genetic data is available
+                has_genetic_data = 'genetic_profile' in st.session_state and st.session_state.genetic_profile is not None
+                
+                if has_genetic_data:
+                    st.info("You're almost there! Review your information before generating your genetically-optimized nutrition plan.")
+                else:
+                    st.info("You're almost there! Review your information before generating your personalized nutrition plan.")
+                
+                
+                # Create a centered column layout with custom widths for buttons
+                col1, col2, col3 = st.columns([1, 3, 1])
+                with col2:
+                    # Create a two-column layout within the center column for the buttons
+                    btn_col1, btn_col2 = st.columns(2)
+                    
+                    with btn_col1:
+                        show_button = st.button("📋 Review Your Data", use_container_width=True, type="secondary",
+                                              help="View the information you've provided")
+                    
+                    with btn_col2:
+                        # Customize the button text based on genetic data availability
+                        button_text = "✨ Create My Nutrition Plan" if has_genetic_data else "✨ Create My Nutrition Plan"
+                        generate_button = st.button(button_text, key="generate_plan", 
+                                                  use_container_width=True, type="secondary",
+                                                  help="Generate your personalized nutrition plan based on your information")
+                
+                if show_button:
+                    display_user_data_review()
+                
+                if generate_button:
+                    generate_nutrition_plan_workflow()
             
-            if generate_button:
-                generate_nutrition_plan_workflow()
-        else:
-            # Create a more visually appealing warning
-            st.markdown("""
-            <div style="
-                background-color: #FFF3E0; 
-                padding: 15px; 
-                border-left: 5px solid #FF9800;
-                border-radius: 4px;
-                margin: 10px 0;
-            ">
-                <h4 style="color: #E65100; margin-top: 0;">Information Needed</h4>
-                <p>Please complete both the Health Information and Socioeconomic Information tabs before generating a plan.</p>
-                <p>Genetic information is optional but recommended for a more personalized plan.</p>
-                <p>Click on the tabs above to enter your information.</p>
-            </div>
-            """, unsafe_allow_html=True)
+            else:
+                # Create a more visually appealing warning
+                st.markdown("""
+                <div style="
+                    background-color: #FFF3E0; 
+                    padding: 15px; 
+                    border-left: 5px solid #FF9800;
+                    border-radius: 4px;
+                    margin: 10px 0;
+                ">
+                    <h4 style="color: #E65100; margin-top: 0;">Information Needed</h4>
+                    <p>Please complete both the Health Information and Socioeconomic Information tabs before generating a plan.</p>
+                    <p>Genetic information is optional but recommended for a more personalized plan.</p>
+                </div>
+                """, unsafe_allow_html=True)

@@ -16,8 +16,29 @@ def show_nutrition_plan():
     if 'nutrition_plan' not in st.session_state:
         st.warning("No nutrition plan has been generated yet. Please go to the Input Data page first.")
         
+        st.markdown("""
+        <style>
+        /* Style for the active tab (primary button) */
+        .stButton button[kind="primary"] {
+            background-color: #87CEEB !important; /* Sky blue */
+            color: #333333 !important; /* Dark gray for text */
+            border-color: #000000 !important; /* Black border */
+            font-weight: 600 !important;
+        }
+        
+        /* Hover effect for inactive tabs */
+        .stButton button[kind="secondary"]:hover {
+            background-color: #E5E4E2 !important; /* Very light blue on hover */
+            color: #333333 !important; /* Dark gray for text */
+            border-color: #000000 !important; /* Black border */
+            font-weight: 600 !important;
+        }
+        
+        </style>
+""", unsafe_allow_html=True)
+        
         # Add helpful button to navigate to Input Data
-        if st.button("Go to Input Data", type="primary", use_container_width=False):
+        if st.button("Go to Input Data", type="secondary", use_container_width=False):
             # Set a navigation flag instead of directly changing radio value
             st.session_state.nav_to_input = True
             st.rerun()

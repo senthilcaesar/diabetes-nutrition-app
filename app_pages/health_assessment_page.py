@@ -338,6 +338,21 @@ def show_health_assessment():
         if data_changed:
             st.warning("⚠️ Your health data has changed since the last assessment. Please run the health assessment again for updated results.")
         
+        st.markdown("""
+        <style>
+
+        
+        /* Hover effect for inactive tabs */
+        .stButton button[kind="secondary"]:hover {
+            background-color: #E5E4E2 !important; /* Very light blue on hover */
+            color: #333333 !important; /* Dark gray for text */
+            border-color: #000000 !important; /* Black border */
+            font-weight: 600 !important;
+        }
+        
+        </style>
+""", unsafe_allow_html=True)
+            
         # Determine appropriate button text based on context
         if data_changed:
             button_text = "Re-run Assessment"
@@ -347,7 +362,7 @@ def show_health_assessment():
             button_text = "Run Health Assessment Again" if not has_genetic_data else "Run Genetic Health Assessment Again"
         
         # Single button for all assessment generation cases
-        run_assessment = st.button(button_text, type="primary")
+        run_assessment = st.button(button_text, type="secondary")
         
         if run_assessment:
             # Display loading animation while generating assessment
@@ -401,7 +416,7 @@ def show_health_assessment():
             # Add button to view genetic insights
             view_insights = st.button(
                 "View Genetic Insights", 
-                type="primary",
+                type="secondary",
                 key="view_genetic_insights_button",
                 help="Click to view detailed insights based on your genetic profile"
             )

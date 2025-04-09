@@ -8,7 +8,7 @@ import json
 import streamlit as st
 from typing import Dict, List, Optional, Any
 
-GPT_MODEL = "gpt-4.5-preview-2025-02-27"
+GPT_MODEL = "gpt-4o-2024-11-20"
 
 def format_structured_genetic_nutrition_plan(structured_data):
     """

@@ -30,7 +30,6 @@ def show_header():
     </div>
     ''', unsafe_allow_html=True)
     
-    st.markdown('</div>', unsafe_allow_html=True)
 
 def apply_custom_css():
     """
@@ -42,14 +41,13 @@ def apply_custom_css():
         /* Font styles and base elements */
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap');
         
+                
         :root {
             /* Futuristic neon color palette */
             --primary-color: #00003c;  /* Dark navy blue */
             --primary-light: #0000a0;  /* Lighter navy blue */
             --primary-dark: #000020;  /* Darker navy blue */
-            --secondary-color: #87CEEB;  /* Neon magenta */
-            --secondary-light: #87CEEB;
-            --secondary-dark: #87CEEB;
+
             --accent-color: #7B42F6;  /* Neon purple */
             --warning-color: #FFD600;  /* Neon yellow */
             --success-color: #00FF94;  /* Neon green */
@@ -63,7 +61,6 @@ def apply_custom_css():
             
             /* Background colors */
             --bg-primary: #FFFFFF;  /* White background */
-            --bg-secondary: #F0F0F0;  /* Light gray */
             --card-bg: #162B3D;  /* Dark blue with slight transparency */
             
             /* UI elements */
@@ -208,19 +205,8 @@ def apply_custom_css():
             );
         }
         
-        /* Futuristic header with space-inspired background */
-        .neo-header {
-            background-color: rgba(10, 25, 41, 0.8);
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            position: relative;
-            overflow: hidden;
-            box-shadow: var(--box-shadow-lg);
-            border: 1px solid rgba(0, 240, 255, 0.2);
-            border-bottom: 3px solid var(--primary-color);
-            border-radius: var(--border-radius-lg);
-        }
-        
+
+                
         /* Particle animation background */
         .neo-particles {
             position: absolute;
@@ -464,12 +450,7 @@ def apply_custom_css():
             justify-content: flex-start;
         }
         
-        /* Override any default button styling */
-        button[kind="primary"] {
-            background-color: white !important;
-            color: #00003c !important;
-            border-color: #5F9EA0 !important;
-        }
+  
         
         .stTabs [data-baseweb="tab"] {
             padding: 16px 30px 16px 16px !important; /* Consistent padding for all tabs */
@@ -505,14 +486,7 @@ def apply_custom_css():
             opacity: 0;
             transition: opacity 0.3s ease;
         }
-        
-        .stTabs [data-baseweb="tab"]:not([aria-selected="true"]):hover {
-            border-color: var(--primary-color) !important;
-            box-shadow: var(--neon-glow-cyan) !important;
-            background-color: #F0F8FF !important; /* Light shade of blue (Alice Blue) on hover */
-            color: var(--primary-color) !important;
-            transform: none !important; /* Remove transform to prevent layout shifts */
-        }
+
         
         .stTabs [data-baseweb="tab"]:hover::before {
             opacity: 1;
@@ -539,17 +513,7 @@ def apply_custom_css():
             visibility: hidden !important;
         }
         
-        /* Override any default styling for selected tabs */
-        .stTabs [data-baseweb="tab-list"] [data-baseweb="tab"][aria-selected="true"],
-        .stTabs [data-baseweb="tab-list"] [data-baseweb="tab"][aria-selected="true"]:hover,
-        .stTabs [data-baseweb="tab-list"] [data-baseweb="tab"][aria-selected="true"]:focus {
-            border-bottom: none !important;
-            border-bottom-color: transparent !important;
-            border-top: 1px solid var(--primary-color) !important;
-            border-left: 1px solid var(--primary-color) !important;
-            border-right: 1px solid var(--primary-color) !important;
-            box-shadow: var(--neon-glow-cyan) !important;
-        }
+   
         
         /* Remove any hover effects that might show red lines */
         .stTabs [data-baseweb="tab-list"] [data-baseweb="tab"][aria-selected="true"]:hover::after,
@@ -974,43 +938,21 @@ def apply_custom_css():
             100% { left: 200%; }
         }
         
-        
-        /* Primary button - neon cyan */
-        .stButton button[kind="primary"] {
+                .stButton button[kind="primary"] {
             background-color: white !important; /* White background by default */
             border: 1px solid var(--primary-color) !important;
             color: var(--primary-color) !important;
         }
+
         
-        .stButton button[kind="primary"]:hover {
-            background-color: #FFDAB9 !important; /* Light shade of orange (Peach Puff) on hover */
-            box-shadow: var(--neon-glow-cyan) !important;
-        }
-        
-        .stButton button[kind="primary"].selected {
-            background-color: #87CEEB !important; /* Sky blue when selected */
+        /* Primary button - neon cyan */
+        .stButton button[kind="secondary"] {
+            background-color: white !important; /* White background by default */
+            border: 1px solid var(--primary-color) !important;
             color: var(--primary-color) !important;
-            border-color: var(--primary-color) !important;
         }
-        
-/* Secondary button - neon magenta */
-.stButton button[kind="secondary"] {
-    background-color: white !important;
-    border: 1px solid #000000 !important; /* Changed border color to black */
-    color: #000000 !important; /* Changed text color to black */
-}
 
-.stButton button[kind="secondary"]:hover {
-    background-color: #FFDAB9 !important; /* Light shade of orange (Peach Puff) on hover */
-    /* Removed hover animation (box-shadow) */
-}
-
-/* Specific styling for the "View My Nutrition Plan" button */
-.stButton button[data-testid="view_plan_button"]:hover,
-.stButton button[key="view_plan_button"]:hover,
-button[data-testid="view_plan_button"]:hover {
-    background-color: #E8F5E9 !important; /* Light shade of green on hover */
-}
+  
         
         /* Success message - lighter, airier */
         .success-message {
@@ -1863,10 +1805,7 @@ div[role="listbox"] {
             box-shadow: var(--box-shadow);
         }
         
-/* Removed hover animation */
-.sidebar-info-card:hover {
-    /* No hover effects */
-}
+
         
         .sidebar-info-card h4 {
             font-family: 'Orbitron', sans-serif;
@@ -2036,9 +1975,7 @@ div[role="listbox"] {
             --primary-color: #eeeee4;  /* Soft sky blue */
             --primary-light: #eeeee4;
             --primary-dark: #eeeee4;
-            --secondary-color: #eeeee4;  /* Soft mint green */
-            --secondary-light: #eeeee4;
-            --secondary-dark: #eeeee4;
+  
             --warning-color: #eeeee4;  /* Soft amber */
             --success-color: #eeeee4;  /* Soft green */
             --info-color: #eeeee4;  /* Soft blue */
@@ -2046,12 +1983,9 @@ div[role="listbox"] {
             
             /* Text colors - lighter and softer */
             --text-color: #eeeee4;  /* Softer blue-grey */
-            --text-muted: #eeeee4;  /* Light blue-grey */
-            --text-light: #eeeee4;  /* Very light blue-grey */
+
             
             /* Background colors - even lighter */
-            --bg-primary: #eeeee4;  /* Almost white with slight blue tint */
-            --bg-secondary: #eeeee4;  /* Very light blue tint */
             --card-bg: #eeeee4;  /* Pure white */
             
             /* UI elements - more rounded */
@@ -2090,16 +2024,12 @@ div[role="listbox"] {
         @media (prefers-color-scheme: dark) {
             :root {
                 /* Softer dark theme color palette */
-                --primary-color: #eeeee4;  /* Lighter blue */
                 --primary-light: #eeeee4;
                 --primary-dark: #eeeee4;
-                --secondary-color: #eeeee4;  /* Lighter green */
-                --secondary-light: #eeeee4;
-                --secondary-dark: #eeeee4;
+
                 --warning-color: #eeeee4;  /* Lighter amber */
                 --success-color: #eeeee4;  /* Lighter green */
-                --info-color: #eeeee4;  /* Lighter blue */
-                --error-color: #eeeee4;  /* Lighter red */
+  
                 
                 /* Text colors - softer for dark mode */
                 --text-color: #eeeee4;
@@ -2108,7 +2038,6 @@ div[role="listbox"] {
                 
                 /* Background colors - softer dark */
                 --bg-primary: #eeeee4;  /* Softer blue-grey */
-                --bg-secondary: #eeeee4;  /* Medium blue-grey */
                 --card-bg: #eeeee4;
                 
                 /* Sidebar specific - softer dark */
@@ -2132,7 +2061,6 @@ div[role="listbox"] {
                 --box-shadow: 0 4px 10px -1px rgba(0, 0, 0, 0.2);
                 --box-shadow-md: 0 8px 15px -3px rgba(0, 0, 0, 0.25);
                 --box-shadow-lg: 0 12px 25px -5px rgba(0, 0, 0, 0.3);
-                --box-shadow-hover: 0 8px 20px -3px rgba(0, 0, 0, 0.3);
             }
             
             /* Apply dark mode styles to main elements */
@@ -2158,12 +2086,7 @@ div[role="listbox"] {
                 border: 1px solid rgba(75, 85, 99, 0.4);
             }
             
-            .stTabs [data-baseweb="tab"]:hover {
-                background-color: white;
-                border-color: var(--primary-color);
-                box-shadow: 0 0 10px rgba(200, 200, 200, 0.7);
-                color: var(--primary-color);
-            }
+            
             
             .stTabs [aria-selected="true"] {
                 background-color: #87CEEB !important; /* Sky blue for selected tab */
@@ -2386,161 +2309,217 @@ def input_health_data():
     Returns:
         dict: Dictionary containing user health information
     """
+    # Add custom CSS to match the example image
+    st.markdown("""
+    <style>
+    /* Style for the form container */
+    .stApp {
+        background-color: #f8f9fa;
+    }
+    
+    /* Style for input fields */
+    .stNumberInput > div, 
+    .stSelectbox > div,
+    .stMultiSelect > div,
+    .stTextArea > div {
+        background-color: #f8f9fa !important;
+        border-radius: 10px !important;
+    }
+    
+    /* Style for input fields */
+    .stNumberInput input,
+    .stSelectbox input,
+    .stMultiSelect input,
+    .stTextArea textarea {
+        background-color: white !important;
+        border-radius: 10px !important;
+        border: none !important;
+        padding: 10px !important;
+    }
+    
+    /* Style for the metric (BMI) */
+    [data-testid="stMetric"] {
+        background-color: white !important;
+        border-radius: 10px !important;
+        padding: 10px !important;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05) !important;
+    }
+    
+    /* Style for labels */
+    .stNumberInput label, 
+    .stSelectbox label,
+    .stMultiSelect label,
+    .stTextArea label {
+        font-weight: 500 !important;
+        color: #333 !important;
+        font-size: 0.9rem !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
     # Initialize health_data in session state if it doesn't exist
     previous_health_data = st.session_state.health_data.copy() if 'health_data' in st.session_state else {}
 
     if 'health_data' not in st.session_state:
         st.session_state.health_data = {}
     
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        # Use session state for each input to maintain values across reruns
-        if 'age' not in st.session_state:
-            st.session_state.age = 45  # Default value
+    # Create a container with a light background and rounded corners
+    with st.container():
         
-        age = st.number_input(
-            "Age", 
-            min_value=18, 
-            max_value=120, 
-            value=st.session_state.age,
-            key="age_input"
-        )
-        st.session_state.age = age
+        col1, col2 = st.columns(2)
         
-        if 'gender' not in st.session_state:
-            st.session_state.gender = "Male"  # Default value
+        with col1:
+            # Use session state for each input to maintain values across reruns
+            if 'age' not in st.session_state:
+                st.session_state.age = 45  # Default value
             
-        gender = st.selectbox(
-            "Gender", 
-            ["Male", "Female", "Other"],
-            index=["Male", "Female", "Other"].index(st.session_state.gender),
-            key="gender_input"
-        )
-        st.session_state.gender = gender
-        
-        if 'weight' not in st.session_state:
-            st.session_state.weight = 70.0  # Default value
+            age = st.number_input(
+                "Age", 
+                min_value=18, 
+                max_value=120, 
+                value=st.session_state.age,
+                key="age_input"
+            )
+            st.session_state.age = age
             
-        weight = st.number_input(
-            "Weight (kg)", 
-            min_value=30.0, 
-            max_value=200.0, 
-            value=st.session_state.weight, 
-            step=0.1,
-            key="weight_input"
-        )
-        st.session_state.weight = weight
-        
-        if 'height' not in st.session_state:
-            st.session_state.height = 170.0  # Default value
+            if 'gender' not in st.session_state:
+                st.session_state.gender = "Male"  # Default value
+                
+            gender = st.selectbox(
+                "Gender", 
+                ["Male", "Female", "Other"],
+                index=["Male", "Female", "Other"].index(st.session_state.gender),
+                key="gender_input"
+            )
+            st.session_state.gender = gender
             
-        height = st.number_input(
-            "Height (cm)", 
-            min_value=100.0, 
-            max_value=220.0, 
-            value=st.session_state.height, 
-            step=0.1,
-            key="height_input"
-        )
-        st.session_state.height = height
-        
-        # Calculate BMI
-        height_m = height / 100
-        bmi = round(weight / (height_m ** 2), 1)
-        st.metric("BMI", bmi, help="Body Mass Index")
-        
-        if 'activity_level' not in st.session_state:
-            st.session_state.activity_level = "Moderately Active"  # Default value
+            if 'weight' not in st.session_state:
+                st.session_state.weight = 70.0  # Default value
+                
+            weight = st.number_input(
+                "Weight (kg)", 
+                min_value=30.0, 
+                max_value=200.0, 
+                value=st.session_state.weight, 
+                step=0.1,
+                key="weight_input"
+            )
+            st.session_state.weight = weight
             
-        activity_level = st.selectbox(
-            "Activity Level",
-            options=["Sedentary", "Lightly Active", "Moderately Active", "Very Active", "Extra Active"],
-            index=["Sedentary", "Lightly Active", "Moderately Active", "Very Active", "Extra Active"].index(st.session_state.activity_level),
-            key="activity_level_input"
-        )
-        st.session_state.activity_level = activity_level
-    
-    with col2:
-        if 'diabetes_type' not in st.session_state:
-            st.session_state.diabetes_type = "Type 2"  # Default value
+            if 'height' not in st.session_state:
+                st.session_state.height = 170.0  # Default value
+                
+            height = st.number_input(
+                "Height (cm)", 
+                min_value=100.0, 
+                max_value=220.0, 
+                value=st.session_state.height, 
+                step=0.1,
+                key="height_input"
+            )
+            st.session_state.height = height
             
-        diabetes_type = st.selectbox(
-            "Diabetes Type", 
-            ["Type 1", "Type 2", "Gestational", "Prediabetes"],
-            index=["Type 1", "Type 2", "Gestational", "Prediabetes"].index(st.session_state.diabetes_type),
-            key="diabetes_type_input"
-        )
-        st.session_state.diabetes_type = diabetes_type
+            # Calculate BMI
+            height_m = height / 100
+            bmi = round(weight / (height_m ** 2), 1)
+            st.metric("BMI", bmi, help="Body Mass Index")
+            
+            if 'activity_level' not in st.session_state:
+                st.session_state.activity_level = "Moderately Active"  # Default value
+                
+            activity_level = st.selectbox(
+                "Activity Level",
+                options=["Sedentary", "Lightly Active", "Moderately Active", "Very Active", "Extra Active"],
+                index=["Sedentary", "Lightly Active", "Moderately Active", "Very Active", "Extra Active"].index(st.session_state.activity_level),
+                key="activity_level_input"
+            )
+            st.session_state.activity_level = activity_level
         
-        if 'fasting_glucose' not in st.session_state:
-            st.session_state.fasting_glucose = 120  # Default value
+        with col2:
+            if 'diabetes_type' not in st.session_state:
+                st.session_state.diabetes_type = "Type 2"  # Default value
+                
+            diabetes_type = st.selectbox(
+                "Diabetes Type", 
+                ["Type 1", "Type 2", "Gestational", "Prediabetes"],
+                index=["Type 1", "Type 2", "Gestational", "Prediabetes"].index(st.session_state.diabetes_type),
+                key="diabetes_type_input"
+            )
+            st.session_state.diabetes_type = diabetes_type
             
-        fasting_glucose = st.number_input(
-            "Fasting Blood Glucose (mg/dL)", 
-            min_value=70, 
-            max_value=300, 
-            value=st.session_state.fasting_glucose,
-            key="fasting_glucose_input"
-        )
-        st.session_state.fasting_glucose = fasting_glucose
-        
-        if 'postmeal_glucose' not in st.session_state:
-            st.session_state.postmeal_glucose = 160  # Default value
+            if 'fasting_glucose' not in st.session_state:
+                st.session_state.fasting_glucose = 120  # Default value
+                
+            fasting_glucose = st.number_input(
+                "Fasting Blood Glucose (mg/dL)", 
+                min_value=70, 
+                max_value=300, 
+                value=st.session_state.fasting_glucose,
+                key="fasting_glucose_input"
+            )
+            st.session_state.fasting_glucose = fasting_glucose
             
-        postmeal_glucose = st.number_input(
-            "Post-meal Blood Glucose (mg/dL)", 
-            min_value=70, 
-            max_value=400, 
-            value=st.session_state.postmeal_glucose,
-            key="postmeal_glucose_input"
-        )
-        st.session_state.postmeal_glucose = postmeal_glucose
-        
-        if 'hba1c' not in st.session_state:
-            st.session_state.hba1c = 7.0  # Default value
+            if 'postmeal_glucose' not in st.session_state:
+                st.session_state.postmeal_glucose = 160  # Default value
+                
+            postmeal_glucose = st.number_input(
+                "Post-meal Blood Glucose (mg/dL)", 
+                min_value=70, 
+                max_value=400, 
+                value=st.session_state.postmeal_glucose,
+                key="postmeal_glucose_input"
+            )
+            st.session_state.postmeal_glucose = postmeal_glucose
             
-        hba1c = st.number_input(
-            "HbA1c (%)", 
-            min_value=4.0, 
-            max_value=14.0, 
-            value=st.session_state.hba1c, 
-            step=0.1,
-            key="hba1c_input"
-        )
-        st.session_state.hba1c = hba1c
-        
-        if 'dietary_restrictions' not in st.session_state:
-            st.session_state.dietary_restrictions = []  # Default value
+            if 'hba1c' not in st.session_state:
+                st.session_state.hba1c = 7.0  # Default value
+                
+            hba1c = st.number_input(
+                "HbA1c (%)", 
+                min_value=4.0, 
+                max_value=14.0, 
+                value=st.session_state.hba1c, 
+                step=0.1,
+                key="hba1c_input"
+            )
+            st.session_state.hba1c = hba1c
             
-        dietary_restrictions = st.multiselect(
-            "Dietary Restrictions",
-            ["None", "Vegetarian", "Vegan", "Gluten-Free", "Lactose Intolerant", "Nut Allergies", "Shellfish Allergies"],
-            default=st.session_state.dietary_restrictions,
-            key="dietary_restrictions_input"
-        )
-        st.session_state.dietary_restrictions = dietary_restrictions
-        
-        if 'medications' not in st.session_state:
-            st.session_state.medications = ""  # Default value
+            if 'dietary_restrictions' not in st.session_state:
+                st.session_state.dietary_restrictions = []  # Default value
+                
+            dietary_restrictions = st.multiselect(
+                "Dietary Restrictions",
+                ["None", "Vegetarian", "Vegan", "Gluten-Free", "Lactose Intolerant", "Nut Allergies", "Shellfish Allergies"],
+                default=st.session_state.dietary_restrictions,
+                key="dietary_restrictions_input"
+            )
+            st.session_state.dietary_restrictions = dietary_restrictions
             
-        medications = st.text_area(
-            "Current Medications (separate by commas)",
-            value=st.session_state.medications,
-            key="medications_input"
-        )
-        st.session_state.medications = medications
-        
-        if 'other_conditions' not in st.session_state:
-            st.session_state.other_conditions = ""  # Default value
+            if 'medications' not in st.session_state:
+                st.session_state.medications = ""  # Default value
+                
+            medications = st.text_area(
+                "Current Medications (separate by commas)",
+                value=st.session_state.medications,
+                key="medications_input",
+                height=100
+            )
+            st.session_state.medications = medications
             
-        other_conditions = st.text_area(
-            "Other Health Conditions (separate by commas)",
-            value=st.session_state.other_conditions,
-            key="other_conditions_input"
-        )
-        st.session_state.other_conditions = other_conditions
+            if 'other_conditions' not in st.session_state:
+                st.session_state.other_conditions = ""  # Default value
+                
+            other_conditions = st.text_area(
+                "Other Health Conditions (separate by commas)",
+                value=st.session_state.other_conditions,
+                key="other_conditions_input",
+                height=100
+            )
+            st.session_state.other_conditions = other_conditions
 
+        # Close the container div
+        st.markdown("</div>", unsafe_allow_html=True)
+        
         if 'health_data' in st.session_state and previous_health_data != st.session_state.health_data:
             # Clear the last_assessed_data to indicate assessment is no longer current
             if 'last_assessed_data' in st.session_state:
@@ -2573,11 +2552,58 @@ def input_socioeconomic_data():
     Returns:
         dict: Dictionary containing user socioeconomic information
     """
+    # Add custom CSS to match the example image
+    st.markdown("""
+    <style>
+    /* Style for the form container */
+    .stApp {
+        background-color: #f8f9fa;
+    }
+    
+    /* Style for input fields */
+    .stNumberInput > div, 
+    .stSelectbox > div,
+    .stMultiSelect > div,
+    .stTextArea > div,
+    .stTextInput > div {
+        background-color: #f8f9fa !important;
+        border-radius: 10px !important;
+    }
+    
+    /* Style for input fields */
+    .stNumberInput input,
+    .stSelectbox input,
+    .stMultiSelect input,
+    .stTextArea textarea,
+    .stTextInput input {
+        background-color: white !important;
+        border-radius: 10px !important;
+        border: none !important;
+        padding: 10px !important;
+    }
+    
+    
+    /* Style for labels */
+    .stNumberInput label, 
+    .stSelectbox label,
+    .stMultiSelect label,
+    .stTextArea label,
+    .stTextInput label {
+        font-weight: 500 !important;
+        color: #333 !important;
+        font-size: 0.9rem !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
     # Initialize socio_data in session state if it doesn't exist
     if 'socio_data' not in st.session_state:
         st.session_state.socio_data = {}
     
-    col1, col2 = st.columns(2)
+    # Create a container with a light background and rounded corners
+    with st.container():
+        
+        col1, col2 = st.columns(2)
     
     with col1:
         # Location
