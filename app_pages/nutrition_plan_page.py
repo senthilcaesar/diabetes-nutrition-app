@@ -69,47 +69,18 @@ def show_nutrition_plan():
     # Display genetic badge at the top if genetic data is used
     # Overview tab content
     with overview_tab:
-
-        st.markdown("""
-            <style>
-            /* Style for the active tab (primary button) */
-            .stButton button[kind="primary"] {
-                background-color: #87CEEB !important; /* Sky blue */
-                color: #333333 !important; /* Dark gray for text */
-                border-color: #000000 !important; /* Black border */
-                font-weight: 600 !important;
-            }
-            
-            /* Hover effect for inactive tabs */
-            .stButton button[kind="secondary"]:hover {
-                background-color: #E5E4E2 !important; /* Very light blue on hover */
-                color: #333333 !important; /* Dark gray for text */
-                border-color: #000000 !important; /* Black border */
-                font-weight: 600 !important;
-            }
-            
-            </style>
-    """, unsafe_allow_html=True)
                 
         # Add download button at the top of the overview tab
-        if st.button("📥 Download Nutrition Plan", type="secondary", use_container_width=False):
-            # Generate the HTML content
-            html_content = create_nutrition_plan_html()
-            if html_content:
-                # Create a temporary HTML file
-                import tempfile
-                import os
-                import webbrowser
-                
-                with tempfile.NamedTemporaryFile(delete=False, suffix='.html') as f:
-                    f.write(html_content.encode('utf-8'))
-                    temp_file_path = f.name
-                
-                # Open the file in the default browser
-                webbrowser.open('file://' + temp_file_path, new=2)
-                
-                # Show success message
-                st.success("Nutrition plan opened in your browser. Use your browser's print function (Ctrl+P or Cmd+P) to save as PDF.")
+        html_content = create_nutrition_plan_html()
+        if html_content:
+            st.download_button(
+                label="📥 Download Nutrition Plan",
+                data=html_content,
+                file_name="diabetes_nutrition_plan.html",
+                mime="text/html",
+                key="download_nutrition_plan",
+                help="Download your nutrition plan as an HTML file that you can open in any browser and print to PDF"
+            )
         
         # Display genetic badge at the top if genetic data is used
             
