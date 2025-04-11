@@ -1058,6 +1058,7 @@ def apply_custom_css():
             transition: var(--transition) !important;
             font-family: 'Share Tech Mono', monospace !important;
             box-shadow: none !important;
+            caret-color: transparent !important; /* Hide the blinking cursor */
         }
         
         .stSelectbox > div > div > div:focus-within,
@@ -1173,6 +1174,7 @@ div[role="listbox"] {
     transition: var(--transition) !important;
     font-family: 'Share Tech Mono', monospace !important;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important; /* Subtle shadow for depth */
+    caret-color: transparent !important; /* Hide the blinking cursor */
 }
 
 .stMultiSelect > div > div > div:hover {
@@ -2219,7 +2221,7 @@ def show_sidebar():
     nav_items = [
         {"id": "Input Data", "icon": "📊", "text": "Input Data"},
         {"id": "Nutrition Plan", "icon": "🍽️", "text": "Nutrition Plan"},
-        {"id": "Health Assessment", "icon": "💉", "text": "Health Assessment"},
+        {"id": "Health Assessment", "icon": "🫀", "text": "Health Assessment"},
         {"id": "Educational Resources", "icon": "📚", "text": "Resources"}
     ]
     

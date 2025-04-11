@@ -96,7 +96,7 @@ def input_genetic_data() -> Dict:
         # Create the three options
         create_option("None", "None", col1)
         create_option("Upload genetic data file", "Upload genetic data file", col2)
-        create_option("Use sample data for demonstration", "Use sample data for demonstration", col3)
+        create_option("Use sample data", "Use sample data", col3)
         
         # Close the genetic-options-container div
         st.markdown('</div>', unsafe_allow_html=True)
@@ -205,7 +205,7 @@ def input_genetic_data() -> Dict:
                         except:
                             pass
         
-        elif genetic_data_option == "Use sample data for demonstration":
+        elif genetic_data_option == "Use sample data":
             # Use sample data for demonstration
             with st.spinner("Generating sample genetic profile..."):
                 # Define the sample file path

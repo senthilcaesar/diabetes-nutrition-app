@@ -143,7 +143,7 @@ def display_user_data_review():
                 st.markdown(f"**Inflammatory Response:** {genetic_profile.get('inflammation_response', {}).get('inflammatory_response', 'Normal').title()}")
                 st.markdown(f"**Caffeine Metabolism:** {genetic_profile.get('caffeine_metabolism', {}).get('caffeine_metabolism', 'Normal').title()}")
         else:
-            st.info("No genetic data has been provided. To add genetic insights to your nutrition plan, please select 'Upload genetic data file' or 'Use sample data for demonstration' on the Genetic Information tab.")
+            st.info("No genetic data has been provided. To add genetic insights to your nutrition plan, please select 'Upload genetic data file' or 'Use sample data' on the Genetic Information tab.")
 
 def generate_nutrition_plan_workflow():
     """Handle the workflow for generating the nutrition plan."""
@@ -290,25 +290,25 @@ def show_input_data_page():
         
         with col1:
             health_tab_style = "primary" if st.session_state.current_page == "health" else "secondary"
-            if st.button("🩺 Health Information", key="health_tab", use_container_width=True, type=health_tab_style):
+            if st.button("🩺 Health Data", key="health_tab", use_container_width=True, type=health_tab_style):
                 st.session_state.current_page = "health"
                 st.rerun()
         
         with col2:
             socio_tab_style = "primary" if st.session_state.current_page == "socio" else "secondary"
-            if st.button("🏘️ Socioeconomic Information", key="socio_tab", use_container_width=True, type=socio_tab_style):
+            if st.button("🏘️ Socio-Data", key="socio_tab", use_container_width=True, type=socio_tab_style):
                 st.session_state.current_page = "socio"
                 st.rerun()
         
         with col3:
             genetic_tab_style = "primary" if st.session_state.current_page == "genetic" else "secondary"
-            if st.button("🧬 Genetic Information", key="genetic_tab", use_container_width=True, type=genetic_tab_style):
+            if st.button("🧬 Genetic Data", key="genetic_tab", use_container_width=True, type=genetic_tab_style):
                 st.session_state.current_page = "genetic"
                 st.rerun()
         
         with col4:
             generate_tab_style = "primary" if st.session_state.current_page == "generate" else "secondary"
-            if st.button("🚀 Generate Plan", key="generate_tab", use_container_width=True, type=generate_tab_style):
+            if st.button("📝 Generate Plan", key="generate_tab", use_container_width=True, type=generate_tab_style):
                 st.session_state.current_page = "generate"
                 st.rerun()
     
