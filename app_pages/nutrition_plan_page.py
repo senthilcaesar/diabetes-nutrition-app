@@ -4,11 +4,7 @@ Displays the generated nutrition plan, genetic optimization, and visual guidance
 """
 
 import streamlit as st
-import base64
-import io
 import re
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_pdf import PdfPages
 from datetime import datetime
 from utils.visualization import (
     create_enhanced_portion_guide,
@@ -80,7 +76,7 @@ def show_nutrition_plan():
                 mime="text/html",
                 key="download_nutrition_plan",
                 help="Download your nutrition plan as an HTML file that you can open in any browser and print to PDF"
-            )
+            )             
         
         # Display genetic badge at the top if genetic data is used
             
