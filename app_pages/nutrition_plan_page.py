@@ -4,6 +4,12 @@ Displays the generated nutrition plan, genetic optimization, and visual guidance
 """
 
 import streamlit as st
+import base64
+import io
+import re
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
+from datetime import datetime
 from utils.visualization import (
     create_enhanced_portion_guide,
     create_enhanced_glucose_guide,
@@ -63,6 +69,48 @@ def show_nutrition_plan():
     # Display genetic badge at the top if genetic data is used
     # Overview tab content
     with overview_tab:
+
+        st.markdown("""
+            <style>
+            /* Style for the active tab (primary button) */
+            .stButton button[kind="primary"] {
+                background-color: #87CEEB !important; /* Sky blue */
+                color: #333333 !important; /* Dark gray for text */
+                border-color: #000000 !important; /* Black border */
+                font-weight: 600 !important;
+            }
+            
+            /* Hover effect for inactive tabs */
+            .stButton button[kind="secondary"]:hover {
+                background-color: #E5E4E2 !important; /* Very light blue on hover */
+                color: #333333 !important; /* Dark gray for text */
+                border-color: #000000 !important; /* Black border */
+                font-weight: 600 !important;
+            }
+            
+            </style>
+    """, unsafe_allow_html=True)
+                
+        # Add download button at the top of the overview tab
+        if st.button("📥 Download Nutrition Plan", type="secondary", use_container_width=False):
+            # Generate the HTML content
+            html_content = create_nutrition_plan_html()
+            if html_content:
+                # Create a temporary HTML file
+                import tempfile
+                import os
+                import webbrowser
+                
+                with tempfile.NamedTemporaryFile(delete=False, suffix='.html') as f:
+                    f.write(html_content.encode('utf-8'))
+                    temp_file_path = f.name
+                
+                # Open the file in the default browser
+                webbrowser.open('file://' + temp_file_path, new=2)
+                
+                # Show success message
+                st.success("Nutrition plan opened in your browser. Use your browser's print function (Ctrl+P or Cmd+P) to save as PDF.")
+        
         # Display genetic badge at the top if genetic data is used
             
         if 'nutrition_overview' in st.session_state:
@@ -181,6 +229,336 @@ def show_nutrition_plan():
             display_visual_guidance(has_genetic_data)
         else:
             st.warning("No visual guidance has been generated yet.")
+
+def create_nutrition_plan_html():
+    """
+    Create an HTML version of the nutrition plan that can be easily printed to PDF.
+    """
+    try:
+        # Import markdown library for conversion
+        import markdown
+        
+        # Get the nutrition plan from session state
+        nutrition_plan = st.session_state.nutrition_plan
+        
+        # Get current date
+        current_date = datetime.now().strftime("%B %d, %Y")
+        
+        # Create HTML content with proper styling for printing
+        html_content = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Diabetes Nutrition Plan</title>
+            <style>
+                @page {{ size: letter; margin: 1cm; }}
+                body {{
+                    font-family: Arial, sans-serif;
+                    line-height: 1.6;
+                    color: #333;
+                    max-width: 800px;
+                    margin: 0 auto;
+                    padding: 20px;
+                }}
+                h1, h2, h3, h4 {{
+                    color: #2c3e50;
+                    margin-top: 1.5em;
+                }}
+                h1 {{
+                    text-align: center;
+                    color: #3498db;
+                    border-bottom: 2px solid #3498db;
+                    padding-bottom: 10px;
+                }}
+                .header {{
+                    text-align: center;
+                    margin-bottom: 30px;
+                }}
+                .date {{
+                    color: #7f8c8d;
+                    font-style: italic;
+                    text-align: center;
+                    margin-bottom: 20px;
+                }}
+                .section {{
+                    margin-bottom: 30px;
+                    page-break-inside: avoid;
+                }}
+                .footer {{
+                    margin-top: 50px;
+                    text-align: center;
+                    font-size: 0.9em;
+                    color: #7f8c8d;
+                    border-top: 1px solid #eee;
+                    padding-top: 20px;
+                }}
+                ul, ol {{
+                    margin-left: 20px;
+                }}
+                table {{
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin: 20px 0;
+                }}
+                table, th, td {{
+                    border: 1px solid #ddd;
+                }}
+                th, td {{
+                    padding: 12px;
+                    text-align: left;
+                }}
+                th {{
+                    background-color: #f2f2f2;
+                }}
+                hr {{
+                    border: 0;
+                    height: 1px;
+                    background: #ddd;
+                    margin: 20px 0;
+                }}
+                .emoji {{
+                    font-size: 1.2em;
+                }}
+                @media print {{
+                    body {{
+                        font-size: 12pt;
+                    }}
+                    h1 {{
+                        font-size: 18pt;
+                    }}
+                    h2 {{
+                        font-size: 16pt;
+                    }}
+                    h3 {{
+                        font-size: 14pt;
+                    }}
+                    .no-print {{
+                        display: none;
+                    }}
+                    @page {{
+                        margin: 2cm;
+                    }}
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <h1>Personalized Diabetes Nutrition Plan</h1>
+                <p class="date">Generated on {current_date}</p>
+            </div>
+        """
+        
+        # Function to convert markdown to HTML
+        def convert_markdown_to_html(markdown_text):
+            # Clean up HTML tags that might be in the text
+            cleaned_text = re.sub(r'<.*?>', '', markdown_text)
+            
+            # Process bold text manually (** ** format)
+            def process_bold(text):
+                # Replace **text** with <strong>text</strong>
+                bold_pattern = r'\*\*(.*?)\*\*'
+                return re.sub(bold_pattern, r'<strong>\1</strong>', text)
+            
+            # Process headers manually (# format)
+            def process_headers(text):
+                # Replace # Header with <h1>Header</h1>, ## Header with <h2>Header</h2>, etc.
+                lines = []
+                for line in text.split('\n'):
+                    if line.strip().startswith('#'):
+                        # Count the number of # characters
+                        header_level = 0
+                        for char in line:
+                            if char == '#':
+                                header_level += 1
+                            else:
+                                break
+                        
+                        if header_level > 0 and header_level <= 6:
+                            # Extract the header text
+                            header_text = line[header_level:].strip()
+                            # Create the HTML header
+                            line = f'<h{header_level}>{header_text}</h{header_level}>'
+                    lines.append(line)
+                return '\n'.join(lines)
+            
+            # Process lists manually (- or * format)
+            def process_lists(text):
+                lines = []
+                in_list = False
+                
+                for line in text.split('\n'):
+                    stripped = line.strip()
+                    if stripped.startswith('- ') or stripped.startswith('* '):
+                        if not in_list:
+                            lines.append('<ul>')
+                            in_list = True
+                        # Extract the list item text
+                        item_text = stripped[2:].strip()
+                        lines.append(f'<li>{item_text}</li>')
+                    else:
+                        if in_list:
+                            lines.append('</ul>')
+                            in_list = False
+                        lines.append(line)
+                
+                if in_list:
+                    lines.append('</ul>')
+                
+                return '\n'.join(lines)
+            
+            # Convert markdown tables to HTML tables
+            def process_tables(text):
+                table_pattern = r'\|(.+)\|\n\|[-:| ]+\|\n((?:\|.+\|\n)+)'
+                
+                def table_replacement(match):
+                    header = match.group(1).strip()
+                    rows = match.group(2).strip()
+                    
+                    # Process header
+                    header_cells = [cell.strip() for cell in header.split('|')]
+                    header_html = '<tr>' + ''.join([f'<th>{cell}</th>' for cell in header_cells if cell]) + '</tr>'
+                    
+                    # Process rows
+                    rows_html = ''
+                    for row in rows.split('\n'):
+                        if '|' in row:
+                            cells = [cell.strip() for cell in row.split('|')]
+                            rows_html += '<tr>' + ''.join([f'<td>{cell}</td>' for cell in cells if cell]) + '</tr>'
+                    
+                    return f'<table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse;">{header_html}{rows_html}</table>'
+                
+                return re.sub(table_pattern, table_replacement, text, flags=re.MULTILINE)
+            
+            # Process horizontal rules (---)
+            def process_hr(text):
+                hr_pattern = r'^---+$'
+                return re.sub(hr_pattern, '<hr>', text, flags=re.MULTILINE)
+            
+            # Process paragraphs and line breaks
+            def process_paragraphs(text):
+                # Split text into paragraphs (double line breaks)
+                paragraphs = text.split('\n\n')
+                processed_paragraphs = []
+                
+                for paragraph in paragraphs:
+                    # Skip empty paragraphs
+                    if not paragraph.strip():
+                        continue
+                    
+                    # Check if this is a special element (header, list, table, etc.)
+                    if paragraph.strip().startswith('#') or paragraph.strip().startswith('|') or \
+                       paragraph.strip().startswith('- ') or paragraph.strip().startswith('* ') or \
+                       paragraph.strip() == '---':
+                        # Don't wrap these in <p> tags
+                        processed_paragraphs.append(paragraph)
+                    else:
+                        # Handle line breaks within paragraphs
+                        lines = paragraph.split('\n')
+                        processed_lines = []
+                        
+                        for line in lines:
+                            if line.strip():
+                                processed_lines.append(line)
+                        
+                        # Join lines with <br> tags and wrap in <p> tags
+                        if processed_lines:
+                            processed_paragraph = '<p>' + '<br>'.join(processed_lines) + '</p>'
+                            processed_paragraphs.append(processed_paragraph)
+                
+                return '\n'.join(processed_paragraphs)
+            
+            # Apply all the processing functions
+            processed_text = cleaned_text
+            processed_text = process_bold(processed_text)
+            processed_text = process_headers(processed_text)
+            processed_text = process_lists(processed_text)
+            processed_text = process_tables(processed_text)
+            processed_text = process_hr(processed_text)
+            processed_text = process_paragraphs(processed_text)
+            
+            # Replace emoji codes with actual emojis
+            emoji_map = {
+                '🔥': '🔥', '🥗': '🥗', '⏱️': '⏱️', '🌾': '🌾',
+                '🥩': '🥩', '🥑': '🥑', '🥦': '🥦', '🍎': '🍎',
+                '🥤': '🥤', '🌞': '🌞', '🥪': '🥪', '🍲': '🍲',
+                '🍏': '🍏', '🍽️': '🍽️', '🥛': '🥛', '📉': '📉', 
+                '📈': '📈', '⏰': '⏰', '🥕': '🥕', '🍞': '🍞',
+                '🍟': '🍟', '🥓': '🥓', '🍰': '🍰', '☕': '☕',
+                '🍗': '🍗', '🫒': '🫒', '🫘': '🫘', '🐟': '🐟',
+                '🫐': '🫐', '🥬': '🥬'
+            }
+            
+            # Replace emoji text with actual emojis
+            for emoji_text, emoji in emoji_map.items():
+                processed_text = processed_text.replace(emoji_text, f'<span style="font-size: 1.2em;">{emoji}</span>')
+            
+            return processed_text
+        
+        # Add Overview section
+        html_content += '<div class="section"><h2>Overview</h2>'
+        if 'nutrition_overview' in st.session_state:
+            overview_content = st.session_state.nutrition_overview
+            # Remove HTML tags but keep the content
+            clean_overview = re.sub(r'<.*?>', '', overview_content)
+            html_content += convert_markdown_to_html(clean_overview)
+        else:
+            # Fall back to extracting from the complete plan
+            overview_sections = [s for s in nutrition_plan.split("\n## ") if any(x in s.lower() for x in [
+                "introduction", "overview", "caloric", "macronutrient", "recommended"
+            ])]
+            for section in overview_sections:
+                html_content += convert_markdown_to_html(section)
+        html_content += '</div>'
+        
+        # Add Meal Plan section
+        html_content += '<div class="section"><h2>Meal Plan</h2>'
+        if 'nutrition_meal_plan' in st.session_state:
+            meal_plan_content = st.session_state.nutrition_meal_plan
+            # Remove HTML tags but keep the content
+            clean_meal_plan = re.sub(r'<.*?>', '', meal_plan_content)
+            html_content += convert_markdown_to_html(clean_meal_plan)
+        else:
+            # Fall back to extracting from the complete plan
+            meal_plan_sections = [s for s in nutrition_plan.split("\n## ") if any(x in s.lower() for x in [
+                "meal plan", "sample meal", "day 1", "day 2", "day 3"
+            ])]
+            for section in meal_plan_sections:
+                html_content += convert_markdown_to_html(section)
+        html_content += '</div>'
+        
+        # Add Recipes & Tips section
+        html_content += '<div class="section"><h2>Recipes & Tips</h2>'
+        if 'nutrition_recipes_tips' in st.session_state:
+            recipes_tips_content = st.session_state.nutrition_recipes_tips
+            # Remove HTML tags but keep the content
+            clean_recipes_tips = re.sub(r'<.*?>', '', recipes_tips_content)
+            html_content += convert_markdown_to_html(clean_recipes_tips)
+        else:
+            # Fall back to extracting from the complete plan
+            recipe_sections = [s for s in nutrition_plan.split("\n## ") if any(x in s.lower() for x in [
+                "recipe", "tips", "avoid", "limit", "portion", "guideline", "stabilize"
+            ]) and not any(x in s.lower() for x in ["genetic", "gene", "dna"])]
+            for section in recipe_sections:
+                html_content += convert_markdown_to_html(section)
+        html_content += '</div>'
+        
+        # Add footer
+        html_content += """
+            <div class="footer">
+                <p>This nutrition plan is personalized based on your health information and is intended as a guide.</p>
+                <p>Always consult with healthcare providers before making significant changes to your diet.</p>
+            </div>
+        </body>
+        </html>
+        """
+        
+        return html_content
+    except Exception as e:
+        st.error(f"An error occurred while generating the file: {str(e)}")
+        # Provide a simpler alternative
+        st.info("You can save this page as a PDF using your browser's print function (Ctrl+P or Cmd+P) and selecting 'Save as PDF'.")
+        return None
 
 def display_visual_guidance(has_genetic_data=False):
     """
