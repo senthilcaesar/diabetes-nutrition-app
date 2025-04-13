@@ -118,7 +118,6 @@ def show_educational_resources():
     st.markdown("<h4 style='font-size: 22px;'>Educational Resources</h4>", unsafe_allow_html=True)
 
     
-    
     # Create tabs
     tab_names = [
         "Diabetes Basics", 

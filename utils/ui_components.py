@@ -41,13 +41,29 @@ def apply_custom_css():
         /* Font styles and base elements */
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap');
         
-                
+        /* Force light mode by disabling color-scheme detection */
         :root {
-            /* Futuristic neon color palette */
+            color-scheme: light only !important;
+        }
+        
+        /* Force light mode for all elements */
+        html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+            color-scheme: light only !important;
+        }
+        
+        /* Force light mode for Streamlit elements */
+        .stApp, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], [data-testid="stSidebarContent"], .main, .block-container, [data-testid="stVerticalBlock"], [data-testid="stHorizontalBlock"] {
+            color-scheme: light only !important;
+        }
+          
+
+        /* === THEME COLORS === */
+        /* Light mode theme variables */
+        :root {
+            /* Light theme color palette */
             --primary-color: #00003c;  /* Dark navy blue */
             --primary-light: #0000a0;  /* Lighter navy blue */
             --primary-dark: #000020;  /* Darker navy blue */
-
             --accent-color: #7B42F6;  /* Neon purple */
             --warning-color: #FFD600;  /* Neon yellow */
             --success-color: #00FF94;  /* Neon green */
@@ -55,33 +71,51 @@ def apply_custom_css():
             --error-color: #FF3D71;  /* Neon red */
             
             /* Text colors */
-            --text-color: #E0F7FA;
-            --text-muted: #90A4AE;
-            --text-light: #CFD8DC;
+            --text-color: #333333;  /* Dark gray for text */
+            --text-muted: #666666;  /* Medium gray for muted text */
+            --text-light: #999999;  /* Light gray for light text */
             
             /* Background colors */
             --bg-primary: #FFFFFF;  /* White background */
-            --card-bg: #162B3D;  /* Dark blue with slight transparency */
+            --card-bg: #FFFFFF;  /* White card background */
             
             /* UI elements */
-            --border-radius: 20px;  /* Rounded edges for oval look */
-            --border-radius-lg: 30px;
-            --border-radius-sm: 15px;
+            --border-radius: 16px;
+            --border-radius-lg: 24px;
+            --border-radius-sm: 12px;
+            --border-radius-full: 9999px;
             --border-angle: 10px;  /* For angled corners */
             
-            /* Glows and shadows */
-            --neon-glow-cyan: 0 0 10px rgba(0, 0, 60, 0.7), 0 0 20px rgba(0, 0, 60, 0.5), 0 0 30px rgba(0, 0, 60, 0.3);
-            --neon-glow-magenta: 0 0 10px rgba(255, 0, 228, 0.7), 0 0 20px rgba(255, 0, 228, 0.5), 0 0 30px rgba(255, 0, 228, 0.3);
-            --neon-glow-purple: 0 0 10px rgba(123, 66, 246, 0.7), 0 0 20px rgba(123, 66, 246, 0.5), 0 0 30px rgba(123, 66, 246, 0.3);
-            --neon-glow-yellow: 0 0 10px rgba(255, 214, 0, 0.7), 0 0 20px rgba(255, 214, 0, 0.5), 0 0 30px rgba(255, 214, 0, 0.3);
-            --neon-glow-green: 0 0 10px rgba(0, 255, 148, 0.7), 0 0 20px rgba(0, 255, 148, 0.5), 0 0 30px rgba(0, 255, 148, 0.3);
+            /* Glows and shadows - lighter for light mode */
+            --neon-glow-cyan: 0 0 5px rgba(0, 0, 60, 0.3), 0 0 10px rgba(0, 0, 60, 0.2);
+            --neon-glow-magenta: 0 0 5px rgba(255, 0, 228, 0.3), 0 0 10px rgba(255, 0, 228, 0.2);
+            --neon-glow-purple: 0 0 5px rgba(123, 66, 246, 0.3), 0 0 10px rgba(123, 66, 246, 0.2);
+            --neon-glow-yellow: 0 0 5px rgba(255, 214, 0, 0.3), 0 0 10px rgba(255, 214, 0, 0.2);
+            --neon-glow-green: 0 0 5px rgba(0, 255, 148, 0.3), 0 0 10px rgba(0, 255, 148, 0.2);
             
-            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-            --box-shadow-md: 0 8px 30px rgba(0, 0, 0, 0.7);
-            --box-shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.9);
+            --box-shadow: 0 2px 10px -2px rgba(0, 0, 0, 0.05);
+            --box-shadow-md: 0 4px 15px -3px rgba(0, 0, 0, 0.07);
+            --box-shadow-lg: 0 8px 25px -5px rgba(0, 0, 0, 0.08);
+            
+        /* Sidebar specific - darker text for better visibility */
+        --sidebar-bg: #F0F0F0;
+        --sidebar-element-bg: #FFFFFF;
+        --sidebar-element-active-bg: linear-gradient(135deg, #64B5F6, #42A5F5);
+        --sidebar-element-active-color: #FFFFFF;
+        --sidebar-element-color: #333333;  /* Darker text */
+        --sidebar-text-color: #333333;  /* Darker text */
+        --sidebar-accent-color: #0066CC;  /* Darker blue */
+        --sidebar-badge-bg: rgba(100, 181, 246, 0.1);
+            
+            /* Form elements */
+            --input-bg: #FFFFFF;
+            --input-border: #E0E0E0;
+            --input-text: #333333;
+            --input-focus-border: #64B5F6;
+            --input-focus-shadow: rgba(100, 181, 246, 0.2);
             
             /* Transitions */
-            --transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* Typography - Futuristic sci-fi fonts */
@@ -479,9 +513,9 @@ def apply_custom_css():
             position: absolute;
             top: 0;
             left: 0;
-            width: 0;
+            width: 100%;
             height: 100%;
-            background: none;
+            background: rgba(229, 228, 226, 0.0); /* Light sky blue background */
             z-index: 0;
             opacity: 0;
             transition: opacity 0.3s ease;
@@ -490,6 +524,12 @@ def apply_custom_css():
         
         .stTabs [data-baseweb="tab"]:hover::before {
             opacity: 1;
+        }
+        
+        /* Only apply hover effects to non-selected tabs */
+        .stTabs [data-baseweb="tab"]:not([aria-selected="true"]):hover {
+            background-color: #E5E4E2 !important; /* Very light gray background on hover */
+            border: 1px solid var(--primary-color) !important;
         }
         
         .stTabs [aria-selected="true"] {
@@ -558,6 +598,86 @@ def apply_custom_css():
             padding: 1.5rem !important;
             margin-top: 0.8rem; /* Increased space between tabs and panel */
             box-shadow: var(--box-shadow);
+            color: #000000 !important; /* Force black text in tab panels */
+        }
+        
+        /* Force all text in tab panels to be black - with !important and higher specificity */
+.stTabs [data-baseweb="tab-panel"] p,
+.stTabs [data-baseweb="tab-panel"] span,
+.stTabs [data-baseweb="tab-panel"] div,
+.stTabs [data-baseweb="tab-panel"] h1,
+.stTabs [data-baseweb="tab-panel"] h2,
+.stTabs [data-baseweb="tab-panel"] h3,
+.stTabs [data-baseweb="tab-panel"] h4,
+.stTabs [data-baseweb="tab-panel"] h5,
+.stTabs [data-baseweb="tab-panel"] h6,
+.stTabs [data-baseweb="tab-panel"] li,
+.stTabs [data-baseweb="tab-panel"] a,
+.stTabs [data-baseweb="tab-panel"] label,
+.stTabs [data-baseweb="tab-panel"] button,
+/* Target more specific elements */
+.stTabs [data-baseweb="tab-panel"] [data-testid="stMarkdownContainer"],
+.stTabs [data-baseweb="tab-panel"] [data-testid="stMarkdownContainer"] p,
+.stTabs [data-baseweb="tab-panel"] [data-testid="stMarkdownContainer"] span,
+.stTabs [data-baseweb="tab-panel"] [data-testid="stMarkdownContainer"] div,
+.stTabs [data-baseweb="tab-panel"] [data-testid="stText"],
+.stTabs [data-baseweb="tab-panel"] [data-testid="stText"] p,
+.stTabs [data-baseweb="tab-panel"] [data-testid="stText"] span,
+.stTabs [data-baseweb="tab-panel"] [data-testid="stText"] div {
+    color: #000000 !important;
+    opacity: 1 !important;
+    font-weight: normal !important;
+}
+        
+        /* Target the specific light blue panel in the genetic data tab */
+        .stTabs [data-baseweb="tab-panel"] > div {
+            color: #000000 !important;
+        }
+        
+        /* Target any alert or info boxes */
+        .stTabs [data-baseweb="tab-panel"] .stAlert,
+        .stTabs [data-baseweb="tab-panel"] .stInfo,
+        .stTabs [data-baseweb="tab-panel"] .stSuccess,
+        .stTabs [data-baseweb="tab-panel"] .stWarning,
+        .stTabs [data-baseweb="tab-panel"] .stError {
+            color: #000000 !important;
+        }
+        
+        /* Target any markdown or text within the light blue panel */
+        .stTabs [data-baseweb="tab-panel"] [style*="background-color: rgb(240, 242, 246)"] *,
+        .stTabs [data-baseweb="tab-panel"] [style*="background-color: #f0f2f6"] *,
+        .stTabs [data-baseweb="tab-panel"] [style*="background-color: rgb(241, 246, 253)"] *,
+        .stTabs [data-baseweb="tab-panel"] [style*="background-color: #f1f6fd"] *,
+        .stTabs [data-baseweb="tab-panel"] [style*="background-color: rgb(135, 206, 235)"] *,
+        .stTabs [data-baseweb="tab-panel"] [style*="background-color: #87CEEB"] * {
+            color: #000000 !important;
+            opacity: 1 !important;
+            font-weight: normal !important;
+        }
+        
+        /* Force all text in the genetic data tab to be black */
+        .stTabs [data-baseweb="tab-panel"] .element-container,
+        .stTabs [data-baseweb="tab-panel"] .element-container *,
+        .stTabs [data-baseweb="tab-panel"] .stMarkdown,
+        .stTabs [data-baseweb="tab-panel"] .stMarkdown *,
+        .stTabs [data-baseweb="tab-panel"] p,
+        .stTabs [data-baseweb="tab-panel"] h1,
+        .stTabs [data-baseweb="tab-panel"] h2,
+        .stTabs [data-baseweb="tab-panel"] h3 {
+            color: #000000 !important;
+            opacity: 1 !important;
+        }
+        
+        /* Target the specific light blue info box in the genetic data tab */
+        .stTabs [data-baseweb="tab-panel"] .stAlert,
+        .stTabs [data-baseweb="tab-panel"] .stInfo,
+        .stTabs [data-baseweb="tab-panel"] .stInfo *,
+        .stTabs [data-baseweb="tab-panel"] .stAlert *,
+        .stTabs [data-baseweb="tab-panel"] [data-testid="stCaptionContainer"],
+        .stTabs [data-baseweb="tab-panel"] [data-testid="stCaptionContainer"] * {
+            color: #000000 !important;
+            opacity: 1 !important;
+            font-weight: normal !important;
         }
         
         .stTabs [data-baseweb="tab-content"] {
@@ -567,14 +687,12 @@ def apply_custom_css():
         /* === CARDS & CONTAINERS === */
         /* Futuristic card styling */
         .card-container {
-            background-color: rgba(22, 43, 61, 0.7);
+            background-color: #FFFFFF;
             border-radius: var(--border-radius);
             box-shadow: var(--box-shadow);
             padding: 2rem;
             margin-bottom: 2rem;
-            border: 1px solid rgba(0, 240, 255, 0.2);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid #e0e0e0;
             transition: var(--transition);
             position: relative;
             overflow: hidden;
@@ -598,7 +716,7 @@ def apply_custom_css():
         
         /* Futuristic plan header */
         .plan-header {
-            background-color: rgba(0, 0, 60, 0.1);
+            background-color: #f5f5f5;
             padding: 2.5rem;
             border-radius: var(--border-radius-lg);
             color: var(--text-color);
@@ -607,8 +725,7 @@ def apply_custom_css():
             box-shadow: var(--box-shadow);
             position: relative;
             overflow: hidden;
-            border: 1px solid var(--primary-color);
-            box-shadow: var(--neon-glow-cyan);
+            border: 1px solid #e0e0e0;
         }
         
         .plan-header::before {
@@ -625,7 +742,7 @@ def apply_custom_css():
         .plan-header h2 {
             position: relative;
             z-index: 1;
-            color: white;
+            color: #333333;
             font-weight: 700;
             margin-bottom: 0.75rem;
         }
@@ -639,14 +756,12 @@ def apply_custom_css():
         
         /* Futuristic plan sections */
         .plan-section {
-            background-color: rgba(22, 43, 61, 0.7);
+            background-color: #FFFFFF;
             padding: 2rem;
             border-radius: var(--border-radius);
             box-shadow: var(--box-shadow);
             margin-bottom: 2rem;
-            border: 1px solid rgba(0, 240, 255, 0.2);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid #e0e0e0;
             position: relative;
             overflow: hidden;
         }
@@ -672,14 +787,12 @@ def apply_custom_css():
         
         /* Meal cards */
         .meal-card {
-            border: 1px solid rgba(226, 232, 240, 0.8);
+            border: 1px solid #e0e0e0;
             border-radius: var(--border-radius);
             padding: 1.25rem;
             margin-bottom: 1rem;
-            background-color: rgba(255, 255, 255, 0.7);
+            background-color: #FFFFFF;
             transition: var(--transition);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
             position: relative;
             overflow: hidden;
         }
@@ -687,7 +800,6 @@ def apply_custom_css():
         .meal-card:hover {
             box-shadow: var(--box-shadow-md);
             transform: translateY(-3px);
-            background-color: rgba(255, 255, 255, 0.9);
         }
         
         .meal-card::after {
@@ -760,12 +872,10 @@ def apply_custom_css():
         .health-assessment-section {
             margin-bottom: 1.75rem;
             padding: 1.75rem;
-            background-color: rgba(255, 255, 255, 0.8);
+            background-color: #FFFFFF;
             border-radius: var(--border-radius-lg);
             box-shadow: var(--box-shadow);
-            border: 1px solid rgba(226, 232, 240, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid #e0e0e0;
             transition: var(--transition);
             position: relative;
             overflow: hidden;
@@ -1194,6 +1304,7 @@ div[role="listbox"] {
     z-index: 1000 !important; /* Ensure dropdown appears above other elements */
 }
 
+
 /* Style for selected items in multiselect */
 [data-baseweb="tag"] {
     background-color: #f0f0f0 !important;
@@ -1550,14 +1661,14 @@ div[role="listbox"] {
         /* === GENETIC DATA VISUALIZATION === */
         /* Futuristic genetic badge */
         .genetic-badge {
-            background-color: rgba(0, 0, 60, 0.1);
+            background-color: #f5f5f5;
             padding: 0.75rem 1.25rem;
             border-radius: var(--border-radius-sm);
             display: inline-flex;
             align-items: center;
             margin-bottom: 1rem;
-            border: 1px solid var(--primary-color);
-            box-shadow: var(--neon-glow-cyan);
+            border: 1px solid #e0e0e0;
+            box-shadow: var(--box-shadow);
             transition: var(--transition);
             font-family: 'Share Tech Mono', monospace;
             text-transform: uppercase;
@@ -1595,15 +1706,13 @@ div[role="listbox"] {
         
         /* Futuristic marker cards */
         .marker-card {
-            background-color: rgba(22, 43, 61, 0.7);
+            background-color: #FFFFFF;
             border-radius: var(--border-radius);
             padding: 1.25rem;
             margin-bottom: 1rem;
-            border: 1px solid rgba(0, 240, 255, 0.3);
+            border: 1px solid #e0e0e0;
             box-shadow: var(--box-shadow);
             transition: var(--transition);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
             position: relative;
             overflow: hidden;
         }
@@ -1970,214 +2079,193 @@ div[role="listbox"] {
             }
         }
         
-        /* === MODE ADAPTIVE COLORS === */
-        /* Light mode (default) - set light theme variables */
-        :root {
-            /* Fresh, light color palette */
-            --primary-color: #eeeee4;  /* Soft sky blue */
-            --primary-light: #eeeee4;
-            --primary-dark: #eeeee4;
-  
-            --warning-color: #eeeee4;  /* Soft amber */
-            --success-color: #eeeee4;  /* Soft green */
-            --info-color: #eeeee4;  /* Soft blue */
-            --error-color: #eeeee4;  /* Soft red */
-            
-            /* Text colors - lighter and softer */
-            --text-color: #eeeee4;  /* Softer blue-grey */
-
-            
-            /* Background colors - even lighter */
-            --card-bg: #eeeee4;  /* Pure white */
-            
-            /* UI elements - more rounded */
-            --border-radius: 16px;
-            --border-radius-lg: 24px;
-            --border-radius-sm: 12px;
-            --border-radius-full: 9999px;
-            
-            /* Shadows and effects - softer, more subtle */
-            --box-shadow: 0 2px 10px -2px rgba(0, 0, 0, 0.05);
-            --box-shadow-md: 0 4px 15px -3px rgba(0, 0, 0, 0.07);
-            --box-shadow-lg: 0 8px 25px -5px rgba(0, 0, 0, 0.08);
-            
-            /* Sidebar specific - lighter, airier */
-            --sidebar-bg: #F0F0F0;
-            --sidebar-element-bg: #FFFFFF;
-            --sidebar-element-active-bg: linear-gradient(135deg, #64B5F6, #42A5F5);
-            --sidebar-element-active-color: #FFFFFF;
-            --sidebar-element-color: #455A64;
-            --sidebar-text-color: #546E7A;
-            --sidebar-accent-color: #64B5F6;
-            --sidebar-badge-bg: rgba(100, 181, 246, 0.1);
-            
-            /* Form elements - cleaner, lighter */
-            --input-bg: #e7e8e9;
-            --input-border: #e7e8e9;
-            --input-text: #e7e8e9;
-            --input-focus-border: #64B5F6;
-            --input-focus-shadow: rgba(100, 181, 246, 0.2);
-            
-            /* Transitions - smoother */
-            --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        /* Dark mode - override variables with a softer dark theme */
-        @media (prefers-color-scheme: dark) {
+        /* === FORCE LIGHT MODE === */
+        /* Force light mode only - completely disable dark mode */
+        /* Disable prefers-color-scheme media query entirely */
+        @media (prefers-color-scheme: no-preference), (prefers-color-scheme: light), (prefers-color-scheme: dark) {
             :root {
-                /* Softer dark theme color palette */
-                --primary-light: #eeeee4;
-                --primary-dark: #eeeee4;
-
-                --warning-color: #eeeee4;  /* Lighter amber */
-                --success-color: #eeeee4;  /* Lighter green */
-  
+                /* Light theme color palette - same as default */
+                --primary-color: #00003c;  /* Dark navy blue */
+                --primary-light: #0000a0;  /* Lighter navy blue */
+                --primary-dark: #000020;  /* Darker navy blue */
+                --accent-color: #7B42F6;  /* Neon purple */
+                --warning-color: #FFD600;  /* Neon yellow */
+                --success-color: #00FF94;  /* Neon green */
+                --info-color: #00003c;  /* Dark navy blue */
+                --error-color: #FF3D71;  /* Neon red */
                 
-                /* Text colors - softer for dark mode */
-                --text-color: #eeeee4;
-                --text-muted: #eeeee4;
-                --text-light: #eeeee4;
+                /* Text colors - forced to dark for better visibility on light backgrounds */
+                --text-color: #333333;  /* Dark gray for text */
+                --text-muted: #666666;  /* Medium gray for muted text */
+                --text-light: #999999;  /* Light gray for light text */
                 
-                /* Background colors - softer dark */
-                --bg-primary: #eeeee4;  /* Softer blue-grey */
-                --card-bg: #eeeee4;
+                /* Background colors - forced to light */
+                --bg-primary: #FFFFFF;  /* White background */
+                --card-bg: #FFFFFF;  /* White card background */
                 
-                /* Sidebar specific - softer dark */
-                --sidebar-bg: linear-gradient(180deg, #263238 0%, #1C2A33 100%);
-                --sidebar-element-bg: rgba(255, 255, 255, 0.08);
-                --sidebar-element-active-bg: linear-gradient(135deg, #90CAF9, #64B5F6);
+                /* Glows and shadows - lighter for light mode */
+                --neon-glow-cyan: 0 0 5px rgba(0, 0, 60, 0.3), 0 0 10px rgba(0, 0, 60, 0.2);
+                --neon-glow-magenta: 0 0 5px rgba(255, 0, 228, 0.3), 0 0 10px rgba(255, 0, 228, 0.2);
+                --neon-glow-purple: 0 0 5px rgba(123, 66, 246, 0.3), 0 0 10px rgba(123, 66, 246, 0.2);
+                --neon-glow-yellow: 0 0 5px rgba(255, 214, 0, 0.3), 0 0 10px rgba(255, 214, 0, 0.2);
+                --neon-glow-green: 0 0 5px rgba(0, 255, 148, 0.3), 0 0 10px rgba(0, 255, 148, 0.2);
+                
+                --box-shadow: 0 2px 10px -2px rgba(0, 0, 0, 0.05);
+                --box-shadow-md: 0 4px 15px -3px rgba(0, 0, 0, 0.07);
+                --box-shadow-lg: 0 8px 25px -5px rgba(0, 0, 0, 0.08);
+                
+                /* Sidebar specific - light colors */
+                --sidebar-bg: #F0F0F0;
+                --sidebar-element-bg: #FFFFFF;
+                --sidebar-element-active-bg: linear-gradient(135deg, #64B5F6, #42A5F5);
                 --sidebar-element-active-color: #FFFFFF;
-                --sidebar-element-color: #ECEFF1;
-                --sidebar-text-color: #CFD8DC;
-                --sidebar-accent-color: #90CAF9;
-                --sidebar-badge-bg: rgba(144, 202, 249, 0.15);
+                --sidebar-element-color: #333333;
+                --sidebar-text-color: #333333;
+                --sidebar-accent-color: #0066CC;
+                --sidebar-badge-bg: rgba(100, 181, 246, 0.1);
                 
-                /* Form elements - softer dark */
-                --input-bg: #455A64;
-                --input-border: #546E7A;
-                --input-text: #ECEFF1;
-                --input-focus-border: #90CAF9;
-                --input-focus-shadow: rgba(144, 202, 249, 0.25);
-                
-                /* Shadows and effects - softer for dark mode */
-                --box-shadow: 0 4px 10px -1px rgba(0, 0, 0, 0.2);
-                --box-shadow-md: 0 8px 15px -3px rgba(0, 0, 0, 0.25);
-                --box-shadow-lg: 0 12px 25px -5px rgba(0, 0, 0, 0.3);
+                /* Form elements - light colors */
+                --input-bg: #FFFFFF;
+                --input-border: #E0E0E0;
+                --input-text: #333333;
+                --input-focus-border: #64B5F6;
+                --input-focus-shadow: rgba(100, 181, 246, 0.2);
             }
             
-            /* Apply dark mode styles to main elements */
-            body {
-                background-color: var(--bg-primary);
-                color: var(--text-color);
+            /* Force light mode for all elements */
+            body, .main .block-container {
+                background-color: #FFFFFF !important;
+                color: #333333 !important;
             }
             
-            .main .block-container {
-                background-color: var(--bg-primary);
+            /* Force light mode for all text */
+            h1, h2, h3, h4, h5, h6, p, span, div, a, button, input, select, textarea {
+                color: #333333 !important;
             }
             
-            /* Header container in dark mode */
-            .header-container {
-                background: linear-gradient(135deg, rgba(129, 140, 248, 0.1) 0%, rgba(52, 211, 153, 0.1) 100%);
-                border: 1px solid rgba(75, 85, 99, 0.4);
+            /* Force light backgrounds for all containers */
+            .stApp, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], 
+            [data-testid="stSidebarContent"], .main, .block-container, 
+            [data-testid="stVerticalBlock"], [data-testid="stHorizontalBlock"] {
+                background-color: #FFFFFF !important;
             }
             
-            /* Tab styling in dark mode */
-            .stTabs [data-baseweb="tab"] {
-                background-color: white;
-                color: var(--text-muted);
-                border: 1px solid rgba(75, 85, 99, 0.4);
-            }
-            
-            
-            
-            .stTabs [aria-selected="true"] {
-                background-color: #87CEEB !important; /* Sky blue for selected tab */
-                color: #00003c !important;
-                font-weight: 600;
-                border: 1px solid var(--primary-color) !important;
-                box-shadow: 0 0 10px rgba(200, 200, 200, 0.7) !important;
-            }
-            
+            /* Force light mode for tab panels */
             .stTabs [data-baseweb="tab-panel"] {
-                background: white;
-                border: 1px solid rgba(75, 85, 99, 0.4);
+                background-color: #f5f5f5 !important;
+                color: #000000 !important;
             }
             
-            /* Content containers in dark mode */
+            /* Force light mode for all text in tab panels */
+            .stTabs [data-baseweb="tab-panel"] *,
+            .stTabs [data-baseweb="tab-panel"] p,
+            .stTabs [data-baseweb="tab-panel"] span,
+            .stTabs [data-baseweb="tab-panel"] div,
+            .stTabs [data-baseweb="tab-panel"] h1,
+            .stTabs [data-baseweb="tab-panel"] h2,
+            .stTabs [data-baseweb="tab-panel"] h3,
+            .stTabs [data-baseweb="tab-panel"] h4,
+            .stTabs [data-baseweb="tab-panel"] h5,
+            .stTabs [data-baseweb="tab-panel"] h6 {
+                color: #000000 !important;
+            }
+            
+            /* Force light mode for all cards and containers */
             .card-container, .plan-section, .health-assessment-section, .meal-card, .marker-card {
-                background-color: rgba(31, 41, 55, 0.7);
-                border-color: rgba(75, 85, 99, 0.4);
+                background-color: #FFFFFF !important;
+                border-color: #e0e0e0 !important;
             }
             
-            /* Input field styling in dark mode */
-            input, select, textarea {
-                background-color: var(--input-bg) !important;
-                color: var(--input-text) !important;
-                border-color: var(--input-border) !important;
-            }
-            
+            /* Force light mode for all form elements */
+            input, select, textarea, button,
             .stTextInput > div > div,
             .stSelectbox > div > div > div,
             .stNumberInput > div > div,
             .stTextArea > div > div,
             .stMultiSelect > div > div > div {
-                background-color: var(--input-bg) !important;
-                border-color: var(--input-border) !important;
+                background-color: #FFFFFF !important;
+                color: #333333 !important;
+                border-color: #e0e0e0 !important;
             }
             
-            /* UI element colors in dark mode */
-            [data-testid="stMetricLabel"] {
-                color: var(--text-color) !important;
-            }
-            
+            /* Force light mode for all metrics */
+            [data-testid="stMetric"],
+            [data-testid="stMetricLabel"],
             [data-testid="stMetricValue"] {
-                color: var(--primary-light) !important;
-                font-weight: 600 !important;
+                background-color: #FFFFFF !important;
+                color: #333333 !important;
+            }
+        }
+        
+        /* === THEME COLORS === */
+        /* Force light mode only - completely disable dark mode */
+        /* Target any dark mode elements and force light mode */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                /* Light theme color palette - same as default */
+                --primary-color: #00003c;  /* Dark navy blue */
+                --primary-light: #0000a0;  /* Lighter navy blue */
+                --primary-dark: #000020;  /* Darker navy blue */
+                --accent-color: #7B42F6;  /* Neon purple */
+                --warning-color: #FFD600;  /* Neon yellow */
+                --success-color: #00FF94;  /* Neon green */
+                --info-color: #00003c;  /* Dark navy blue */
+                --error-color: #FF3D71;  /* Neon red */
+                
+                /* Text colors - forced to dark for better visibility on light backgrounds */
+                --text-color: #333333;  /* Dark gray for text */
+                --text-muted: #666666;  /* Medium gray for muted text */
+                --text-light: #999999;  /* Light gray for light text */
+                
+                /* Background colors - forced to light */
+                --bg-primary: #FFFFFF;  /* White background */
+                --card-bg: #FFFFFF;  /* White card background */
+                
+                /* Glows and shadows - lighter for light mode */
+                --neon-glow-cyan: 0 0 5px rgba(0, 0, 60, 0.3), 0 0 10px rgba(0, 0, 60, 0.2);
+                --neon-glow-magenta: 0 0 5px rgba(255, 0, 228, 0.3), 0 0 10px rgba(255, 0, 228, 0.2);
+                --neon-glow-purple: 0 0 5px rgba(123, 66, 246, 0.3), 0 0 10px rgba(123, 66, 246, 0.2);
+                --neon-glow-yellow: 0 0 5px rgba(255, 214, 0, 0.3), 0 0 10px rgba(255, 214, 0, 0.2);
+                --neon-glow-green: 0 0 5px rgba(0, 255, 148, 0.3), 0 0 10px rgba(0, 255, 148, 0.2);
+                
+                --box-shadow: 0 2px 10px -2px rgba(0, 0, 0, 0.05);
+                --box-shadow-md: 0 4px 15px -3px rgba(0, 0, 0, 0.07);
+                --box-shadow-lg: 0 8px 25px -5px rgba(0, 0, 0, 0.08);
+                
+                /* Sidebar specific - light colors */
+                --sidebar-bg: #F0F0F0;
+                --sidebar-element-bg: #FFFFFF;
+                --sidebar-element-active-bg: linear-gradient(135deg, #64B5F6, #42A5F5);
+                --sidebar-element-active-color: #FFFFFF;
+                --sidebar-element-color: #333333;
+                --sidebar-text-color: #333333;
+                --sidebar-accent-color: #0066CC;
+                --sidebar-badge-bg: rgba(100, 181, 246, 0.1);
+                
+                /* Form elements - light colors */
+                --input-bg: #FFFFFF;
+                --input-border: #E0E0E0;
+                --input-text: #333333;
+                --input-focus-border: #64B5F6;
+                --input-focus-shadow: rgba(100, 181, 246, 0.2);
             }
             
-            [data-testid="stExpander"] {
-                background-color: var(--bg-secondary) !important;
-                border-color: var(--input-border) !important;
+            /* Force light mode for all elements */
+            body, .main .block-container {
+                background-color: #FFFFFF !important;
+                color: #333333 !important;
             }
             
-            /* Message styling in dark mode */
-            .stSuccess {
-                background: linear-gradient(135deg, rgba(52, 211, 153, 0.1), rgba(16, 185, 129, 0.2)) !important;
-                color: var(--secondary-light) !important;
-                border: 1px solid rgba(52, 211, 153, 0.3) !important;
+            /* Force light mode for all text */
+            h1, h2, h3, h4, h5, h6, p, span, div, a, button, input, select, textarea {
+                color: #333333 !important;
             }
             
-            .stWarning {
-                background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.2)) !important;
-                color: var(--warning-color) !important;
-                border: 1px solid rgba(251, 191, 36, 0.3) !important;
-            }
-            
-            .stInfo {
-                background: linear-gradient(135deg, rgba(96, 165, 250, 0.1), rgba(59, 130, 246, 0.2)) !important;
-                color: var(--info-color) !important;
-                border: 1px solid rgba(96, 165, 250, 0.3) !important;
-            }
-            
-            .stError {
-                background: linear-gradient(135deg, rgba(248, 113, 113, 0.1), rgba(239, 68, 68, 0.2)) !important;
-                color: var(--error-color) !important;
-                border: 1px solid rgba(248, 113, 113, 0.3) !important;
-            }
-            
-            /* Sidebar elements in dark mode */
-            .sidebar-info-card {
-                background-color: white;
-                border: 1px solid rgba(75, 85, 99, 0.4);
-            }
-            
-            .genetics-active-badge {
-                background: rgba(31, 41, 55, 0.7);
-                border: 1px solid rgba(75, 85, 99, 0.4);
-            }
-            
-            .genetics-active-badge .subtitle {
-                background: rgba(55, 65, 81, 0.7);
+            /* Force light backgrounds for all containers */
+            .stApp, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], 
+            [data-testid="stSidebarContent"], .main, .block-container, 
+            [data-testid="stVerticalBlock"], [data-testid="stHorizontalBlock"] {
+                background-color: #FFFFFF !important;
             }
         }
     </style>

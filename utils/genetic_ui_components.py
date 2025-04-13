@@ -30,9 +30,7 @@ def input_genetic_data() -> Dict:
     # Create a container for the genetic data section
     genetic_container = st.container()
     
-    with genetic_container:
-        st.subheader("Genetic Data (Optional)")
-        
+    with genetic_container:        
         # Initialize genetic_profile in session state if not present
         if 'genetic_profile' not in st.session_state:
             st.session_state.genetic_profile = None
@@ -50,34 +48,7 @@ def input_genetic_data() -> Dict:
         # Create three columns for the three options
         col1, col2, col3 = st.columns(3)
         
-        # Add CSS to disable hover effects globally
-        st.markdown("""
-        <style>
-        /* Style for the selected button - light shade of orange like main tab panel */
-        button[data-testid="baseButton-primary"] {
-            background-color: #FFDAB9 !important; /* Light shade of orange (Peach Puff) */
-            color: #E65100 !important; /* Dark orange text for contrast */
-            border: 1px solid #FF9800 !important; /* Orange border */
-            font-weight: 700 !important;
-            box-shadow: 0 0 10px rgba(255, 152, 0, 0.4) !important;
-        }
-        
-        /* Style for secondary buttons */
-        button[data-testid="baseButton-secondary"] {
-            background-color: #FFFFFF !important; /* White background */
-            color: #000000 !important; /* Black text */
-            border: 1px solid rgba(0, 0, 60, 0.2) !important;
-        }
-        
-        /* Hover effect for secondary buttons - light shade of orange */
-        button[data-testid="baseButton-secondary"]:hover {
-            border-color: #FF9800 !important;
-            box-shadow: 0 0 10px rgba(255, 152, 0, 0.2) !important;
-            background-color: #FFF3E0 !important; /* Very light shade of orange on hover */
-            color: #E65100 !important;
-        }
-        </style>
-        """, unsafe_allow_html=True)
+
         
         # Function to create a clickable option
         def create_option(label, value, column):
@@ -95,7 +66,7 @@ def input_genetic_data() -> Dict:
         
         # Create the three options
         create_option("None", "None", col1)
-        create_option("Upload genetic data file", "Upload genetic data file", col2)
+        create_option("Upload file", "Upload file", col2)
         create_option("Use sample data", "Use sample data", col3)
         
         # Close the genetic-options-container div
@@ -107,7 +78,7 @@ def input_genetic_data() -> Dict:
         
         genetic_data = {}
         
-        if genetic_data_option == "Upload genetic data file":
+        if genetic_data_option == "Upload file":
             # File uploader for genetic data
             uploaded_file = st.file_uploader(
                 "Upload your genetic data (23andMe, Ancestry, or VCF format)",
