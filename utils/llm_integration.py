@@ -2,7 +2,7 @@ from openai import OpenAI
 import json
 import streamlit as st
 
-GPT_MODEL = "gpt-4o-2024-11-20"  # Specify the model to use
+GPT_MODEL = "gpt-4.1-2025-04-14"  # Specify the model to use
 
 # This module handles all OpenAI API interactions for the diabetes nutrition plan application
 def initialize_openai_client(api_key):
