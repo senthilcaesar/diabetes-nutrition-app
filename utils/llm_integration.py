@@ -647,6 +647,7 @@ def create_nutrition_plan_prompt(user_data):
     socio_info = f"""
     ## Socioeconomic Considerations
     - Cultural Food Preferences: {cultural_foods}
+    - Language Preference: {user_data.get('language_preferences')}
     - Literacy Level: {literacy_level}
     - Income Level: {income_level}
     - Grocery Budget: {grocery_budget}
