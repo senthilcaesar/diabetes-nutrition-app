@@ -2895,7 +2895,6 @@ def input_socioeconomic_data():
         'income_level': income_level,
         'education_level': education_level,
         'literacy_level': literacy_level,
-        'language_preferences': language_preferences,
         'technology_access': technology_access,
         'healthcare_access': healthcare_access,
         'local_food_availability': local_food_availability,
