@@ -73,7 +73,6 @@ def display_user_data_review():
             st.write("**Education Level:**", socio_data.get('education_level'))
         
         with col2:
-    		st.wrire("**Language Preferences**", socio_data.get('language_preferences'))
             st.write("**Food Availability:**", socio_data.get('local_food_availability'))
             st.write("**Cooking Facilities:**", socio_data.get('cooking_facilities'))
             st.write("**Meal Prep Time:**", socio_data.get('meal_prep_time'))
