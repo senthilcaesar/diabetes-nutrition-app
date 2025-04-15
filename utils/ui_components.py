@@ -2761,15 +2761,15 @@ def input_socioeconomic_data():
     
     with col2:
         # Language Preferences
-        #if 'language_preferences' not in st.session_state:
-        #    st.session_state.language_preferences = ""
+        if 'language_preferences' not in st.session_state:
+            st.session_state.language_preferences = ""
             
-        #language_preferences = st.text_input(
-        #    "Preferred Language(s)",
-        #    value=st.session_state.language_preferences,
-        #    key="language_preferences_input"
-        #)
-        #st.session_state.language_preferences = language_preferences
+        language_preferences = st.text_input(
+            "Preferred Language(s)",
+            value=st.session_state.language_preferences,
+            key="language_preferences_input"
+        )
+        st.session_state.language_preferences = language_preferences
         
         # Technology Access
         if 'technology_access' not in st.session_state:
@@ -2894,6 +2894,7 @@ def input_socioeconomic_data():
         'geographic_setting': geographic_setting,
         'income_level': income_level,
         'education_level': education_level,
+        'language_preferences': language_preferences,
         'literacy_level': literacy_level,
         'technology_access': technology_access,
         'healthcare_access': healthcare_access,
