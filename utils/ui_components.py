@@ -1780,16 +1780,16 @@ div[role="listbox"] {
         }
         
         .stRadio > div > label {
-            padding: 12px 16px !important; /* Adjusted padding for pill shape */
+            padding: 18px 16px !important; /* Adjusted padding for pill shape */
             margin: 0 !important;
             border-radius: 50px !important; /* Pill shape */
             transition: all 0.2s ease !important;
             background-color: #FFFFFF !important; /* White background */
             color: #333333 !important; /* Dark gray text */
             border: none !important;
-            font-family: 'Share Tech Mono', monospace !important;
+            font-family: 'Orbitron', sans-serif !important;
             font-weight: 600 !important;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important; /* Subtle shadow */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4) !important; /* Subtle shadow */
             position: relative;
             overflow: hidden;
             text-transform: uppercase !important;
@@ -1802,7 +1802,7 @@ div[role="listbox"] {
         }
         
         .stRadio > div > label:not(.stRadio > div [data-baseweb="radio"] [data-checked="true"] ~ label):hover {
-            background-color: #F8F8F8 !important; /* Very light gray on hover */
+            background-color: #E5E4E2 !important; /* Very light gray on hover */
             box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15) !important; /* Slightly stronger shadow on hover */
             transform: translateY(-1px) !important; /* Slight lift effect */
         }
