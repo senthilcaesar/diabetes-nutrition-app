@@ -71,11 +71,18 @@ def display_user_data_review():
             st.write("**Setting:**", socio_data.get('geographic_setting'))
             st.write("**Income Level:**", socio_data.get('income_level'))
             st.write("**Education Level:**", socio_data.get('education_level'))
+            st.write("**Literacy Level:**", socio_data.get('literacy_level'))
+            st.write("**Language Preferences:**", socio_data.get('language_preferences'))
+            st.write("**Technology Access:**", socio_data.get('technology_access'))
+            st.write("**Healthcare Access:**", socio_data.get('healthcare_access'))
         
         with col2:
             st.write("**Food Availability:**", socio_data.get('local_food_availability'))
+            st.write("**Grocery Budget:**", socio_data.get('grocery_budget'))
             st.write("**Cooking Facilities:**", socio_data.get('cooking_facilities'))
             st.write("**Meal Prep Time:**", socio_data.get('meal_prep_time'))
+            st.write("**Family Size:**", socio_data.get('family_size'))
+            st.write("**Support System:**", socio_data.get('support_system'))
             cultural_foods = socio_data.get('cultural_foods', '')
             st.write("**Cultural Foods:**", cultural_foods[:50] + "..." if len(cultural_foods) > 50 else cultural_foods)
 

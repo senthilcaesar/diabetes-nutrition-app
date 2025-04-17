@@ -2,7 +2,7 @@ from openai import OpenAI
 import json
 import streamlit as st
 
-GPT_MODEL = "gpt-4o-2024-11-20"  # Specify the model to use
+GPT_MODEL = "gpt-4.1-2025-04-14"  # Specify the model to use
 
 # This module handles all OpenAI API interactions for the diabetes nutrition plan application
 def initialize_openai_client(api_key):
@@ -44,15 +44,15 @@ def create_health_assessment_tools():
                         },
                         "potential_health_risks": {
                             "type": "string",
-                            "description": "Description of potential health risks based on the assessment."
+                            "description": "Assessment of potential health risks based on individual patient profile."
                         },
                         "suggested_diagnoses_and_care_plans": {
                             "type": "string",
-                            "description": "Suggested diagnoses and care plans based on the assessment."
+                            "description": "Recommended diagnostic procedures and follow-up testing protocols based on health assessment findings, along with proposed care plans and treatment approaches to address identified health concerns."
                         },
                         "areas_of_concern": {
                             "type": "string",
-                            "description": "Areas of concern that should be discussed with a healthcare provider."
+                            "description": "Key health concerns requiring professional medical consultation and collaborative care planning with healthcare providers."
                         },
                         "recommendations": {
                             "type": "array",
@@ -174,9 +174,9 @@ def create_health_assessment_prompt(user_data):
     Please provide:
     1. An overall evaluation of the patient's diabetes management
     2. Analysis of their key metrics and how they compare to recommended targets
-    3. Identification of potential health risks based on their profile
-    4. Suggestion of diagnoses and care plans
-    5. Specific areas of concern that should be discussed with a healthcare provider
+    3. Assessment of potential health risks based on individual patient profile
+    4. Recommended diagnostic procedures and follow-up testing protocols based on health assessment findings, along with proposed care plans and treatment approaches to address identified health concerns
+    5. Key health concerns requiring professional medical consultation and collaborative care planning with healthcare providers
     6. Recommendations for improving their health management
     
     Format the assessment in clear sections with headings, and begin with a summary of the most important points and include more detailed information.
@@ -412,7 +412,7 @@ def generate_nutrition_plan(user_data, api_key):
             {"role": "system", "content": "You are a medical nutrition specialist with expertise in diabetes management. Create a personalized nutrition plan based on the provided health and socioeconomic data."},
             {"role": "user", "content": prompt}
         ],
-        temperature=0.3,
+        #temperature=0.3,
         tools=tools,
         tool_choice={"type": "function", "function": {"name": "generate_structured_nutrition_plan"}}
     )
@@ -646,11 +646,16 @@ def create_nutrition_plan_prompt(user_data):
     
     socio_info = f"""
     ## Socioeconomic Considerations
-    - Cultural Food Preferences: {cultural_foods}
+    - Cultural Food Preferences and Traditional Foods: {cultural_foods}
+    - Preferred Languages: {user_data.get('language_preferences', 'Not specified')}
     - Literacy Level: {literacy_level}
     - Income Level: {income_level}
     - Grocery Budget: {grocery_budget}
+    - Family Size: {user_data.get('family_size', 'Not specified')}
     - Local Food Availability: {local_foods}
+    - Access to Technology: {user_data.get('technology_access', 'Not specified')}
+    - Access to Healthcare: {user_data.get('healthcare_access', 'Not specified')}
+    - Support Systems: {user_data.get('support_system', 'Not specified')}
     - Location: {user_data.get('location')}
     - Geographic Setting: {user_data.get('geographic_setting')}
     - Cooking Facilities: {user_data.get('cooking_facilities')}
@@ -683,6 +688,7 @@ def create_nutrition_plan_prompt(user_data):
     - Specifically designed to help manage diabetes while addressing other health conditions
 
     Include more detailed nutritional information, rationale for recommendations.
+    Please provide the output in the preferred language of the user.
     
     Return the plan in a well-formatted structure with clear sections.
     """

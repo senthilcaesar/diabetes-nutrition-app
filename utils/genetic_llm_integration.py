@@ -8,7 +8,7 @@ import json
 import streamlit as st
 from typing import Dict, List, Optional, Any
 
-GPT_MODEL = "gpt-4o-2024-11-20"
+GPT_MODEL = "gpt-4.1-2025-04-14"
 
 def format_structured_genetic_nutrition_plan(structured_data):
     """
@@ -776,15 +776,15 @@ def create_genetic_health_assessment_tools():
                         },
                         "potential_health_risks": {
                             "type": "string",
-                            "description": "Description of potential health risks based on both standard assessment and genetic factors."
+                            "description": "Assessment of potential health risks based on individual patient profile and genetic factors."
                         },
                         "suggested_diagnoses_and_care_plans": {
                             "type": "string",
-                            "description": "Suggested diagnoses and care plans based on the assessment and genetic insights."
+                            "description": "Recommended diagnostic procedures and follow-up testing protocols based on health assessment findings, along with proposed care plans and treatment approaches to address identified health concerns and genetic insights."
                         },
                         "areas_of_concern": {
                             "type": "string",
-                            "description": "Areas of concern that should be discussed with a healthcare provider, including genetic considerations."
+                            "description": "Key health concerns requiring professional medical consultation and collaborative care planning with healthcare providers, including genetic considerations."
                         },
                         "personalized_recommendations": {
                             "type": "object",
@@ -966,9 +966,9 @@ def create_genetic_health_assessment_prompt(user_data, genetic_profile):
     1. An overall health assessment that incorporates genetic insights
     2. Analysis of key health metrics with genetic context
     3. Specific genetic factors affecting diabetes management
-    4. Potential health risks based on both standard and genetic factors
-    5. Personalized diagnosis and care plans integrating genetic insights
-    6. Areas of concern for healthcare provider discussion
+    4. Assessment of potential health risks based on individual patient profile and genetic factors
+    5. Recommended diagnostic procedures and follow-up testing protocols based on health assessment findings, along with proposed care plans and treatment approaches to address identified health concerns and integrating genetic insights
+    6. Key health concerns requiring professional medical consultation and collaborative care planning with healthcare providers
     7. Detailed personalized recommendations for:
        - Nutrition (based on genetic metabolism factors)
        - Physical activity (considering genetic factors)

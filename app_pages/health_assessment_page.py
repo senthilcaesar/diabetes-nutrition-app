@@ -4,6 +4,7 @@ Displays health metrics, genetic insights, and the AI-generated health assessmen
 """
 
 import streamlit as st
+import re
 from utils.visualization import create_health_metrics_visualizations
 from utils.llm_integration import generate_health_assessment
 from utils.genetic_ui_components import show_genetic_insights
@@ -71,18 +72,120 @@ def display_health_assessment(structured_data):
     # Suggested Diagnoses and Care Plans
     st.markdown("<h3 style='color:#006064; margin-top:0; border-bottom:2px solid #B2EBF2; padding-bottom:10px;'>Suggested Diagnoses and Care Plans</h3>", unsafe_allow_html=True)
     
-    st.markdown(
-        f'<div style="background-color:#E0F7FA; padding:15px; border-radius:5px; border-left:5px solid #00BCD4; margin-bottom:20px;">{structured_data["suggested_diagnoses_and_care_plans"]}</div>',
-        unsafe_allow_html=True
-    )
+    # Get the content
+    diagnoses_and_plans = structured_data["suggested_diagnoses_and_care_plans"]
+    
+    # Format the content with enhanced styling to improve readability
+    formatted_content = diagnoses_and_plans
+    
+    # Create a styled container
+    formatted_html = '<div style="background-color:#E0F7FA; padding:15px; border-radius:5px; border-left:5px solid #00BCD4; margin-bottom:20px;">'
+    
+    # Check if the content appears to be a numbered list
+    if re.search(r'\d+\.', formatted_content):
+        # Handle numbered list format - preserve the original numbering
+        # Split by number pattern (e.g., "1.", "2.")
+        items = re.split(r'(\d+\.)', formatted_content)
+        
+        # Process the split items
+        i = 1
+        while i < len(items):
+            if re.match(r'\d+\.', items[i]):
+                # This is a number marker
+                number = items[i]
+                # The content follows the number
+                if i+1 < len(items):
+                    content = items[i+1].strip()
+                    formatted_html += f'<p style="margin-top:8px; margin-bottom:8px;"><strong>{number}</strong> {content}</p>'
+                i += 2
+            else:
+                # Regular text not part of numbering
+                if items[i].strip():
+                    # Check if this text might be a diagnosis or care plan
+                    text = items[i].strip()
+                    if "diagnos" in text.lower() or "condition" in text.lower() or "assessment" in text.lower():
+                        # This is likely a diagnosis - style it differently
+                        formatted_html += f'<p style="font-weight:600; margin-bottom:10px;">{text}</p>'
+                    elif any(keyword in text.lower() for keyword in ["plan", "recommend", "treat", "monitor", "follow", "consider"]):
+                        # This is likely part of a care plan - style it differently
+                        formatted_html += f'<p style="margin-top:5px; margin-left:15px;">• {text}</p>'
+                    else:
+                        # Regular text
+                        formatted_html += f'<p style="margin-top:8px; margin-bottom:8px;">{text}</p>'
+                i += 1
+    else:
+        # Not a numbered list, use sentence-by-sentence analysis
+        # Split by sentences
+        sentences = re.split(r'(?<=[.!?])\s+', formatted_content)
+        
+        # Process each sentence
+        for i, sentence in enumerate(sentences):
+            if sentence.strip():
+                # Check if this sentence might be a diagnosis
+                if i == 0 or any(keyword in sentence.lower() for keyword in ["diagnos", "condition", "assessment"]):
+                    # This is likely a diagnosis - style it differently
+                    formatted_html += f'<p style="font-weight:600; margin-bottom:10px;">{sentence}</p>'
+                # Check if this sentence might be part of a care plan
+                elif any(keyword in sentence.lower() for keyword in ["plan", "recommend", "treat", "monitor", "follow", "consider"]):
+                    # This is likely part of a care plan - style it differently
+                    formatted_html += f'<p style="margin-top:5px; margin-left:15px;">• {sentence}</p>'
+                else:
+                    # Regular sentence
+                    formatted_html += f'<p>{sentence}</p>'
+    
+    formatted_html += '</div>'
+    
+    # Display the formatted content
+    st.markdown(formatted_html, unsafe_allow_html=True)
     
     # Areas of Concern
     st.markdown("<h3 style='color:#E65100; margin-top:0; border-bottom:2px solid #FFE0B2; padding-bottom:10px;'>Areas of Concern for Discussion with a Healthcare Provider</h3>", unsafe_allow_html=True)
     
-    st.markdown(
-        f'<div style="background-color:#FFF3E0; padding:15px; border-radius:5px; border-left:5px solid #FF9800; margin-bottom:20px;">{structured_data["areas_of_concern"]}</div>',
-        unsafe_allow_html=True
-    )
+    # Get the content
+    areas_of_concern = structured_data["areas_of_concern"]
+    
+    # Format the content with enhanced styling to improve readability
+    formatted_content = areas_of_concern
+    
+    # Create a styled container
+    formatted_html = '<div style="background-color:#FFF3E0; padding:15px; border-radius:5px; border-left:5px solid #FF9800; margin-bottom:20px;">'
+    
+    # Check if the content appears to be a numbered list
+    if re.search(r'\d+\.', formatted_content):
+        # Handle numbered list format - preserve the original numbering
+        # Split by number pattern (e.g., "1.", "2.")
+        items = re.split(r'(\d+\.)', formatted_content)
+        
+        # Process the split items
+        i = 1
+        while i < len(items):
+            if re.match(r'\d+\.', items[i]):
+                # This is a number marker
+                number = items[i]
+                # The content follows the number
+                if i+1 < len(items):
+                    content = items[i+1].strip()
+                    formatted_html += f'<p style="margin-top:8px; margin-bottom:8px;"><strong>{number}</strong> {content}</p>'
+                i += 2
+            else:
+                # Regular text not part of numbering
+                if items[i].strip():
+                    formatted_html += f'<p style="margin-top:8px; margin-bottom:8px;">{items[i].strip()}</p>'
+                i += 1
+    else:
+        # Not a numbered list, use bullet points for each sentence
+        # Split by sentences
+        sentences = re.split(r'(?<=[.!?])\s+', formatted_content)
+        
+        # Process each sentence as a separate concern
+        for sentence in sentences:
+            if sentence.strip():
+                formatted_html += f'<p style="margin-top:5px; margin-bottom:10px;">• {sentence.strip()}</p>'
+    
+    formatted_html += '</div>'
+    
+    # Display the formatted content
+    st.markdown(formatted_html, unsafe_allow_html=True)
     
     # Recommendations as a list of points
     st.markdown("<h3 style='color:#33691E; margin-top:0; border-bottom:2px solid #DCEDC8; padding-bottom:10px;'>Recommendations for Health Management Improvement</h3>", unsafe_allow_html=True)
@@ -175,18 +278,120 @@ def display_genetic_health_assessment(structured_data):
     # Suggested Diagnoses and Care Plans
     st.markdown("<h3 style='color:#006064; margin-top:0; border-bottom:2px solid #B2EBF2; padding-bottom:10px;'>Suggested Diagnoses and Care Plans</h3>", unsafe_allow_html=True)
     
-    st.markdown(
-        f'<div style="background-color:#E0F7FA; padding:15px; border-radius:5px; border-left:5px solid #00BCD4; margin-bottom:20px;">{structured_data["suggested_diagnoses_and_care_plans"]}</div>',
-        unsafe_allow_html=True
-    )
+    # Get the content
+    diagnoses_and_plans = structured_data["suggested_diagnoses_and_care_plans"]
+    
+    # Format the content with enhanced styling to improve readability
+    formatted_content = diagnoses_and_plans
+    
+    # Create a styled container
+    formatted_html = '<div style="background-color:#E0F7FA; padding:15px; border-radius:5px; border-left:5px solid #00BCD4; margin-bottom:20px;">'
+    
+    # Check if the content appears to be a numbered list
+    if re.search(r'\d+\.', formatted_content):
+        # Handle numbered list format - preserve the original numbering
+        # Split by number pattern (e.g., "1.", "2.")
+        items = re.split(r'(\d+\.)', formatted_content)
+        
+        # Process the split items
+        i = 1
+        while i < len(items):
+            if re.match(r'\d+\.', items[i]):
+                # This is a number marker
+                number = items[i]
+                # The content follows the number
+                if i+1 < len(items):
+                    content = items[i+1].strip()
+                    formatted_html += f'<p style="margin-top:8px; margin-bottom:8px;"><strong>{number}</strong> {content}</p>'
+                i += 2
+            else:
+                # Regular text not part of numbering
+                if items[i].strip():
+                    # Check if this text might be a diagnosis or care plan
+                    text = items[i].strip()
+                    if "diagnos" in text.lower() or "condition" in text.lower() or "assessment" in text.lower():
+                        # This is likely a diagnosis - style it differently
+                        formatted_html += f'<p style="font-weight:600; margin-bottom:10px;">{text}</p>'
+                    elif any(keyword in text.lower() for keyword in ["plan", "recommend", "treat", "monitor", "follow", "consider"]):
+                        # This is likely part of a care plan - style it differently
+                        formatted_html += f'<p style="margin-top:5px; margin-left:15px;">• {text}</p>'
+                    else:
+                        # Regular text
+                        formatted_html += f'<p style="margin-top:8px; margin-bottom:8px;">{text}</p>'
+                i += 1
+    else:
+        # Not a numbered list, use sentence-by-sentence analysis
+        # Split by sentences
+        sentences = re.split(r'(?<=[.!?])\s+', formatted_content)
+        
+        # Process each sentence
+        for i, sentence in enumerate(sentences):
+            if sentence.strip():
+                # Check if this sentence might be a diagnosis
+                if i == 0 or any(keyword in sentence.lower() for keyword in ["diagnos", "condition", "assessment"]):
+                    # This is likely a diagnosis - style it differently
+                    formatted_html += f'<p style="font-weight:600; margin-bottom:10px;">{sentence}</p>'
+                # Check if this sentence might be part of a care plan
+                elif any(keyword in sentence.lower() for keyword in ["plan", "recommend", "treat", "monitor", "follow", "consider"]):
+                    # This is likely part of a care plan - style it differently
+                    formatted_html += f'<p style="margin-top:5px; margin-left:15px;">• {sentence}</p>'
+                else:
+                    # Regular sentence
+                    formatted_html += f'<p>{sentence}</p>'
+    
+    formatted_html += '</div>'
+    
+    # Display the formatted content
+    st.markdown(formatted_html, unsafe_allow_html=True)
     
     # Areas of Concern
     st.markdown("<h3 style='color:#E65100; margin-top:0; border-bottom:2px solid #FFE0B2; padding-bottom:10px;'>Areas of Concern for Discussion with a Healthcare Provider</h3>", unsafe_allow_html=True)
     
-    st.markdown(
-        f'<div style="background-color:#FFF3E0; padding:15px; border-radius:5px; border-left:5px solid #FF9800; margin-bottom:20px;">{structured_data["areas_of_concern"]}</div>',
-        unsafe_allow_html=True
-    )
+    # Get the content
+    areas_of_concern = structured_data["areas_of_concern"]
+    
+    # Format the content with enhanced styling to improve readability
+    formatted_content = areas_of_concern
+    
+    # Create a styled container
+    formatted_html = '<div style="background-color:#FFF3E0; padding:15px; border-radius:5px; border-left:5px solid #FF9800; margin-bottom:20px;">'
+    
+    # Check if the content appears to be a numbered list
+    if re.search(r'\d+\.', formatted_content):
+        # Handle numbered list format - preserve the original numbering
+        # Split by number pattern (e.g., "1.", "2.")
+        items = re.split(r'(\d+\.)', formatted_content)
+        
+        # Process the split items
+        i = 1
+        while i < len(items):
+            if re.match(r'\d+\.', items[i]):
+                # This is a number marker
+                number = items[i]
+                # The content follows the number
+                if i+1 < len(items):
+                    content = items[i+1].strip()
+                    formatted_html += f'<p style="margin-top:8px; margin-bottom:8px;"><strong>{number}</strong> {content}</p>'
+                i += 2
+            else:
+                # Regular text not part of numbering
+                if items[i].strip():
+                    formatted_html += f'<p style="margin-top:8px; margin-bottom:8px;">{items[i].strip()}</p>'
+                i += 1
+    else:
+        # Not a numbered list, use bullet points for each sentence
+        # Split by sentences
+        sentences = re.split(r'(?<=[.!?])\s+', formatted_content)
+        
+        # Process each sentence as a separate concern
+        for sentence in sentences:
+            if sentence.strip():
+                formatted_html += f'<p style="margin-top:5px; margin-bottom:10px;">• {sentence.strip()}</p>'
+    
+    formatted_html += '</div>'
+    
+    # Display the formatted content
+    st.markdown(formatted_html, unsafe_allow_html=True)
     
     # Personalized Recommendations
     st.markdown("<h3 style='color:#33691E; margin-top:0; border-bottom:2px solid #DCEDC8; padding-bottom:10px;'>Personalized Recommendations</h3>", unsafe_allow_html=True)
@@ -606,5 +811,3 @@ def show_health_assessment():
                 These insights will help you understand how your genetic variants may influence your nutritional needs.
                 """)
             pass
-
-            
