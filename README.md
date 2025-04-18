@@ -1,4 +1,4 @@
-# Personalized Diabetes Nutrition Plan
+# Neuro Nutrition
 
 This AI-powered application provides personalized nutrition guidance for individuals with diabetes, taking into account:
 
