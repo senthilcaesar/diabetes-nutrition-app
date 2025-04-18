@@ -6,6 +6,8 @@ This AI-powered application provides personalized nutrition guidance for individ
 - Socioeconomic context
 - Genetic profile (optional)
 
+![app](images/app.png)
+
 The app uses OpenAI's GPT-4 to generate tailored recommendations based on the user's input data.
 
 ## Live Application
