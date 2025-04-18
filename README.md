@@ -6,7 +6,7 @@ This AI-powered application provides personalized nutrition guidance for individ
 - Socioeconomic context
 - Genetic profile (optional)
 
-The app is a Streamlit web application for diabetes nutrition planning with four main pages: input collection, personalized nutrition plans, health assessment, and educational resources. It uses OpenAI's GPT-4 to generate tailored recommendations based on the user's diabetes type, health metrics, and socioeconomic factors, with optional genetic data integration for more targeted advice.
+The app uses OpenAI's GPT-4 to generate tailored recommendations based on the user's input data.
 
 ## Live Application
 
@@ -126,14 +126,15 @@ A sample file is provided in `example_data/sample_23andme.txt` that can be used 
 The application requires the following Python packages:
 
 ```
-streamlit>=1.30.0
-openai>=1.3.0
-pandas>=2.0.0
-numpy>=1.24.0
-matplotlib>=3.7.0
+streamlit>=1.22.0
+openai>=1.0.0
+pandas>=1.5.0
+numpy>=1.22.0
+matplotlib>=3.5.0
 Pillow>=9.0.0
 python-dotenv>=0.20.0
 scikit-learn>=1.0.0
+markdown>=3.4.0
 ```
 
 Install all required packages using:
