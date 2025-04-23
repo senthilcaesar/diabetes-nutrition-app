@@ -2310,7 +2310,8 @@ def show_sidebar():
         {"id": "Input Data", "icon": "📊", "text": "Input Data"},
         {"id": "Nutrition Plan", "icon": "🍽️", "text": "Nutrition Plan"},
         {"id": "Health Assessment", "icon": "🫀", "text": "Health Assessment"},
-        {"id": "Educational Resources", "icon": "📚", "text": "Resources"}
+        {"id": "Educational Resources", "icon": "📚", "text": "Resources"},
+        {"id": "Q&A", "icon": "❓", "text": "Q&A"}
     ]
     
     # Instead of custom HTML navigation, use direct radio buttons with styling

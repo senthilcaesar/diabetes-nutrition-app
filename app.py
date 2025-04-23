@@ -11,6 +11,7 @@ from app_pages.input_page import show_input_data_page
 from app_pages.nutrition_plan_page import show_nutrition_plan
 from app_pages.health_assessment_page import show_health_assessment
 from app_pages.educational_resources_page import show_educational_resources
+from app_pages.rag_qa_page import show_rag_qa_page
 
 # Set page configuration
 st.set_page_config(
@@ -40,6 +41,8 @@ def main():
         show_health_assessment()
     elif page == "Educational Resources":
         show_educational_resources()
+    elif page == "Q&A":
+        show_rag_qa_page()
 
 if __name__ == "__main__":
     main()

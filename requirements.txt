@@ -7,4 +7,8 @@ Pillow>=9.0.0
 python-dotenv>=0.20.0
 scikit-learn>=1.0.0
 markdown>=3.4.0
+# RAG system dependencies
+pymupdf4llm>=0.0.21
+langchain_text_splitters>=0.0.1
+tiktoken>=0.9.0
 # No additional dependencies required for genetic components
