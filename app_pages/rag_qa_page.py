@@ -116,13 +116,13 @@ def show_rag_qa_page():
         st.session_state.rag_history = []
     
     # Show history in sidebar if there are previous questions
-    if st.session_state.rag_history:
-        with st.sidebar:
-            st.markdown("### Previous Questions")
-            for i, (q, a) in enumerate(st.session_state.rag_history):
-                if st.button(f"{q[:50]}{'...' if len(q) > 50 else ''}", key=f"history_{i}"):
-                    st.session_state.current_question = q
-                    st.experimental_rerun()
+    # if st.session_state.rag_history:
+    #     with st.sidebar:
+    #         st.markdown("### Previous Questions")
+    #         for i, (q, a) in enumerate(st.session_state.rag_history):
+    #             if st.button(f"{q[:50]}{'...' if len(q) > 50 else ''}", key=f"history_{i}"):
+    #                 st.session_state.current_question = q
+    #                 st.experimental_rerun()
     
     with main_container:
         # Create a container with a light background and rounded corners
