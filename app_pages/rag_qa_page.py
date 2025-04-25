@@ -203,8 +203,8 @@ def show_rag_qa_page():
             - What's the best breakfast for stable glucose levels?
             - What is glucose and why is it important for the body?
             - How do glucose spikes affect energy levels and mood?
-            - What's the connection between glucose and inflammation?
             - What's the relationship between glucose and heart health?
+            - What's the connection between glucose and inflammation?
             - What's the relationship between carbohydrates and glucose?
             - What's the connection between glucose levels and diabetes?
             - What are the best strategies to prevent glucose spikes after meals?
