@@ -371,27 +371,6 @@ def create_nutrition_plan_tools():
     
     return tools
 
-
-    """Generate a personalized nutrition plan using OpenAI."""
-    prompt = create_nutrition_plan_prompt(user_data)
-    
-    print(prompt)
-
-    client = OpenAI(api_key=api_key)
-    response = client.chat.completions.create(
-        model="gpt-4",  # Adjust based on availability and needs
-        messages=[
-            {"role": "system", "content": "You are a medical nutrition specialist with expertise in diabetes management. Create a personalized nutrition plan based on the provided health and socioeconomic data."},
-            {"role": "user", "content": prompt}
-        ],
-        temperature=0.3,
-        max_tokens=2000
-    )
-    
-    nutrition_plan = response.choices[0].message.content.strip()
-    print(nutrition_plan)
-    return nutrition_plan
-
 def generate_nutrition_plan(user_data, api_key):
     """
     Generate a personalized nutrition plan using OpenAI.
@@ -733,7 +712,6 @@ def generate_visual_guidance(nutrition_plan, literacy_level, plan_complexity, ap
             {"role": "user", "content": prompt}
         ],
         temperature=0.3,
-        max_tokens=1500
     )
     
     visual_guidance = response.choices[0].message.content.strip()

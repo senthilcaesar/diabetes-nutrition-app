@@ -194,19 +194,22 @@ def show_rag_qa_page():
             st.markdown("<h5 style='color:#20a7db; margin-top:0; border-bottom:2px solid #D3D3D3; padding-bottom:10px;'>Example Questions</h5>", unsafe_allow_html=True)
                                
             st.markdown("""
-            - How does exercise affect blood glucose levels?
-            - What is glucose and why is it important for the body?
             - What are normal blood glucose levels?
-            - How does insulin affect blood glucose levels?
+            - What is the root cause of Type 2 diabetes?
             - How does fiber affect blood glucose levels?
-            - What's the relationship between carbohydrates and glucose?
-            - What's the best breakfast for stable glucose levels?
-            - What are the best strategies to prevent glucose spikes after meals?
-            - What's the connection between glucose levels and diabetes?
-            - What's the relationship between glucose and heart health?
-            - How do glucose spikes affect energy levels and mood?
-            - What's the connection between glucose and inflammation?
+            - How does insulin affect blood glucose levels?
+            - How does exercise affect blood glucose levels?
             - How do glucose levels affect cognitive function?
+            - How do glucose spikes affect energy levels and mood?
+            - What's the best breakfast for stable glucose levels?
+            - What is glucose and why is it important for the body?
+            - What's the connection between glucose and inflammation?
+            - What's the relationship between glucose and heart health?
+            - What's the relationship between carbohydrates and glucose?
+            - What's the connection between glucose levels and diabetes?
+            - What are the main differences between Type 1 and Type 2 diabetes?
+            - What are the best strategies to prevent glucose spikes after meals?
+            - How does eating food in the right order help with glucose management?
                     """)
     
     # Admin section for reingesting documents
