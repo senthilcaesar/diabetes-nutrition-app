@@ -16,12 +16,3 @@ run:
   secrets:
     - name: OPENAI_API_KEY
       value-from: /apprunner/secrets/OPENAI_API_KEY
-  health-check:
-    path: "/"
-    interval: 10
-    timeout: 5
-    healthy-threshold: 3
-    unhealthy-threshold: 5
-  instance:
-    cpu: 1
-    memory: 2048
