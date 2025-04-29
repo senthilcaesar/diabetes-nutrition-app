@@ -123,28 +123,6 @@ The application specifically analyzes these genetic markers:
 
 A sample file is provided in `example_data/sample_23andme.txt` that can be used for demonstration purposes.
 
-## Requirements
-
-The application requires the following Python packages:
-
-```
-streamlit>=1.22.0
-openai>=1.0.0
-pandas>=1.5.0
-numpy>=1.22.0
-matplotlib>=3.5.0
-Pillow>=9.0.0
-python-dotenv>=0.20.0
-scikit-learn>=1.0.0
-markdown>=3.4.0
-```
-
-Install all required packages using:
-
-```bash
-pip install -r requirements.txt
-```
-
 ## Getting Started
 
 1. Clone the repository:
