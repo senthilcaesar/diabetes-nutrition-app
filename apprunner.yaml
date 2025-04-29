@@ -11,11 +11,6 @@ run:
   network:
     port: 8080
     env: APP_PORT
-
   env:
     - name: PYTHONUNBUFFERED
       value: "1"
-
-secrets:
-  - name: OPENAI_API_KEY
-    value-from: /apprunner/secrets/OPENAI_API_KEY
