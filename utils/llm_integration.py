@@ -16,6 +16,7 @@ def create_health_assessment_tools():
     Returns:
         list: A list containing the function schema for health assessment
     """
+    # Define a function schema that describes our desired structure
     tools = [
         {
             "type": "function",
@@ -88,6 +89,7 @@ def generate_health_assessment(user_data, api_key):
     # Get the tools schema
     tools = create_health_assessment_tools()
     
+    # Extract structured data using function calling
     response = client.chat.completions.create(
         model=GPT_MODEL,  # Use GPT-4 for more comprehensive medical analysis
         messages=[
@@ -144,6 +146,7 @@ def create_health_assessment_prompt(user_data):
     dietary_restrictions = user_data.get('dietary_restrictions', 'None')
     
     # Build the prompt
+    # Have the model provide arguments matching the schema
     prompt = f"""
     Please provide a comprehensive health assessment for a patient with the following profile:
     
@@ -172,7 +175,8 @@ def create_health_assessment_prompt(user_data):
     
     ## Requested Assessment
     Please provide:
-    1. An overall evaluation of the patient's diabetes management
+    0. A summary of the patient's overall health status
+    1. An evaluation of their diabetes management
     2. Analysis of their key metrics and how they compare to recommended targets
     3. Assessment of potential health risks based on individual patient profile
     4. Recommended diagnostic procedures and follow-up testing protocols based on health assessment findings, along with proposed care plans and treatment approaches to address identified health concerns

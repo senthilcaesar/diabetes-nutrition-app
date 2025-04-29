@@ -1,0 +1,97 @@
+# Diabetes Nutrition RAG System with ChromaDB
+
+This directory contains the Retrieval-Augmented Generation (RAG) system for the Diabetes Nutrition App. The system uses ChromaDB for vector storage and retrieval, enabling efficient semantic search over diabetes and nutrition documents.
+
+## System Overview
+
+```mermaid
+graph TD
+    A[PDF Documents] -->|Extract Text| B[Text Extraction]
+    B -->|Split into Chunks| C[Text Chunking]
+    C -->|Generate Embeddings| D[Vector Embeddings]
+    D -->|Store in ChromaDB| E[ChromaDB Collection]
+
+    F[User Question] -->|Generate Embedding| G[Question Embedding]
+    G -->|Query ChromaDB| E
+    E -->|Return Similar Chunks| H[Relevant Chunks]
+    H -->|Context for LLM| I[OpenAI API]
+    I -->|Generate Response| J[Answer to User]
+```
+
+## How the System Works
+
+### 1. Document Ingestion (`ingest_documents.py`)
+
+The ingestion process transforms PDF documents into searchable vector embeddings:
+
+1. **Text Extraction**: Uses `pymupdf4llm` to extract text from PDF files in the `data` directory.
+2. **Text Chunking**: Splits the extracted text into smaller chunks (500 characters with 125 character overlap) using `RecursiveCharacterTextSplitter`.
+3. **Embedding Generation**: Creates vector embeddings for each chunk using OpenAI's `text-embedding-3-small` model.
+4. **Storage**: Stores the chunks, embeddings, and metadata in a ChromaDB collection.
+
+### 2. Retrieval and Response Generation (`rag_system.py`)
+
+When a user asks a question:
+
+1. **Question Embedding**: Converts the user's question into a vector embedding.
+2. **Similarity Search**: Queries the ChromaDB collection to find chunks most similar to the question.
+3. **Context Assembly**: Gathers the most relevant chunks to use as context.
+4. **Response Generation**: Sends the question and context to OpenAI's GPT model to generate a response.
+
+## Key Components
+
+- **ChromaDB Client**: Manages the vector database for storing and retrieving embeddings.
+- **Collection**: Named "diabetes_nutrition_docs", stores document chunks with their embeddings.
+- **Metadata**: Each chunk includes metadata about its source document and position.
+- **Similarity Search**: Uses vector similarity to find relevant information.
+
+## Important Points to Note
+
+1. **ChromaDB Initialization**: Uses the `PersistentClient` for automatic data persistence:
+
+   ```python
+   client = chromadb.PersistentClient(path=str(chroma_dir))
+   ```
+
+2. **Embedding Model**: Uses OpenAI's `text-embedding-3-small` for both document chunks and questions.
+
+3. **Chunk Size**: The system uses 500-character chunks with 125-character overlap. Adjust these parameters based on your content if needed.
+
+4. **Similarity Threshold**: The system includes chunks with similarity scores above 0.7 or at least the top 2 chunks regardless of score.
+
+5. **API Key**: Requires an OpenAI API key for generating embeddings and responses.
+
+6. **Data Directory**: PDF documents should be placed in the `rag/data` directory.
+
+## Usage
+
+### Ingesting Documents
+
+Run the ingestion script to process PDF documents:
+
+```bash
+python ingest_documents.py
+```
+
+This creates a ChromaDB collection with embeddings for all document chunks.
+
+### Querying the System
+
+The RAG system is integrated into the Streamlit app. Users can ask questions through the Q&A interface, and the system will:
+
+1. Find relevant information from the ingested documents
+2. Generate a response based on the retrieved context
+3. Display the answer to the user
+
+## Customization
+
+- **Embedding Model**: Change the embedding model in both `ingest_documents.py` and `rag_system.py`.
+- **Chunk Size**: Adjust the `chunk_size` and `chunk_overlap` parameters in the `RecursiveCharacterTextSplitter`.
+- **Collection Name**: Modify the `collection_name` parameter if you want to create multiple collections.
+- **Similarity Threshold**: Change the threshold in the `generate_response` function to include more or fewer chunks.
+
+## Troubleshooting
+
+- **Missing API Key**: Set the OpenAI API key in environment variables or `.env` file.
+- **No Documents Found**: Ensure PDF files are placed in the `rag/data` directory.
+- **ChromaDB Errors**: Check that the ChromaDB directory has proper write permissions.

@@ -1,15 +1,15 @@
 """
 RAG Q&A page for the Diabetes Nutrition App.
 This page provides a user interface for asking questions about diabetes and nutrition,
-with answers retrieved from PDF documents using a RAG system.
+with answers retrieved from PDF documents using a RAG system with ChromaDB.
 """
 
 import os
 import streamlit as st
-import json
 from pathlib import Path
+import chromadb
 
-from utils.rag_system import load_chunks, find_similar_chunks, generate_response, ingest_documents
+from utils.rag_system import load_chunks, find_similar_chunks, generate_response, ingest_documents, get_chroma_client
 
 def show_rag_qa_page():
     """Display the RAG Q&A interface."""
@@ -74,10 +74,18 @@ def show_rag_qa_page():
     
     st.markdown("<h4 style='font-size: 22px; font-family: inherit;'>Ask Questions About Diabetes & Nutrition</h4>", unsafe_allow_html=True)
     
-    # Check if chunks file exists, if not, show option to ingest documents
-    chunks_file = Path("rag_ingested_chunks.json")
+    # Check if ChromaDB collection exists, if not, show option to ingest documents
+    collection_name = "diabetes_nutrition_docs"
+    chroma_client = get_chroma_client()
     
-    if not chunks_file.exists():
+    # Check if collection exists
+    try:
+        existing_collections = chroma_client.list_collections()
+        collection_exists = any(collection.name == collection_name for collection in existing_collections)
+    except Exception:
+        collection_exists = False
+    
+    if not collection_exists:
         st.warning("The knowledge base has not been created yet. Please ingest documents first.")
         
         if st.button("Ingest Documents"):
@@ -101,7 +109,7 @@ def show_rag_qa_page():
             1. Extracts text from PDF files in the data directory
             2. Splits the text into smaller chunks
             3. Generates embeddings for each chunk
-            4. Saves the chunks with embeddings to a JSON file
+            4. Stores the chunks with embeddings in a ChromaDB collection
             
             This process only needs to be run once, or when new documents are added to the data directory.
             """)
@@ -146,11 +154,11 @@ def show_rag_qa_page():
         if submit_button and question:
             with st.spinner("Searching for information..."):
                 try:
-                    # Load chunks
-                    all_chunks = load_chunks()
+                    # Load ChromaDB collection
+                    collection = load_chunks(collection_name)
                     
-                    # Find relevant chunks
-                    relevant_chunks = find_similar_chunks(question, all_chunks)
+                    # Find relevant chunks using ChromaDB
+                    relevant_chunks = find_similar_chunks(question, collection)
                     
                     # Generate response
                     response_data = generate_response(question, relevant_chunks)
@@ -172,7 +180,8 @@ def show_rag_qa_page():
                     # Show relevant chunks
                     # with st.expander("View Source Passages"):
                     #     for i, chunk in enumerate(response_data["chunks"]):
-                    #         st.markdown(f"**Passage {i+1}** (from {chunk['id'].split('-')[0]})")
+                    #         source = chunk.get('source', chunk['id'].split('-')[0])
+                    #         st.markdown(f"**Passage {i+1}** (from {source})")
                     #         st.markdown(chunk["text"])
                     #         st.markdown(f"*Relevance score: {chunk['score']:.2f}*")
                     #         st.markdown("---")
@@ -194,6 +203,8 @@ def show_rag_qa_page():
             st.markdown("<h5 style='color:#20a7db; margin-top:0; border-bottom:2px solid #D3D3D3; padding-bottom:10px;'>Example Questions</h5>", unsafe_allow_html=True)
                                
             st.markdown("""
+            - What is insulin?
+            - What is insulin resistance?
             - What are normal blood glucose levels?
             - What is the root cause of Type 2 diabetes?
             - How does fiber affect blood glucose levels?
@@ -211,6 +222,14 @@ def show_rag_qa_page():
             - What are the main differences between Type 1 and Type 2 diabetes?
             - How does eating food in the right order help with glucose management?
                     """)
+            
+            st.markdown("<h5 style='color:#20a7db; margin-top:0; border-bottom:2px solid #D3D3D3; padding-bottom:10px;'>Example Answer</h5>", unsafe_allow_html=True)
+            
+            st.markdown("""What is insulin resistance? Please explain in layman's terms.""")
+
+            st.markdown("""Insulin resistance is a condition where the body's cells don't respond well to insulin, a hormone that helps control blood sugar levels. Imagine insulin as a key that opens a door to let glucose (sugar) into the cells for energy. In insulin resistance, 
+                        the key (insulin) doesn't fit the lock (the cell's receptor) very well, so the door doesn't open easily. As a result, glucose builds up in the blood instead of entering the cells. The body tries to compensate by producing more insulin, but this can lead to problems like high blood sugar and excessive fat in the liver.
+                        """)       
     
     # Admin section for reingesting documents
     # with st.expander("Admin Options"):

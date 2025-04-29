@@ -1,53 +1,75 @@
 """
 RAG (Retrieval-Augmented Generation) system for the Diabetes Nutrition App.
 This module provides functions for retrieving relevant information from PDF documents
-and generating responses to user questions.
+and generating responses to user questions using ChromaDB for vector storage and retrieval.
 """
 
-import json
 import numpy as np
 import os
 import pathlib
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Any, Tuple, Optional, Union
 
 import streamlit as st
 import openai
 from openai import OpenAI
 import pymupdf4llm
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+import chromadb
+from chromadb.config import Settings
 
-def cosine_similarity(vec1: List[float], vec2: List[float]) -> float:
+def get_chroma_client():
     """
-    Calculate cosine similarity between two vectors.
+    Initialize and return a ChromaDB client with persistent storage.
     
-    Args:
-        vec1: First vector
-        vec2: Second vector
-        
     Returns:
-        Cosine similarity score between 0 and 1
+        chromadb.Client: Initialized ChromaDB client
     """
-    vec1 = np.array(vec1)
-    vec2 = np.array(vec2)
-    return np.dot(vec1, vec2) / (np.linalg.norm(vec1) * np.linalg.norm(vec2))
+    # Create a directory for ChromaDB if it doesn't exist
+    chroma_dir = pathlib.Path(os.path.dirname(os.path.dirname(__file__))) / "rag" / "chroma_db"
+    os.makedirs(chroma_dir, exist_ok=True)
+    
+    # Create a persistent client using the new client initialization method
+    client = chromadb.PersistentClient(path=str(chroma_dir))
+    
+    return client
 
-def ingest_documents(data_dir: str, output_file: str = "rag_ingested_chunks.json") -> None:
+def ingest_documents(data_dir: str, collection_name: str = "diabetes_nutrition_docs") -> int:
     """
     Process PDF documents in the data directory, extract text, split into chunks,
-    generate embeddings, and save to a JSON file.
+    generate embeddings, and store in a ChromaDB collection.
     
     Args:
         data_dir: Path to directory containing PDF files
-        output_file: Path to output JSON file
+        collection_name: Name of the ChromaDB collection to store documents
+        
+    Returns:
+        int: Number of chunks added to the collection
     """
     # Initialize OpenAI client
     client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+    
+    # Initialize ChromaDB client
+    chroma_client = get_chroma_client()
+    
+    # Check if collection exists and delete it to start fresh
+    try:
+        existing_collections = chroma_client.list_collections()
+        if any(collection.name == collection_name for collection in existing_collections):
+            chroma_client.delete_collection(collection_name)
+    except Exception as e:
+        print(f"Error checking existing collections: {str(e)}")
+    
+    # Create a new collection
+    collection = chroma_client.create_collection(
+        name=collection_name,
+        metadata={"description": "Diabetes and nutrition documents"}
+    )
     
     # Get list of PDF files in the data directory
     data_path = pathlib.Path(data_dir)
     filenames = [f for f in os.listdir(data_path) if f.endswith('.pdf')]
     
-    all_chunks = []
+    total_chunks_added = 0
     for filename in filenames:
         # Extract text from the PDF file
         md_text = pymupdf4llm.to_markdown(data_path / filename)
@@ -57,48 +79,73 @@ def ingest_documents(data_dir: str, output_file: str = "rag_ingested_chunks.json
             model_name="gpt-4o", chunk_size=500, chunk_overlap=125
         )
         texts = text_splitter.create_documents([md_text])
-        file_chunks = [{"id": f"{filename}-{(i + 1)}", "text": text.page_content} for i, text in enumerate(texts)]
-
-        # Generate embeddings using openAI SDK for each text
-        for file_chunk in file_chunks:
-            file_chunk["embedding"] = (
-                client.embeddings.create(model="text-embedding-3-small", input=file_chunk["text"]).data[0].embedding
+        
+        # Prepare data for ChromaDB
+        chunk_ids = []
+        chunk_texts = []
+        chunk_embeddings = []
+        chunk_metadatas = []
+        
+        # Generate embeddings for each chunk and prepare for ChromaDB
+        for i, text in enumerate(texts):
+            chunk_id = f"{filename}-{(i + 1)}"
+            
+            # Generate embedding
+            embedding = client.embeddings.create(
+                model="text-embedding-3-small", 
+                input=text.page_content
+            ).data[0].embedding
+            
+            # Add to lists for batch addition
+            chunk_ids.append(chunk_id)
+            chunk_texts.append(text.page_content)
+            chunk_embeddings.append(embedding)
+            chunk_metadatas.append({
+                "source": filename,
+                "chunk_index": i + 1,
+                "total_chunks": len(texts)
+            })
+        
+        # Add chunks to ChromaDB collection
+        if chunk_ids:
+            collection.add(
+                ids=chunk_ids,
+                documents=chunk_texts,
+                embeddings=chunk_embeddings,
+                metadatas=chunk_metadatas
             )
-        all_chunks.extend(file_chunks)
-
-    # Save the documents with embeddings to a JSON file
-    with open(output_file, "w") as f:
-        json.dump(all_chunks, f, indent=4)
+            total_chunks_added += len(chunk_ids)
     
-    return len(all_chunks)
+    return total_chunks_added
 
-def load_chunks(file_path: str = "rag_ingested_chunks.json") -> List[Dict[str, Any]]:
+def load_chunks(collection_name: str = "diabetes_nutrition_docs") -> chromadb.Collection:
     """
-    Load preprocessed chunks from a JSON file.
+    Load the ChromaDB collection containing preprocessed chunks.
     
     Args:
-        file_path: Path to the JSON file containing chunks with embeddings
+        collection_name: Name of the ChromaDB collection
         
     Returns:
-        List of chunks with text and embeddings
+        chromadb.Collection: ChromaDB collection containing chunks with embeddings
     """
     try:
-        with open(file_path, "r") as f:
-            return json.load(f)
-    except FileNotFoundError:
-        raise FileNotFoundError(f"Chunks file not found at {file_path}. Run ingest_documents first.")
+        chroma_client = get_chroma_client()
+        collection = chroma_client.get_collection(collection_name)
+        return collection
+    except Exception as e:
+        raise ValueError(f"ChromaDB collection '{collection_name}' not found. Run ingest_documents first. Error: {str(e)}")
 
-def find_similar_chunks(question: str, all_chunks: List[Dict[str, Any]], top_k: int = 5) -> List[Dict[str, Any]]:
+def find_similar_chunks(question: str, collection: chromadb.Collection, top_k: int = 5) -> List[Tuple[Dict[str, Any], float]]:
     """
-    Find chunks most similar to the question using cosine similarity.
+    Find chunks most similar to the question using ChromaDB's similarity search.
     
     Args:
         question: User question
-        all_chunks: List of chunks with text and embeddings
+        collection: ChromaDB collection containing chunks with embeddings
         top_k: Number of most similar chunks to return
         
     Returns:
-        List of most similar chunks
+        List of tuples containing chunks and their similarity scores
     """
     # Initialize OpenAI client
     client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
@@ -109,15 +156,33 @@ def find_similar_chunks(question: str, all_chunks: List[Dict[str, Any]], top_k: 
         input=question
     ).data[0].embedding
     
-    # Calculate similarity scores
-    similarities = []
-    for chunk in all_chunks:
-        similarity = cosine_similarity(question_embedding, chunk["embedding"])
-        similarities.append((chunk, similarity))
+    # Query ChromaDB for similar chunks
+    results = collection.query(
+        query_embeddings=[question_embedding],
+        n_results=top_k,
+        include=["documents", "metadatas", "distances"]
+    )
     
-    # Sort by similarity score and return top_k
-    similarities.sort(key=lambda x: x[1], reverse=True)
-    return [(item[0], item[1]) for item in similarities[:top_k]]
+    # Format results as list of tuples (chunk, similarity)
+    similar_chunks = []
+    for i in range(len(results["ids"][0])):
+        chunk_id = results["ids"][0][i]
+        document = results["documents"][0][i]
+        metadata = results["metadatas"][0][i]
+        # Convert distance to similarity score (ChromaDB returns L2 distance, lower is better)
+        # We'll convert to a similarity score between 0 and 1 where higher is better
+        distance = results["distances"][0][i]
+        similarity = 1.0 / (1.0 + distance)  # Convert distance to similarity
+        
+        chunk = {
+            "id": chunk_id,
+            "text": document,
+            "metadata": metadata
+        }
+        
+        similar_chunks.append((chunk, similarity))
+    
+    return similar_chunks
 
 def generate_response(question: str, relevant_chunks: List[Tuple[Dict[str, Any], float]], model: str = "gpt-4o") -> Dict[str, Any]:
     """
@@ -134,10 +199,6 @@ def generate_response(question: str, relevant_chunks: List[Tuple[Dict[str, Any],
     # Initialize OpenAI client
     client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
     
-    # Extract chunks and scores
-    chunks = [chunk for chunk, _ in relevant_chunks]
-    scores = [score for _, score in relevant_chunks]
-    
     # Create context from relevant chunks
     context_parts = []
     sources = []
@@ -148,7 +209,13 @@ def generate_response(question: str, relevant_chunks: List[Tuple[Dict[str, Any],
             continue
             
         context_parts.append(f"[{i+1}] {chunk['text']}")
-        source_id = chunk['id'].split('-')[0]  # Extract filename from chunk ID
+        
+        # Extract source from metadata if available, otherwise from ID
+        if 'metadata' in chunk and 'source' in chunk['metadata']:
+            source_id = chunk['metadata']['source']
+        else:
+            source_id = chunk['id'].split('-')[0]  # Extract filename from chunk ID
+            
         if source_id not in sources:
             sources.append(source_id)
     
@@ -175,8 +242,19 @@ def generate_response(question: str, relevant_chunks: List[Tuple[Dict[str, Any],
         temperature=0.3
     )
     
+    # Prepare chunks for response
+    response_chunks = []
+    for chunk, score in relevant_chunks:
+        if score >= 0.7 or relevant_chunks.index((chunk, score)) < 2:
+            response_chunks.append({
+                "text": chunk["text"],
+                "id": chunk["id"],
+                "score": score,
+                "source": chunk.get("metadata", {}).get("source", chunk["id"].split('-')[0])
+            })
+    
     return {
         "answer": response.choices[0].message.content,
         "sources": sources,
-        "chunks": [{"text": chunk["text"], "id": chunk["id"], "score": score} for chunk, score in relevant_chunks if score >= 0.7 or relevant_chunks.index((chunk, score)) < 2]
+        "chunks": response_chunks
     }

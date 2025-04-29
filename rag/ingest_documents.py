@@ -1,12 +1,11 @@
 """
 Script to ingest PDF documents from the data directory, extract text, split into chunks,
-generate embeddings, and save to a JSON file.
+generate embeddings, and store in a ChromaDB collection.
 
 This script should be run before using the RAG Q&A system to ensure the knowledge base
 is up to date with the latest documents.
 """
 
-import json
 import os
 import pathlib
 import sys
@@ -17,6 +16,8 @@ from openai import OpenAI
 import pymupdf4llm
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from dotenv import load_dotenv
+import chromadb
+from chromadb.config import Settings
 
 # Try to import streamlit for secrets, but don't fail if not available
 try:
@@ -24,6 +25,22 @@ try:
     STREAMLIT_AVAILABLE = True
 except ImportError:
     STREAMLIT_AVAILABLE = False
+
+def get_chroma_client():
+    """
+    Initialize and return a ChromaDB client with persistent storage.
+    
+    Returns:
+        chromadb.Client: Initialized ChromaDB client
+    """
+    # Create a directory for ChromaDB if it doesn't exist
+    chroma_dir = pathlib.Path(os.path.dirname(__file__)) / "chroma_db"
+    os.makedirs(chroma_dir, exist_ok=True)
+    
+    # Create a persistent client using the new client initialization method
+    client = chromadb.PersistentClient(path=str(chroma_dir))
+    
+    return client
 
 def get_openai_api_key():
     """
@@ -83,8 +100,35 @@ def main():
     
     print(f"Found {len(filenames)} PDF files: {', '.join(filenames)}")
     
+    # Initialize ChromaDB client and create/get collection
+    try:
+        chroma_client = get_chroma_client()
+        
+        # Create or get the collection for diabetes nutrition documents
+        collection_name = "diabetes_nutrition_docs"
+        
+        # Check if collection exists and delete it to start fresh
+        try:
+            existing_collections = chroma_client.list_collections()
+            if any(collection.name == collection_name for collection in existing_collections):
+                print(f"Removing existing collection: {collection_name}")
+                chroma_client.delete_collection(collection_name)
+        except Exception as e:
+            print(f"Error checking existing collections: {str(e)}")
+        
+        # Create a new collection
+        collection = chroma_client.create_collection(
+            name=collection_name,
+            metadata={"description": "Diabetes and nutrition documents"}
+        )
+        
+        print(f"Created ChromaDB collection: {collection_name}")
+    except Exception as e:
+        print(f"Error initializing ChromaDB: {str(e)}")
+        return
+    
     # Process each PDF file
-    all_chunks = []
+    total_chunks_added = 0
     for filename in filenames:
         print(f"Processing {filename}...")
         
@@ -102,34 +146,60 @@ def main():
                 model_name="gpt-4o", chunk_size=500, chunk_overlap=125
             )
             texts = text_splitter.create_documents([md_text])
-            file_chunks = [{"id": f"{filename}-{(i + 1)}", "text": text.page_content} for i, text in enumerate(texts)]
-            print(f"  Split into {len(file_chunks)} chunks")
+            print(f"  Split into {len(texts)} chunks")
         except Exception as e:
             print(f"  Error splitting text from {filename}: {str(e)}")
             continue
         
-        # Generate embeddings for each chunk
-        for i, file_chunk in enumerate(file_chunks):
+        # Prepare data for ChromaDB
+        chunk_ids = []
+        chunk_texts = []
+        chunk_embeddings = []
+        chunk_metadatas = []
+        
+        # Generate embeddings for each chunk and prepare for ChromaDB
+        for i, text in enumerate(texts):
             try:
-                print(f"  Generating embedding for chunk {i+1}/{len(file_chunks)}...", end="\r")
-                file_chunk["embedding"] = (
-                    client.embeddings.create(model="text-embedding-3-small", input=file_chunk["text"]).data[0].embedding
-                )
+                chunk_id = f"{filename}-{(i + 1)}"
+                print(f"  Generating embedding for chunk {i+1}/{len(texts)}...", end="\r")
+                
+                # Generate embedding
+                embedding = client.embeddings.create(
+                    model="text-embedding-3-small", 
+                    input=text.page_content
+                ).data[0].embedding
+                
+                # Add to lists for batch addition
+                chunk_ids.append(chunk_id)
+                chunk_texts.append(text.page_content)
+                chunk_embeddings.append(embedding)
+                chunk_metadatas.append({
+                    "source": filename,
+                    "chunk_index": i + 1,
+                    "total_chunks": len(texts)
+                })
             except Exception as e:
                 print(f"\n  Error generating embedding for chunk {i+1} of {filename}: {str(e)}")
                 continue
         
-        print(f"  Generated embeddings for {len(file_chunks)} chunks")
-        all_chunks.extend(file_chunks)
+        # Add chunks to ChromaDB collection in batches
+        try:
+            if chunk_ids:
+                collection.add(
+                    ids=chunk_ids,
+                    documents=chunk_texts,
+                    embeddings=chunk_embeddings,
+                    metadatas=chunk_metadatas
+                )
+                print(f"  Added {len(chunk_ids)} chunks to ChromaDB collection")
+                total_chunks_added += len(chunk_ids)
+            else:
+                print("  No chunks to add for this file")
+        except Exception as e:
+            print(f"  Error adding chunks to ChromaDB: {str(e)}")
     
-    # Save the chunks with embeddings to a JSON file
-    output_file = "rag_ingested_chunks.json"
-    try:
-        with open(output_file, "w") as f:
-            json.dump(all_chunks, f, indent=4)
-        print(f"Successfully saved {len(all_chunks)} chunks to {output_file}")
-    except Exception as e:
-        print(f"Error saving chunks to {output_file}: {str(e)}")
+    # Print success message
+    print(f"Successfully added {total_chunks_added} chunks to ChromaDB collection '{collection_name}'")
     
     print("Document ingestion complete!")
 
