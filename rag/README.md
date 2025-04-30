@@ -128,3 +128,131 @@ The RAG system is integrated into the Streamlit app. Users can ask questions thr
 - **Missing API Key**: Set the OpenAI API key in environment variables or `.env` file.
 - **No Documents Found**: Ensure PDF files are placed in the `rag/data` directory.
 - **ChromaDB Errors**: Check that the ChromaDB directory has proper write permissions.
+
+## SQLite Compatibility Issue
+
+ChromaDB requires SQLite version 3.35.0 or higher. If you encounter the following error:
+
+```
+RuntimeError: Your system has an unsupported version of sqlite3. Chroma requires sqlite3 >= 3.35.0.
+```
+
+We've implemented the following solution:
+
+1. **SQLite Version Patching**: Created a patch file (`patch_chromadb.py`) that monkey-patches the SQLite version check:
+
+   ```python
+   # Monkey patch the sqlite3 module version to bypass the version check
+   sqlite3.sqlite_version_info = (3, 35, 0)
+   sqlite3.sqlite_version = "3.35.0"
+
+   # Set environment variable to skip SQLite version check
+   os.environ["CHROMA_SQLITE_VERSION_CHECK"] = "0"
+   ```
+
+2. **Import Order**: Modified `app.py` to import the patch before importing any modules that use ChromaDB:
+
+   ```python
+   # Import patch for ChromaDB SQLite compatibility
+   import patch_chromadb
+
+   import streamlit as st
+   # ... other imports
+   ```
+
+3. **Session State for Client Persistence**: Used Streamlit's session state to store the ChromaDB client instance:
+
+   ```python
+   # Use Streamlit session state to store the client instance
+   if "chroma_client" not in st.session_state:
+       # Create a persistent client
+       st.session_state.chroma_client = chromadb.PersistentClient(path=str(chroma_dir))
+
+   return st.session_state.chroma_client
+   ```
+
+### Data Persistence
+
+With these changes, the RAG system now uses a persistent database that stores data on disk in the `rag/chroma_db` directory. This ensures that:
+
+1. **Data Persistence**: The vector database is stored on disk and persists between application restarts.
+
+2. **Consistent Retrieval**: The system can retrieve previously ingested documents without needing to re-ingest them each time the application starts.
+
+3. **Efficient Resource Usage**: The system doesn't need to regenerate embeddings for the same documents multiple times.
+
+The combination of SQLite version patching and persistent storage provides a robust solution that works across different environments while maintaining data persistence.
+
+## Debugging and Common Issues
+
+### 1. Collection Not Found
+
+If you encounter an error like "ChromaDB collection 'diabetes_nutrition_docs' not found", it means the collection hasn't been created yet. This can happen if:
+
+- You haven't ingested any documents yet
+- The collection was deleted
+- You're using a different ChromaDB client instance that doesn't have access to the same storage
+
+**Solution**: Click the "Ingest Documents" button on the Q&A page to create the collection.
+
+### 2. Empty Responses
+
+If the system consistently responds with "I don't have enough information to answer this question based on the available documents", it could be due to:
+
+- The question is genuinely not covered in the ingested documents
+- The similarity search isn't finding relevant chunks
+- The collection is empty or corrupted
+
+**Solution**:
+
+- Try rephrasing your question
+- Check if documents were successfully ingested
+- Try re-ingesting the documents
+- Examine the `rag/chroma_db` directory to ensure it contains data
+
+### 3. OpenAI API Key Issues
+
+If you encounter errors related to the OpenAI API, it could be due to:
+
+- Missing API key
+- Invalid API key
+- API rate limits
+- API service disruptions
+
+**Solution**:
+
+- Ensure your OpenAI API key is set in the `.env` file or environment variables
+- Check your API key usage and limits on the OpenAI dashboard
+- Verify the API is operational
+
+## Performance Considerations
+
+### 1. Memory Usage
+
+The RAG system's memory usage depends on:
+
+- Number of documents ingested
+- Size of the documents
+- Chunk size and overlap
+- Number of embeddings stored
+
+For large document collections, consider:
+
+- Increasing chunk size to reduce the number of chunks
+- Using a more efficient embedding model
+- Implementing pagination for large result sets
+
+### 2. Response Time
+
+Several factors affect response time:
+
+- Time to generate embeddings for the question
+- Time to search for similar chunks
+- Time to generate the response from the LLM
+
+To improve response time:
+
+- Use a faster embedding model
+- Optimize the number of chunks returned by the similarity search
+- Cache frequently asked questions and their responses
+- Use a faster LLM for response generation

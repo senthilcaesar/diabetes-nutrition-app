@@ -19,16 +19,23 @@ from chromadb.config import Settings
 
 def get_chroma_client():
     """
-    Initialize and return a ChromaDB client with in-memory storage.
-    This avoids SQLite version compatibility issues.
+    Initialize and return a ChromaDB client with persistent storage.
+    Uses session state to ensure the same client is used throughout the application.
     
     Returns:
         chromadb.Client: Initialized ChromaDB client
     """
-    # Use the EphemeralClient which doesn't require SQLite
-    client = chromadb.EphemeralClient()
+    # Use Streamlit session state to store the client instance
+    # This ensures we use the same client throughout the application
+    if "chroma_client" not in st.session_state:
+        # Create a directory for ChromaDB if it doesn't exist
+        chroma_dir = pathlib.Path(os.path.dirname(os.path.dirname(__file__))) / "rag" / "chroma_db"
+        os.makedirs(chroma_dir, exist_ok=True)
+        
+        # Create a persistent client
+        st.session_state.chroma_client = chromadb.PersistentClient(path=str(chroma_dir))
     
-    return client
+    return st.session_state.chroma_client
 
 def ingest_documents(data_dir: str, collection_name: str = "diabetes_nutrition_docs") -> int:
     """

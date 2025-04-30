@@ -28,16 +28,28 @@ except ImportError:
 
 def get_chroma_client():
     """
-    Initialize and return a ChromaDB client with in-memory storage.
-    This avoids SQLite version compatibility issues.
+    Initialize and return a ChromaDB client with persistent storage.
     
     Returns:
         chromadb.Client: Initialized ChromaDB client
     """
-    # Use the EphemeralClient which doesn't require SQLite
-    client = chromadb.EphemeralClient()
+    # Create a directory for ChromaDB if it doesn't exist
+    chroma_dir = pathlib.Path(os.path.dirname(__file__)) / "chroma_db"
+    os.makedirs(chroma_dir, exist_ok=True)
     
-    return client
+    # Check if we're running in Streamlit
+    if STREAMLIT_AVAILABLE:
+        # Use Streamlit session state to store the client instance
+        # This ensures we use the same client throughout the application
+        if "chroma_client" not in st.session_state:
+            # Create a persistent client
+            st.session_state.chroma_client = chromadb.PersistentClient(path=str(chroma_dir))
+        
+        return st.session_state.chroma_client
+    else:
+        # If not running in Streamlit, create a new persistent client
+        client = chromadb.PersistentClient(path=str(chroma_dir))
+        return client
 
 def get_openai_api_key():
     """

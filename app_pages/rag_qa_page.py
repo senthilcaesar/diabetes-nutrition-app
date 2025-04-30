@@ -92,7 +92,7 @@ def show_rag_qa_page():
             with st.spinner("Processing documents... This may take a few minutes."):
                 try:
                     # Get the data directory path
-                    data_dir = Path(os.path.dirname(os.path.dirname(__file__))) / "data"
+                    data_dir = Path(os.path.dirname(os.path.dirname(__file__))) / "rag" / "data"
                     
                     # Ingest documents
                     num_chunks = ingest_documents(str(data_dir))
