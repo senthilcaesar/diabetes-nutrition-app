@@ -19,17 +19,14 @@ from chromadb.config import Settings
 
 def get_chroma_client():
     """
-    Initialize and return a ChromaDB client with persistent storage.
+    Initialize and return a ChromaDB client with in-memory storage.
+    This avoids SQLite version compatibility issues.
     
     Returns:
         chromadb.Client: Initialized ChromaDB client
     """
-    # Create a directory for ChromaDB if it doesn't exist
-    chroma_dir = pathlib.Path(os.path.dirname(os.path.dirname(__file__))) / "rag" / "chroma_db"
-    os.makedirs(chroma_dir, exist_ok=True)
-    
-    # Create a persistent client using the new client initialization method
-    client = chromadb.PersistentClient(path=str(chroma_dir))
+    # Use in-memory client instead of persistent storage to avoid SQLite version issues
+    client = chromadb.Client()
     
     return client
 
