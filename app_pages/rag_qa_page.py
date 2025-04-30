@@ -218,8 +218,11 @@ def show_rag_qa_page():
             - What's the connection between glucose and inflammation?
             - What's the relationship between carbohydrates and glucose?
             - What's the connection between glucose levels and diabetes?
+            - What is the link between glucose spikes and inflammatory conditions?
+            - How might I modify my breakfast to reduce morning glucose spikes?
             - What are the best strategies to prevent glucose spikes after meals?
             - What are the main differences between Type 1 and Type 2 diabetes?
+            - What's the difference between glucose, fructose, and sucrose?
             - How does eating food in the right order help with glucose management?
                     """)
             
