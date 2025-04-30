@@ -25,8 +25,8 @@ def get_chroma_client():
     Returns:
         chromadb.Client: Initialized ChromaDB client
     """
-    # Use in-memory client instead of persistent storage to avoid SQLite version issues
-    client = chromadb.Client()
+    # Use the EphemeralClient which doesn't require SQLite
+    client = chromadb.EphemeralClient()
     
     return client
 

@@ -14,3 +14,4 @@ langchain_text_splitters>=0.0.1
 tiktoken>=0.9.0
 chromadb>=0.4.18
 protobuf<=3.20.3  # Added to fix compatibility issues with chromadb
+pysqlite3-binary>=0.5.0  # Added to provide a newer version of SQLite for ChromaDB
