@@ -186,9 +186,7 @@ def show_rag_qa_page():
                     st.error(f"Error processing question: {str(e)}")
         
         with st.expander("About this Q&A System"):
-            st.markdown("""
-            This Q&A system uses Retrieval-Augmented Generation (RAG) to answer your questions about diabetes and nutrition.       
-            All information comes from verified medical sources in our database.""")
+            st.markdown("""This Q&A system uses Retrieval-Augmented Generation (RAG) with Pinecone vector database to answer your questions about diabetes and nutrition. All information comes from verified medical sources in our database.""")
 
             st.markdown("<h5 style='color:#20a7db; margin-top:0; border-bottom:2px solid #D3D3D3; padding-bottom:10px;'>Example Questions</h5>", unsafe_allow_html=True)
                                
