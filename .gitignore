@@ -27,7 +27,6 @@ ENV/
 # Streamlit
 .streamlit/secrets.toml
 
-# Environment variables
 .env
 
 # IDE specific files

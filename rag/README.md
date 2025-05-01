@@ -267,13 +267,34 @@ The system requires the following credentials:
 
 ### Streamlit Secrets (Preferred Method)
 
-For Streamlit deployment, add these to your `.streamlit/secrets.toml` file:
+#### For Local Development
+
+For local Streamlit deployment, add these to your `.streamlit/secrets.toml` file:
 
 ```toml
 OPENAI_API_KEY = "your_openai_api_key"
 PINECONE_API_KEY = "your_pinecone_api_key"
 PINECONE_ENVIRONMENT = "your_pinecone_environment"
 ```
+
+#### For Streamlit Cloud Deployment
+
+For Streamlit Cloud deployment, you need to add your secrets in the Streamlit Cloud dashboard:
+
+1. Go to your Streamlit Cloud dashboard
+2. Select your app
+3. Click on "Settings" (⚙️)
+4. Scroll down to the "Secrets" section
+5. Add the following secrets:
+
+```toml
+[general]
+OPENAI_API_KEY = "your_openai_api_key"
+PINECONE_API_KEY = "your_pinecone_api_key"
+PINECONE_ENVIRONMENT = "gcp-starter"
+```
+
+Make sure to use the correct Pinecone environment value that works with your Pinecone account (e.g., "gcp-starter").
 
 ### Environment Variables (Alternative)
 
@@ -309,7 +330,11 @@ The system will first try to read credentials from Streamlit secrets, and if not
    - Verify your API key in Streamlit secrets or environment variables
    - Check if your Pinecone account is active
    - Ensure you're using a supported region for your account tier
-   - For Streamlit Cloud deployment, make sure secrets are properly configured in the Streamlit dashboard
+   - For Streamlit Cloud deployment:
+     - Make sure secrets are properly configured in the Streamlit Cloud dashboard
+     - Ensure the secrets are in the correct format with the `[general]` section header
+     - Try using "gcp-starter" as the Pinecone environment value
+     - Check the Streamlit Cloud logs for any specific error messages
 
 2. **OpenAI API Errors**:
 
