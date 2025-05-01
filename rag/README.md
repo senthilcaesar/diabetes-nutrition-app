@@ -219,7 +219,7 @@ These can be set in a `.env` file in the project root directory.
 
 - **Python 3.8+**
 - **Dependencies**:
-  - pinecone (v6.0.2+)
+  - pinecone (v6.0.0+) - Note: The official Pinecone package was renamed from `pinecone-client` to `pinecone`
   - openai
   - pymupdf4llm
   - langchain_text_splitters
