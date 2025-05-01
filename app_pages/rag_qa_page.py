@@ -1,15 +1,15 @@
 """
 RAG Q&A page for the Diabetes Nutrition App.
 This page provides a user interface for asking questions about diabetes and nutrition,
-with answers retrieved from PDF documents using a RAG system with ChromaDB.
+with answers retrieved from PDF documents using a RAG system with Pinecone.
 """
 
 import os
 import streamlit as st
 from pathlib import Path
-import chromadb
 
-from utils.rag_system import load_chunks, find_similar_chunks, generate_response, ingest_documents, get_chroma_client
+from utils.rag_system import find_similar_chunks, generate_response, ingest_documents
+from rag.pinecone_utils import initialize_pinecone, delete_index
 
 def show_rag_qa_page():
     """Display the RAG Q&A interface."""
@@ -74,18 +74,38 @@ def show_rag_qa_page():
     
     st.markdown("<h4 style='font-size: 22px; font-family: inherit;'>Ask Questions About Diabetes & Nutrition</h4>", unsafe_allow_html=True)
     
-    # Check if ChromaDB collection exists, if not, show option to ingest documents
-    collection_name = "diabetes_nutrition_docs"
-    chroma_client = get_chroma_client()
+    # Check if Pinecone is properly configured
+    index_name = "diabetes-nutrition"
+    pinecone_configured = True
     
-    # Check if collection exists
     try:
-        existing_collections = chroma_client.list_collections()
-        collection_exists = any(collection.name == collection_name for collection in existing_collections)
-    except Exception:
-        collection_exists = False
+        # Try to initialize Pinecone
+        initialize_pinecone()
+    except Exception as e:
+        pinecone_configured = False
+        st.error(f"Error connecting to Pinecone: {str(e)}")
+        st.info("Please make sure PINECONE_API_KEY and PINECONE_ENVIRONMENT are set in your environment variables or .env file.")
+        return
     
-    if not collection_exists:
+    # Check if documents have been ingested
+    # First, try to check if the index exists and has documents
+    index_exists = False
+    try:
+        # Try to query the index with a simple test query to see if it exists and has documents
+        test_results = find_similar_chunks("test query", index_name, 1)
+        index_exists = len(test_results) > 0
+    except Exception as e:
+        # If there's an error, the index might not exist or be empty
+        index_exists = False
+        
+    # Update session state based on the check
+    if index_exists:
+        st.session_state.pinecone_index_initialized = True
+    elif "pinecone_index_initialized" not in st.session_state:
+        st.session_state.pinecone_index_initialized = False
+        
+    # If the index is not initialized, show the warning and ingest button
+    if not st.session_state.get("pinecone_index_initialized", False):
         st.warning("The knowledge base has not been created yet. Please ingest documents first.")
         
         if st.button("Ingest Documents"):
@@ -98,6 +118,7 @@ def show_rag_qa_page():
                     num_chunks = ingest_documents(str(data_dir))
                     
                     st.success(f"Successfully processed documents and created {num_chunks} chunks!")
+                    st.session_state.pinecone_index_initialized = True
                     st.experimental_rerun()
                 except Exception as e:
                     st.error(f"Error ingesting documents: {str(e)}")
@@ -109,7 +130,7 @@ def show_rag_qa_page():
             1. Extracts text from PDF files in the data directory
             2. Splits the text into smaller chunks
             3. Generates embeddings for each chunk
-            4. Stores the chunks with embeddings in a ChromaDB collection
+            4. Stores the chunks with embeddings in a Pinecone index
             
             This process only needs to be run once, or when new documents are added to the data directory.
             """)
@@ -122,15 +143,6 @@ def show_rag_qa_page():
     # History management
     if "rag_history" not in st.session_state:
         st.session_state.rag_history = []
-    
-    # Show history in sidebar if there are previous questions
-    # if st.session_state.rag_history:
-    #     with st.sidebar:
-    #         st.markdown("### Previous Questions")
-    #         for i, (q, a) in enumerate(st.session_state.rag_history):
-    #             if st.button(f"{q[:50]}{'...' if len(q) > 50 else ''}", key=f"history_{i}"):
-    #                 st.session_state.current_question = q
-    #                 st.experimental_rerun()
     
     with main_container:
         # Create a container with a light background and rounded corners
@@ -154,11 +166,8 @@ def show_rag_qa_page():
         if submit_button and question:
             with st.spinner("Searching for information..."):
                 try:
-                    # Load ChromaDB collection
-                    collection = load_chunks(collection_name)
-                    
-                    # Find relevant chunks using ChromaDB
-                    relevant_chunks = find_similar_chunks(question, collection)
+                    # Find relevant chunks using Pinecone
+                    relevant_chunks = find_similar_chunks(question, index_name)
                     
                     # Generate response
                     response_data = generate_response(question, relevant_chunks)
@@ -172,29 +181,10 @@ def show_rag_qa_page():
                     st.session_state.rag_history.insert(0, (question, response_data["answer"]))
                     if len(st.session_state.rag_history) > 10:
                         st.session_state.rag_history.pop()
-                    
-                    # Show sources
-                    # st.markdown("### Sources")
-                    # st.markdown(f"Information retrieved from: {', '.join(response_data['sources'])}")
-                    
-                    # Show relevant chunks
-                    # with st.expander("View Source Passages"):
-                    #     for i, chunk in enumerate(response_data["chunks"]):
-                    #         source = chunk.get('source', chunk['id'].split('-')[0])
-                    #         st.markdown(f"**Passage {i+1}** (from {source})")
-                    #         st.markdown(chunk["text"])
-                    #         st.markdown(f"*Relevance score: {chunk['score']:.2f}*")
-                    #         st.markdown("---")
                 
                 except Exception as e:
                     st.error(f"Error processing question: {str(e)}")
         
-        # Information about the RAG system
-        # How it works:
-        # 1. Your question is converted into a numerical representation (embedding)
-        # 2. The system finds the most relevant passages from our knowledge base
-        # 3. These passages are used as context to generate an accurate answer
-
         with st.expander("About this Q&A System"):
             st.markdown("""
             This Q&A system uses Retrieval-Augmented Generation (RAG) to answer your questions about diabetes and nutrition.       
@@ -239,8 +229,11 @@ def show_rag_qa_page():
     #     if st.button("Reingest Documents"):
     #         with st.spinner("Reprocessing documents... This may take a few minutes."):
     #             try:
+    #                 # Delete existing index
+    #                 delete_index(index_name)
+                    
     #                 # Get the data directory path
-    #                 data_dir = Path(os.path.dirname(os.path.dirname(__file__))) / "data"
+    #                 data_dir = Path(os.path.dirname(os.path.dirname(__file__))) / "rag" / "data"
                     
     #                 # Ingest documents
     #                 num_chunks = ingest_documents(str(data_dir))

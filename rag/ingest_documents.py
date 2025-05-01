@@ -1,6 +1,5 @@
 """
-Script to ingest PDF documents from the data directory, extract text, split into chunks,
-generate embeddings, and store in a ChromaDB collection.
+Script to ingest PDF documents from the data directory into Pinecone vector database.
 
 This script should be run before using the RAG Q&A system to ensure the knowledge base
 is up to date with the latest documents.
@@ -9,208 +8,76 @@ is up to date with the latest documents.
 import os
 import pathlib
 import sys
-from typing import List, Dict, Any
+import argparse
+from typing import List
+import logging
 
-import openai
-from openai import OpenAI
-import pymupdf4llm
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from dotenv import load_dotenv
-import chromadb
-from chromadb.config import Settings
+from pinecone_utils import ingest_documents, delete_index
 
-# Try to import streamlit for secrets, but don't fail if not available
-try:
-    import streamlit as st
-    STREAMLIT_AVAILABLE = True
-except ImportError:
-    STREAMLIT_AVAILABLE = False
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
-def get_chroma_client():
+def get_pdf_files(directory: str) -> List[str]:
     """
-    Initialize and return a ChromaDB client with persistent storage.
+    Get all PDF files in a directory.
     
-    Returns:
-        chromadb.Client: Initialized ChromaDB client
-    """
-    # Create a directory for ChromaDB if it doesn't exist
-    chroma_dir = pathlib.Path(os.path.dirname(__file__)) / "chroma_db"
-    os.makedirs(chroma_dir, exist_ok=True)
-    
-    # Check if we're running in Streamlit
-    if STREAMLIT_AVAILABLE:
-        # Use Streamlit session state to store the client instance
-        # This ensures we use the same client throughout the application
-        if "chroma_client" not in st.session_state:
-            # Create a persistent client
-            st.session_state.chroma_client = chromadb.PersistentClient(path=str(chroma_dir))
+    Args:
+        directory: Directory to search for PDF files
         
-        return st.session_state.chroma_client
-    else:
-        # If not running in Streamlit, create a new persistent client
-        client = chromadb.PersistentClient(path=str(chroma_dir))
-        return client
-
-def get_openai_api_key():
-    """
-    Get the OpenAI API key from environment variables, Streamlit secrets, or user input.
-    
     Returns:
-        str: OpenAI API key
+        List of paths to PDF files
     """
-    # Load environment variables from .env file
-    load_dotenv()
-    
-    # Try to get API key from environment variables
-    api_key = os.environ.get("OPENAI_API_KEY") or os.environ.get("OPENAI_KEY")
-    
-    # If not found in environment variables, try Streamlit secrets
-    if not api_key and STREAMLIT_AVAILABLE:
-        try:
-            api_key = st.secrets["OPENAI_API_KEY"]
-        except:
-            pass
-    
-    # If still not found, prompt the user
-    if not api_key:
-        print("OpenAI API key not found in environment variables or Streamlit secrets.")
-        api_key = input("Please enter your OpenAI API key: ")
-        
-        if not api_key:
-            print("Error: No API key provided. Exiting.")
-            sys.exit(1)
-    
-    return api_key
+    pdf_files = []
+    for file in os.listdir(directory):
+        if file.lower().endswith('.pdf'):
+            pdf_files.append(os.path.join(directory, file))
+    return pdf_files
 
 def main():
     """
     Main function to ingest documents from the data directory.
     """
-    # Get OpenAI API key
-    api_key = get_openai_api_key()
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(description="Ingest documents into Pinecone vector database")
+    parser.add_argument("--data_dir", type=str, default="./data", help="Directory containing PDF files")
+    parser.add_argument("--index_name", type=str, default="diabetes-nutrition", help="Name of the Pinecone index")
+    parser.add_argument("--reset", action="store_true", help="Delete existing index before ingestion")
     
-    # Initialize OpenAI client
-    client = OpenAI(api_key=api_key)
+    args = parser.parse_args()
     
     # Get the data directory path
-    data_dir = pathlib.Path(os.path.dirname(__file__)) / "data"
+    if os.path.isabs(args.data_dir):
+        data_dir = args.data_dir
+    else:
+        data_dir = os.path.join(os.path.dirname(__file__), args.data_dir)
     
     # Check if data directory exists
-    if not data_dir.exists():
-        print(f"Error: Data directory not found at {data_dir}")
+    if not os.path.exists(data_dir):
+        logger.error(f"Error: Data directory not found at {data_dir}")
         return
     
     # Get list of PDF files in the data directory
-    filenames = [f for f in os.listdir(data_dir) if f.endswith('.pdf')]
+    pdf_files = get_pdf_files(data_dir)
     
-    if not filenames:
-        print(f"No PDF files found in {data_dir}")
+    if not pdf_files:
+        logger.error(f"No PDF files found in {data_dir}")
         return
     
-    print(f"Found {len(filenames)} PDF files: {', '.join(filenames)}")
+    logger.info(f"Found {len(pdf_files)} PDF files: {', '.join(os.path.basename(f) for f in pdf_files)}")
     
-    # Initialize ChromaDB client and create/get collection
+    # Reset index if requested
+    if args.reset:
+        logger.info(f"Deleting existing index: {args.index_name}")
+        delete_index(args.index_name)
+    
+    # Ingest documents
     try:
-        chroma_client = get_chroma_client()
-        
-        # Create or get the collection for diabetes nutrition documents
-        collection_name = "diabetes_nutrition_docs"
-        
-        # Check if collection exists and delete it to start fresh
-        try:
-            existing_collections = chroma_client.list_collections()
-            if any(collection.name == collection_name for collection in existing_collections):
-                print(f"Removing existing collection: {collection_name}")
-                chroma_client.delete_collection(collection_name)
-        except Exception as e:
-            print(f"Error checking existing collections: {str(e)}")
-        
-        # Create a new collection
-        collection = chroma_client.create_collection(
-            name=collection_name,
-            metadata={"description": "Diabetes and nutrition documents"}
-        )
-        
-        print(f"Created ChromaDB collection: {collection_name}")
+        num_chunks = ingest_documents(pdf_files, args.index_name)
+        logger.info(f"Successfully ingested {num_chunks} document chunks into Pinecone index: {args.index_name}")
     except Exception as e:
-        print(f"Error initializing ChromaDB: {str(e)}")
+        logger.error(f"Error ingesting documents: {str(e)}")
         return
-    
-    # Process each PDF file
-    total_chunks_added = 0
-    for filename in filenames:
-        print(f"Processing {filename}...")
-        
-        # Extract text from the PDF file
-        try:
-            md_text = pymupdf4llm.to_markdown(data_dir / filename)
-            print(f"  Extracted {len(md_text)} characters of text")
-        except Exception as e:
-            print(f"  Error extracting text from {filename}: {str(e)}")
-            continue
-        
-        # Split the text into smaller chunks
-        try:
-            text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
-                model_name="gpt-4o", chunk_size=500, chunk_overlap=125
-            )
-            texts = text_splitter.create_documents([md_text])
-            print(f"  Split into {len(texts)} chunks")
-        except Exception as e:
-            print(f"  Error splitting text from {filename}: {str(e)}")
-            continue
-        
-        # Prepare data for ChromaDB
-        chunk_ids = []
-        chunk_texts = []
-        chunk_embeddings = []
-        chunk_metadatas = []
-        
-        # Generate embeddings for each chunk and prepare for ChromaDB
-        for i, text in enumerate(texts):
-            try:
-                chunk_id = f"{filename}-{(i + 1)}"
-                print(f"  Generating embedding for chunk {i+1}/{len(texts)}...", end="\r")
-                
-                # Generate embedding
-                embedding = client.embeddings.create(
-                    model="text-embedding-3-small", 
-                    input=text.page_content
-                ).data[0].embedding
-                
-                # Add to lists for batch addition
-                chunk_ids.append(chunk_id)
-                chunk_texts.append(text.page_content)
-                chunk_embeddings.append(embedding)
-                chunk_metadatas.append({
-                    "source": filename,
-                    "chunk_index": i + 1,
-                    "total_chunks": len(texts)
-                })
-            except Exception as e:
-                print(f"\n  Error generating embedding for chunk {i+1} of {filename}: {str(e)}")
-                continue
-        
-        # Add chunks to ChromaDB collection in batches
-        try:
-            if chunk_ids:
-                collection.add(
-                    ids=chunk_ids,
-                    documents=chunk_texts,
-                    embeddings=chunk_embeddings,
-                    metadatas=chunk_metadatas
-                )
-                print(f"  Added {len(chunk_ids)} chunks to ChromaDB collection")
-                total_chunks_added += len(chunk_ids)
-            else:
-                print("  No chunks to add for this file")
-        except Exception as e:
-            print(f"  Error adding chunks to ChromaDB: {str(e)}")
-    
-    # Print success message
-    print(f"Successfully added {total_chunks_added} chunks to ChromaDB collection '{collection_name}'")
-    
-    print("Document ingestion complete!")
 
 if __name__ == "__main__":
     main()
