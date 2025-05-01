@@ -3,9 +3,6 @@ Main application file for the Personalized Diabetes Nutrition Plan.
 This file serves as the entry point and handles navigation between pages.
 """
 
-# Import patch for ChromaDB SQLite compatibility
-import patch_chromadb
-
 import streamlit as st
 
 # Now use absolute imports
