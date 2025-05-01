@@ -27,6 +27,7 @@ except ImportError:
 def initialize_pinecone():
     """
     Initialize Pinecone client with API key and environment.
+    First tries to get credentials from Streamlit secrets, then falls back to environment variables.
     
     Returns:
         pinecone.Pinecone: Initialized Pinecone client
@@ -34,11 +35,27 @@ def initialize_pinecone():
     # Load environment variables
     load_dotenv()
     
-    api_key = os.environ.get("PINECONE_API_KEY")
-    environment = os.environ.get("PINECONE_ENVIRONMENT")
+    # Try to get credentials from Streamlit secrets first
+    api_key = None
+    environment = None
+    
+    # Check if Streamlit is available
+    if STREAMLIT_AVAILABLE:
+        try:
+            api_key = st.secrets.get("PINECONE_API_KEY")
+            environment = st.secrets.get("PINECONE_ENVIRONMENT")
+        except Exception as e:
+            logger.warning(f"Could not get Pinecone credentials from Streamlit secrets: {str(e)}")
+    
+    # Fall back to environment variables if not found in Streamlit secrets
+    if not api_key:
+        api_key = os.environ.get("PINECONE_API_KEY")
+    
+    if not environment:
+        environment = os.environ.get("PINECONE_ENVIRONMENT")
     
     if not api_key or not environment:
-        raise ValueError("Pinecone API key and environment must be set")
+        raise ValueError("Pinecone API key and environment must be set in Streamlit secrets or environment variables")
     
     return pinecone.Pinecone(api_key=api_key, environment=environment)
 
@@ -143,7 +160,8 @@ def format_metadata(metadata: Dict[str, Any]) -> Dict[str, Any]:
 
 def get_openai_api_key():
     """
-    Get the OpenAI API key from environment variables, Streamlit secrets, or user input.
+    Get the OpenAI API key from Streamlit secrets, environment variables, or user input.
+    First tries Streamlit secrets, then falls back to environment variables.
     
     Returns:
         str: OpenAI API key
@@ -151,19 +169,22 @@ def get_openai_api_key():
     # Load environment variables from .env file
     load_dotenv()
     
-    # Try to get API key from environment variables
-    api_key = os.environ.get("OPENAI_API_KEY") or os.environ.get("OPENAI_KEY")
+    # Try to get API key from Streamlit secrets first
+    api_key = None
     
-    # If not found in environment variables, try Streamlit secrets
-    if not api_key and STREAMLIT_AVAILABLE:
+    if STREAMLIT_AVAILABLE:
         try:
-            api_key = st.secrets["OPENAI_API_KEY"]
-        except:
-            pass
+            api_key = st.secrets.get("OPENAI_API_KEY")
+        except Exception as e:
+            logger.warning(f"Could not get OpenAI API key from Streamlit secrets: {str(e)}")
+    
+    # If not found in Streamlit secrets, try environment variables
+    if not api_key:
+        api_key = os.environ.get("OPENAI_API_KEY") or os.environ.get("OPENAI_KEY")
     
     # If still not found, prompt the user
     if not api_key:
-        logger.error("OpenAI API key not found in environment variables or Streamlit secrets.")
+        logger.error("OpenAI API key not found in Streamlit secrets or environment variables.")
         api_key = input("Please enter your OpenAI API key: ")
         
         if not api_key:
