@@ -42,8 +42,10 @@ def initialize_pinecone():
     # Check if Streamlit is available
     if STREAMLIT_AVAILABLE:
         try:
-            api_key = st.secrets.get("PINECONE_API_KEY")
-            environment = st.secrets.get("PINECONE_ENVIRONMENT")
+            # Access Streamlit secrets using dictionary-like syntax
+            api_key = st.secrets["PINECONE_API_KEY"]
+            environment = st.secrets["PINECONE_ENVIRONMENT"]
+            logger.info("Successfully loaded Pinecone credentials from Streamlit secrets")
         except Exception as e:
             logger.warning(f"Could not get Pinecone credentials from Streamlit secrets: {str(e)}")
     
@@ -174,7 +176,8 @@ def get_openai_api_key():
     
     if STREAMLIT_AVAILABLE:
         try:
-            api_key = st.secrets.get("OPENAI_API_KEY")
+            api_key = st.secrets["OPENAI_API_KEY"]
+            logger.info("Successfully loaded OpenAI API key from Streamlit secrets")
         except Exception as e:
             logger.warning(f"Could not get OpenAI API key from Streamlit secrets: {str(e)}")
     
