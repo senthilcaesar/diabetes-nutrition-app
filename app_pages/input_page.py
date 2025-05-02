@@ -159,8 +159,8 @@ def generate_nutrition_plan_workflow():
     header_placeholder = st.empty()
     header_placeholder.markdown("""
     <div style="text-align: center; padding: 10px;">
-        <h4>Crafting Your Personalized Nutrition Plan</h4>
-        <p>Analyzing your health data and creating customized recommendations...</p>
+        <p>Analyzing your health data and creating customized nutrition plan...</p>
+        <p>This could take a few minutes, so please don't refresh your browser or use the back button.</p>
     </div>
     """, unsafe_allow_html=True)
     
