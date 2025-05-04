@@ -116,15 +116,92 @@ Key configuration parameters:
 - **Cloud Provider**: AWS
 - **Region**: us-east-1 (compatible with free tier)
 
+## Agentic RAG Enhancement
+
+The system now includes an Agentic RAG approach that improves user questions before retrieving information from the vector database.
+
+```mermaid
+graph TD
+    A[User Question] -->|Pass to LLM| B[Question Improvement]
+    B -->|Rewritten Question| C[Question Embedding]
+    C -->|Query Pinecone| D[Pinecone Vector Database]
+    D -->|Return Similar Chunks| E[Relevant Chunks]
+    E -->|Context for LLM| F[OpenAI GPT Model]
+    F -->|Generate Response| G[Answer to User]
+```
+
+### Question Improvement Process
+
+When a user submits a question, the system first processes it through an LLM to enhance its quality:
+
+```python
+improved_question = improve_question(original_question)
+```
+
+The question improvement process:
+
+1. Takes the original user question
+2. Passes it to OpenAI's GPT-4o model with a specialized prompt
+3. The model analyzes the question and improves it by:
+
+   - Correcting grammar and spelling errors
+   - Adding relevant medical terminology
+   - Making the question more specific and detailed
+   - Ensuring the question is clear and unambiguous
+   - Preserving the original intent
+
+4. Returns both the improved question and an explanation of the changes
+
+### Benefits of Agentic RAG
+
+This approach offers several advantages:
+
+1. **Enhanced Retrieval Accuracy**: More precise questions lead to more relevant document chunks being retrieved from the vector database.
+
+2. **Educational Value**: Users can see how their questions are interpreted and learn how to formulate better medical queries.
+
+3. **Transparency**: The system shows both the original and improved questions, along with an explanation of the changes.
+
+4. **Improved Answer Quality**: Better context selection leads to more accurate and relevant answers.
+
+### Technical Implementation
+
+The question improvement uses the following prompt structure:
+
+```
+You are an AI assistant specializing in diabetes and nutrition. Your task is to improve the following question
+to make it more effective for retrieving relevant information from a medical knowledge base.
+
+Original Question: [user question]
+
+Please:
+1. Correct any grammar or spelling errors
+2. Add relevant medical terminology where appropriate
+3. Make the question more specific and detailed
+4. Ensure the question is clear and unambiguous
+5. Preserve the original intent of the question
+```
+
+The system uses a temperature setting of 0.3 to ensure consistent, factual improvements while maintaining the original intent of the user's question.
+
 ## How the System Answers Your Questions: A Simple Explanation
 
 When you ask a question through the Q&A interface, the system works like a smart research assistant to find the most relevant information from the medical documents and provide you with an accurate answer. Here's how it works in simple terms:
 
-### Step 1: Understanding Your Question
+### Step 1: Improving Your Question
 
-When you type a question like "What is insulin resistance?", the system needs to understand what your question means. It does this by:
+When you type a question like "What is insulin resistance?", the system first improves your question to make it more effective for retrieval:
 
-1. Taking your question text
+1. Your original question is sent to OpenAI's GPT-4o model
+2. The model analyzes your question and improves it by adding medical terminology, making it more specific, and ensuring it's clear
+3. The improved question is used for the actual search
+4. You can see both your original question and the improved version, along with an explanation of the changes
+
+### Step 2: Understanding Your Question
+
+The system then needs to understand what your improved question means. It does this by:
+
+1. Taking the improved question text
 2. Sending it to OpenAI's embedding model
 3. Getting back a special numerical "fingerprint" (a vector of 1536 numbers) that represents the meaning of your question
 4. This fingerprint captures the essence of what you're asking about

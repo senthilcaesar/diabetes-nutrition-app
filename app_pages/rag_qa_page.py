@@ -166,11 +166,13 @@ def show_rag_qa_page():
         if submit_button and question:
             with st.spinner("Searching for information..."):
                 try:
-                    # Find relevant chunks using Pinecone
-                    relevant_chunks = find_similar_chunks(question, index_name)
+                    # Find relevant chunks using Pinecone with question improvement
+                    relevant_chunks, question_info = find_similar_chunks(question, index_name)
                     
                     # Generate response
-                    response_data = generate_response(question, relevant_chunks)
+                    response_data = generate_response(question, relevant_chunks, question_info)
+                    
+                    # Question processing information is now logged to the command line instead of displayed in the UI
                     
                     # Create a container for the answer with a light background
                     with st.container():
@@ -199,7 +201,6 @@ def show_rag_qa_page():
             - How does fiber affect blood glucose levels?
             - How does insulin affect blood glucose levels?
             - How does exercise affect blood glucose levels?
-            - How do glucose levels affect cognitive function?
             - What's the best breakfast for stable glucose levels?
             - What is glucose and why is it important for the body?
             - How do glucose spikes affect energy levels and mood?
