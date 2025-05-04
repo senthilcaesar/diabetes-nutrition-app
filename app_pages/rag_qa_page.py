@@ -149,7 +149,7 @@ def show_rag_qa_page():
         with st.container():
             # Question input
             question = st.text_input("Enter your question:", 
-                                    placeholder="e.g., What is glucose and why is it important for the body?",
+                                    placeholder="e.g., What is the impact of exercise on glucose?",
                                     value=st.session_state.get("current_question", ""))
             
             # Clear current question after using it
@@ -194,6 +194,7 @@ def show_rag_qa_page():
             - What is insulin?
             - What is insulin resistance?
             - What are normal blood glucose levels?
+            - How does sleep affect glucose levels?
             - What is the root cause of Type 2 diabetes?
             - How does fiber affect blood glucose levels?
             - How does insulin affect blood glucose levels?
