@@ -214,15 +214,7 @@ def show_rag_qa_page():
             - What are the main differences between Type 1 and Type 2 diabetes?
             - What's the difference between glucose, fructose, and sucrose?
             - How does eating food in the right order help with glucose management?
-                    """)
-            
-            st.markdown("<h5 style='color:#20a7db; margin-top:0; border-bottom:2px solid #D3D3D3; padding-bottom:10px;'>Example Answer</h5>", unsafe_allow_html=True)
-            
-            st.markdown("""What is insulin resistance? Please explain in layman's terms.""")
-
-            st.markdown("""Insulin resistance is a condition where the body's cells don't respond well to insulin, a hormone that helps control blood sugar levels. Imagine insulin as a key that opens a door to let glucose (sugar) into the cells for energy. In insulin resistance, 
-                        the key (insulin) doesn't fit the lock (the cell's receptor) very well, so the door doesn't open easily. As a result, glucose builds up in the blood instead of entering the cells. The body tries to compensate by producing more insulin, but this can lead to problems like high blood sugar and excessive fat in the liver.
-                        """)       
+                    """)   
     
     # Admin section for reingesting documents
     # with st.expander("Admin Options"):

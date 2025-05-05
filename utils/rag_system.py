@@ -227,12 +227,12 @@ def generate_response(question: str, relevant_chunks: List[Tuple[Dict[str, Any],
     Context:
     {context}
     
-    Question: {prompt_question} {" Please explain in layman terms"}
+    Question: {prompt_question} {"Please explain in layman terms"}
     
     """
     
     print(prompt)
-    
+
     # Generate response using OpenAI
     response = client.chat.completions.create(
         model=model,
