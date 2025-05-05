@@ -145,9 +145,8 @@ The question improvement process:
 3. The model analyzes the question and improves it by:
 
    - Correcting grammar and spelling errors
-   - Adding relevant medical terminology
-   - Making the question more specific and detailed
-   - Ensuring the question is clear and unambiguous
+   - Make the question simple and easy to understand
+   - Ensuring the question is clear
    - Preserving the original intent
 
 4. Returns both the improved question and an explanation of the changes
@@ -169,17 +168,16 @@ This approach offers several advantages:
 The question improvement uses the following prompt structure:
 
 ```
-You are an AI assistant specializing in diabetes and nutrition. Your task is to improve the following question
-to make it more effective for retrieving relevant information from a medical knowledge base.
+You are an AI assistant. Your task is to improve the following question
+to make it more effective for retrieving relevant information from a knowledge base.
 
 Original Question: [user question]
 
 Please:
 1. Correct any grammar or spelling errors
-2. Add relevant medical terminology where appropriate
-3. Make the question more specific and detailed
-4. Ensure the question is clear and unambiguous
-5. Preserve the original intent of the question
+2. Make the question simple and easy to understand
+3. Ensure the question is clear
+4. Preserve the original intent of the question
 ```
 
 The system uses a temperature setting of 0.3 to ensure consistent, factual improvements while maintaining the original intent of the user's question.
