@@ -227,7 +227,7 @@ def generate_response(question: str, relevant_chunks: List[Tuple[Dict[str, Any],
     Context:
     {context}
     
-    Question: {prompt_question}
+    Question: {prompt_question} {" Please explain in layman terms"}
     
     """
     
