@@ -231,6 +231,8 @@ def generate_response(question: str, relevant_chunks: List[Tuple[Dict[str, Any],
     
     """
     
+    print(prompt)
+    
     # Generate response using OpenAI
     response = client.chat.completions.create(
         model=model,
