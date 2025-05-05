@@ -222,7 +222,7 @@ def generate_response(question: str, relevant_chunks: List[Tuple[Dict[str, Any],
     # Create prompt
     prompt = f"""
     Answer the following question based ONLY on the provided context. If the answer cannot be determined from the context, say "I don't have enough information to answer this question.
-    Don't use phrases like "based on the provided context" or "based on the information provided" in your answer."
+    Don't use phrases like "based on the provided context" or "mentioned in the context" or "based on the information provided" in your answer."
     
     Context:
     {context}
