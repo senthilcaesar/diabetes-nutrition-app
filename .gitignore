@@ -26,6 +26,7 @@ ENV/
 
 # Streamlit
 .streamlit/secrets.toml
+rag/.streamlit/secrets.toml
 
 .env
 
