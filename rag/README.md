@@ -2,6 +2,11 @@
 
 This document explains the Retrieval-Augmented Generation (RAG) system implemented for the Diabetes Nutrition App using Pinecone as the vector database. The system enables users to ask questions about diabetes and nutrition and receive accurate answers based on information extracted from medical literature.
 
+1. Extracts text from PDF files in the data directory (pymupdf4llm)
+2. Splits the text into smaller chunks (LangChain's RecursiveCharacterTextSplitter)
+3. Generates vector embeddings for each chunk
+4. Stores the chunks with embeddings in a Pinecone vector database
+
 ## System Architecture
 
 ```mermaid
